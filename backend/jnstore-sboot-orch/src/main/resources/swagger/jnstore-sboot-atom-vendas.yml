@@ -1,0 +1,447 @@
+openapi: 3.0.1
+info:
+  title: "JNStore Vendas API"
+  description: "API para gerenciamento de Vendas, Caixas, Itens de Venda e Pagamentos da JNStore."
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+    description: Ambiente de desenvolvimento
+
+tags:
+  - name: "Caixa"
+    description: "Operações relacionadas à abertura e fechamento de caixa."
+  - name: "Venda"
+    description: "Operações para registrar e consultar vendas."
+
+paths:
+  /caixas/abrir:
+    get:
+      tags:
+        - Caixa
+      summary: "Consulta se existe um caixa aberto para o dia atual"
+      operationId: consultaCaixaAbertoHoje
+      responses:
+        '200':
+          description: "Caixa aberto encontrado para o dia"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Caixa
+      summary: "Abre um novo caixa"
+      operationId: abrirCaixa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '201':
+          description: "Caixa aberto com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas/{id}/fechar:
+    post:
+      tags:
+        - Caixa
+      summary: "Fecha um caixa existente"
+      operationId: fecharCaixa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '200':
+          description: "Caixa fechado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas:
+    get:
+      tags:
+        - Caixa
+      summary: "Lista todos os caixas"
+      operationId: listarCaixas
+      responses:
+        '200':
+          description: "Lista de caixas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaixaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas/{id}:
+    get:
+      tags:
+        - Caixa
+      summary: "Busca um caixa pelo ID"
+      operationId: buscarCaixaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Caixa encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas:
+    post:
+      tags:
+        - Venda
+      summary: "Registra uma nova venda"
+      operationId: registrarVenda
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendaInput'
+      responses:
+        '201':
+          description: "Venda registrada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Venda
+      summary: "Lista todas as vendas"
+      operationId: listarVendas
+      responses:
+        '200':
+          description: "Lista de vendas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/por-variacao:
+    get:
+      tags:
+        - Venda
+      summary: "Busca vendas por uma lista de IDs de variação"
+      operationId: listarVendasPorIdVariacao
+      parameters:
+        - name: idVariacao
+          in: query
+          required: true
+          description: "Lista de IDs de variação para buscar as vendas associadas."
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: "Lista de vendas encontradas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/{id}:
+    get:
+      tags:
+        - Venda
+      summary: "Busca uma venda pelo ID"
+      operationId: buscarVendaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Venda encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete: # Novo método para desfazerVenda
+      tags:
+        - Venda
+      summary: "Desfaz uma venda pelo ID"
+      operationId: desfazerVenda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Venda desfeita com sucesso"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    CaixaInput:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
+          format: int64
+          description: "ID do usuário que está abrindo/fechando o caixa."
+        valor:
+          type: number
+          description: "Valor inicial na abertura ou valor final no fechamento."
+
+    CaixaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        usuarioId:
+          type: integer
+          format: int64
+        dataAbertura:
+          type: string
+          format: date-time
+        valorInicial:
+          type: number
+          format: double
+        dataFechamento:
+          type: string
+          format: date-time
+        valorFinal:
+          type: number
+
+    VendaInput:
+      type: object
+      required:
+        - caixaId
+        - itens
+        - pagamentos
+      properties:
+        caixaId:
+          type: integer
+          format: int64
+        desconto:
+          type: number
+          default: 0
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaInput'
+        totalBruto:
+          type: number
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoInput'
+        totalLiquido:
+          type: number
+
+    VendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        caixaId:
+          type: integer
+          format: int64
+        dataVenda:
+          type: string
+          format: date-time
+        totalBruto:
+          type: number
+        desconto:
+          type: number
+        totalLiquido:
+          type: number
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaRepresentation'
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoRepresentation'
+
+    ItemVendaInput:
+      type: object
+      required:
+        - varianteId
+        - precoUnitario
+        - quantidade
+      properties:
+        varianteId:
+          type: integer
+          format: int64
+          description: "ID da variante do produto (referência ao MS-ESTOQUE)."
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    ItemVendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        varianteId:
+          type: integer
+          format: int64
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    PagamentoInput:
+      type: object
+      required:
+        - forma
+        - valorPago
+      properties:
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+          format: double
+
+    PagamentoRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+          format: double
+
+    FormaPagamento:
+      type: string
+      enum:
+        - CREDITO
+        - DEBITO
+        - DINHEIRO
+        - PIX
+
+    ErroRepresetation:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        detalhes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErroDetalheRepresetation'
+
+    ErroDetalheRepresetation:
+      type: object
+      properties:
+        campo:
+          type: string
+        mensagem:
+          type: string
+
+  responses:
+    BadRequest:
+      description: "Requisição inválida"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    NotFound:
+      description: "Recurso não encontrado"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    InternalServerError:
+      description: "Erro interno do servidor"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'

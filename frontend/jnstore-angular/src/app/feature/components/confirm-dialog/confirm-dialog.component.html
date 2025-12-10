@@ -1,0 +1,14 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4>{{ title }}</h4>
+    </div>
+    <div class="modal-body">
+      <p>{{ message }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onCancel()">{{ cancelText }}</button>
+      <button [class]="isDangerous ? 'btn btn-danger' : 'btn btn-primary'" (click)="onConfirm()">{{ okText }}</button>
+    </div>
+  </div>
+</div>

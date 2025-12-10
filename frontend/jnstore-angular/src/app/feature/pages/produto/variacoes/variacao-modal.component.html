@@ -1,0 +1,75 @@
+<!-- Modal -->
+<div class="modal fade" #variacaoModal tabindex="-1" aria-labelledby="variacaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="variacaoModalLabel">{{ editIndex === null ? 'Adicionar' : 'Editar' }} Variação</h5>
+        <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="onSave()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Identificador (SKU)</label>
+              <input class="form-control" formControlName="identificador" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Qtd. Estoque</label>
+              <input type="number" class="form-control" formControlName="quantidadeEstoque"
+                [class.is-invalid]="f['quantidadeEstoque'].invalid && f['quantidadeEstoque'].touched" />
+              <div *ngIf="f['quantidadeEstoque'].invalid && f['quantidadeEstoque'].touched" class="invalid-feedback">
+                Estoque é obrigatório e não pode ser negativo.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Cor</label>
+              <select class="form-select" formControlName="cor" [class.is-invalid]="f['cor'].invalid && f['cor'].touched">
+                <option value="" disabled>Selecione uma cor</option>
+                <option *ngFor="let color of standardColors" [value]="color">{{ color }}</option>
+                <option value="Outro">Outro</option>
+              </select>
+              <div *ngIf="f['cor'].invalid && f['cor'].touched" class="invalid-feedback">
+                Cor é obrigatória.
+              </div>
+            </div>
+
+            <div class="col-md-6" *ngIf="f['cor'].value === 'Outro'">
+              <label class="form-label">Qual cor?</label>
+              <input type="text" class="form-control" formControlName="outraCor"
+                     [class.is-invalid]="f['outraCor'].invalid && f['outraCor'].touched" />
+              <div *ngIf="f['outraCor'].invalid && f['outraCor'].touched" class="invalid-feedback">
+                Especifique a cor.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Tamanho</label>
+              <select class="form-select" formControlName="tamanho" [class.is-invalid]="f['tamanho'].invalid && f['tamanho'].touched">
+                <option value="" disabled>Selecione um tamanho</option>
+                <option *ngFor="let size of standardSizes" [value]="size">{{ size }}</option>
+                <option value="Outro">Outro</option>
+              </select>
+              <div *ngIf="f['tamanho'].invalid && f['tamanho'].touched" class="invalid-feedback">
+                Tamanho é obrigatório.
+              </div>
+            </div>
+
+            <div class="col-md-6" *ngIf="f['tamanho'].value === 'Outro'">
+              <label class="form-label">Qual tamanho?</label>
+              <input type="text" class="form-control" formControlName="outroTamanho"
+                     [class.is-invalid]="f['outroTamanho'].invalid && f['outroTamanho'].touched" />
+              <div *ngIf="f['outroTamanho'].invalid && f['outroTamanho'].touched" class="invalid-feedback">
+                Especifique o tamanho.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="form.invalid">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>

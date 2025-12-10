@@ -1,0 +1,41 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root{
+	--jn-brown: #3f2b20; /* deep brown */
+	--jn-gold: #d4af37;  /* gold */
+	--jn-black: #0b0b0b;
+}
+
+body{
+	color: var(--jn-black);
+	background: #fff;
+	font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Primary buttons use gold background with black text */
+.btn-primary{
+	background-color: var(--jn-gold) !important;
+	border-color: var(--jn-gold) !important;
+	color: var(--jn-black) !important;
+}
+.btn-primary:hover, .btn-primary:focus{
+	background-color: #b5892f !important;
+	border-color: #b5892f !important;
+	color: var(--jn-black) !important;
+}
+
+/* Accent link color */
+a{ color: var(--jn-brown); }
+
+/* Alerts styling tuned to brand */
+.alert-primary, .alert-info{ background-color: rgba(212,175,55,0.12); color: var(--jn-black); border-color: rgba(212,175,55,0.2); }
+.alert-success{ background-color: rgba(60,160,90,0.08); }
+.alert-danger{ background-color: rgba(220,30,30,0.06); }
+
+/* Cards and inputs subtle border using brown */
+.card{ border-color: rgba(63,43,32,0.12); }
+input.form-control, select.form-select, textarea.form-control{ border-color: rgba(63,43,32,0.12); }
+
+/* Header tweaks (app title area) */
+h1{ color: var(--jn-brown); }
+

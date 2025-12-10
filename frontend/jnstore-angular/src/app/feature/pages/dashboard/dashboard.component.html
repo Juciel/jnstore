@@ -1,0 +1,55 @@
+<div class="container-fluid py-3">
+  <div *ngIf="loading" class="alert alert-info">Carregando estatísticas...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div class="row">
+    <div class="col-lg-4 col-12">
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3>{{ caixaValor | currency:'BRL':'symbol':'1.2-2' }}</h3>
+          <p>Valor do caixa (hoje)</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-cash-register"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-12">
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>{{ produtosVendidosCount }}</h3>
+          <p>Produtos vendidos (hoje)</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-boxes"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-12">
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>{{ valorVendido | currency:'BRL':'symbol':'1.2-2' }}</h3>
+          <p>Valor vendido (hoje)</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Histórico de Vendas (últimos 7 dias)</h3>
+        </div>
+        <div class="card-body">
+          <canvas #salesChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>

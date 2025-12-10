@@ -1,0 +1,81 @@
+<div class="venda container py-3">
+
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <a class="btn btn-secondary" routerLink="/vendas">&larr; Voltar</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div formArrayName="itens" class="mb-3">
+      <h5>Itens</h5>
+      <!-- Item Rows -->
+      <div *ngFor="let it of itens.controls; let i = index" [formGroupName]="i" class="card p-2 mb-2">
+        <div class="row g-2">
+          <!-- Autocomplete Column -->
+          <div class="col-md-6">
+            <label class="form-label">Produto</label>
+            <div class="autocomplete-container">
+              <input type="text" class="form-control" formControlName="search" placeholder="Digite para buscar...">
+              <div class="autocomplete-results" *ngIf="autocompleteResults[i] && autocompleteResults[i].length > 0">
+                <div *ngFor="let result of autocompleteResults[i]" class="autocomplete-item" (click)="selectProduct(i, result)">
+                  {{result.variacao.identificador}}<br>
+                  <strong>{{ result.produto.categoria.descricao }} - {{ result.produto.nome }}</strong><br>
+                  {{result.variacao.cor}}<br>
+                  {{result.variacao.tamanho}}<br>
+                  <small>Preço: {{ result.produto.valorVenda | currency:'BRL' }}</small>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" formControlName="varianteId" />
+          </div>
+
+          <!-- Other Fields -->
+          <div class="col-md-2">
+            <label class="form-label">Preço Unit.</label>
+            <input type="text" class="form-control" formControlName="precoUnitario" currencyMask inputmode="decimal" />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Quantidade</label>
+            <input type="number" class="form-control" formControlName="quantidade" />
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger w-100" (click)="removeItem(i)">Remover</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline-primary mt-2" (click)="addItem()">Adicionar Item</button>
+    </div>
+
+    <div formArrayName="pagamentos" class="mb-3">
+      <h5>Pagamentos</h5>
+      <div *ngFor="let p of pagamentos.controls; let j = index" [formGroupName]="j" class="card p-2 mb-2">
+        <div class="row g-2">
+          <div class="col-md-6">
+            <label class="form-label">Forma</label>
+            <select class="form-select" formControlName="forma">
+              <option value="DINHEIRO">DINHEIRO</option>
+              <option value="CREDITO">CREDITO</option>
+              <option value="DEBITO">DEBITO</option>
+              <option value="PIX">PIX</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Valor Pago</label>
+            <input type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" />
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger w-100" (click)="removePagamento(j)">Remover</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addPagamento()">Adicionar Pagamento</button>
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary" [disabled]="submitting">{{ submitting ? 'Registrando...' : 'Registrar Venda' }}</button>
+    </div>
+  </form>
+
+  <div *ngIf="submitError" class="alert alert-danger">{{ submitError }}</div>
+  <div *ngIf="saved" class="alert alert-success">Venda registrada com ID {{ saved.id }}</div>
+</div>

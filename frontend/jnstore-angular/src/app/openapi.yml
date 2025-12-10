@@ -1,0 +1,921 @@
+openapi: 3.0.1
+info:
+  title: "JNStore Estoque API"
+  description: "API para gerenciamento de estoque da JNStore. Inclui controle de grade (cor e tamanho) e movimentação."
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Ambiente de desenvolvimento
+
+tags:
+  - name: "Produto"
+    description: "Operações relacionadas a produtos (CRUD e listagem)"
+  - name: "Estoque"
+    description: "Controle de entradas e saídas de estoque (reposição/venda)"
+  - name: "Categoria"
+    description: "Operações relacionadas às categorias de produtos"
+  - name: "Caixa"
+    description: "Operações relacionadas ao caixa (abertura, fechamento, status)"
+  - name: "Venda"
+    description: "Operações de registro e consulta de vendas"
+
+paths:
+  /produtos:
+    get:
+      tags:
+        - Produto
+      operationId: getAll
+      summary: "Lista todos os produtos"
+      responses:
+        '200':
+          description: "Lista de produtos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoRepresetation'
+        '400':
+          description: Erro na requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: Erro interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    post:
+      tags:
+        - Produto
+      operationId: create
+      summary: "Cria um novo produto"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProdutoRepresetation'
+      responses:
+        '201':
+          description: "Produto criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoRepresetation'
+        '400':
+          description: "Erro na validação dos dados"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /produtos/{id}:
+    get:
+      tags:
+        - Produto
+      operationId: getById
+      summary: "Busca um produto pelo ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Produto encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoRepresetation'
+        '404':
+          description: "Produto não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '400':
+          description: "ID do produto inválido"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    put:
+      tags:
+        - Produto
+      operationId: update
+      summary: Atualiza um produto existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProdutoRepresetation'
+      responses:
+        '200':
+          description: "Produto atualizado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoRepresetation'
+        '404':
+          description: "Produto não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '400':
+          description: "Erro na requisição ou validação"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    delete:
+      tags:
+        - Produto
+      operationId: delete
+      summary: Deleta um produto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Produto deletado com sucesso"
+        '404':
+          description: "Produto não encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '400':
+          description: "ID do produto inválido"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /categorias:
+    get:
+      tags:
+        - Categoria
+      operationId: listarCategorias
+      summary: "Lista todas as categorias"
+      responses:
+        '200':
+          description: "Lista de categorias"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoriaRepresetation'
+        '500':
+          description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    post:
+      tags:
+        - Categoria
+      operationId: criarCategoria
+      summary: "Cria uma nova categoria"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaRepresetation'
+      responses:
+        '201':
+          description: "Categoria criada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaRepresetation'
+        '400':
+          description: "Erro de validação nos dados da categoria"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /categorias/{id}:
+    get:
+      tags:
+        - Categoria
+      operationId: buscarCategoriaPorId
+      summary: "Busca uma categoria pelo seu ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Categoria encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaRepresetation'
+        '404':
+          description: "Categoria não encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    put:
+      tags:
+        - Categoria
+      operationId: atualizarCategoria
+      summary: "Atualiza uma categoria existente"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaRepresetation'
+      responses:
+        '200':
+          description: "Categoria atualizada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaRepresetation'
+        '404':
+          description: "Categoria não encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '400':
+          description: "Erro de validação nos dados da categoria"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+    delete:
+      tags:
+        - Categoria
+      operationId: deletarCategoria
+      summary: "Deleta uma categoria"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Categoria deletada com sucesso"
+        '404':
+          description: "Categoria não encontrada"
+
+  /estoque/entrada:
+    post:
+      tags:
+        - Estoque
+      operationId: registrarEntrada
+      summary: "Registra a entrada (adição) de estoque para uma variação ."
+      description: "Usado para registrar compras, reposições ou ajustes positivos no estoque de um específico."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimentacaoEstoqueInput'
+      responses:
+        '201':
+          description: "Entrada de estoque registrada com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimentacaoEstoqueRepresetation'
+        '400':
+          description: Erro na requisição ou validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '404':
+          description: Variação (SKU) não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: Erro interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /estoque/saida:
+    post:
+      tags:
+        - Estoque
+      operationId: registrarSaida
+      summary: "Registra a saída (remoção) de estoque para uma variação."
+      description: "Usado para registrar vendas, perdas ou ajustes negativos no estoque de um SKU específico."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimentacaoEstoqueInput'
+      responses:
+        '201':
+          description: "Saída de estoque registrada com sucesso."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimentacaoEstoqueRepresetation'
+        '400':
+          description: "Erro na requisição, validação (ex: quantidade negativa) ou estoque insuficiente"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '404':
+          description: Variação (SKU) não encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: Erro interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /caixas/abrir:
+    post:
+      tags:
+        - Caixa
+      summary: "Abre um novo caixa"
+      operationId: abrirCaixa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '201':
+          description: "Caixa aberto com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas/{id}/fechar:
+    post:
+      tags:
+        - Caixa
+      summary: "Fecha um caixa existente"
+      operationId: fecharCaixa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '200':
+          description: "Caixa fechado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas:
+    get:
+      tags:
+        - Caixa
+      summary: "Lista todos os caixas"
+      operationId: listarCaixas
+      responses:
+        '200':
+          description: "Lista de caixas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaixaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /caixas/{id}:
+    get:
+      tags:
+        - Caixa
+      summary: "Busca um caixa pelo ID"
+      operationId: buscarCaixaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Caixa encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas:
+    post:
+      tags:
+        - Venda
+      summary: "Registra uma nova venda"
+      operationId: registrarVenda
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendaInput'
+      responses:
+        '201':
+          description: "Venda registrada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Venda
+      summary: "Lista todas as vendas"
+      operationId: listarVendas
+      responses:
+        '200':
+          description: "Lista de vendas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/{id}:
+    get:
+      tags:
+        - Venda
+      summary: "Busca uma venda pelo ID"
+      operationId: buscarVendaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Venda encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    # CAIXA & VENDA
+    CaixaInput:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
+          format: int64
+          description: "ID do usuário que está abrindo/fechando o caixa."
+        valor:
+          type: number
+          description: "Valor inicial na abertura ou valor final no fechamento."
+
+    CaixaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        usuarioId:
+          type: integer
+          format: int64
+        dataAbertura:
+          type: string
+          format: date-time
+        valorInicial:
+          type: number
+          format: double
+        dataFechamento:
+          type: string
+          format: date-time
+        valorFinal:
+          type: number
+
+    VendaInput:
+      type: object
+      required:
+        - caixaId
+        - itens
+        - pagamentos
+      properties:
+        caixaId:
+          type: integer
+          format: int64
+        desconto:
+          type: number
+          default: 0
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaInput'
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoInput'
+
+    VendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        caixaId:
+          type: integer
+          format: int64
+        dataVenda:
+          type: string
+          format: date-time
+        totalBruto:
+          type: number
+        desconto:
+          type: number
+        totalLiquido:
+          type: number
+          format: double
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaRepresentation'
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoRepresentation'
+
+    ItemVendaInput:
+      type: object
+      required:
+        - varianteId
+        - precoUnitario
+        - quantidade
+      properties:
+        varianteId:
+          type: integer
+          format: int64
+          description: "ID da variante do produto (referência ao MS-ESTOQUE)."
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    ItemVendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        varianteId:
+          type: integer
+          format: int64
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    PagamentoInput:
+      type: object
+      required:
+        - forma
+        - valorPago
+      properties:
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+          format: double
+
+    PagamentoRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+          format: double
+
+    FormaPagamento:
+      type: string
+      enum:
+        - CREDITO
+        - DINHEIRO
+        - PIX
+
+    # ESTOQUE
+    MovimentacaoEstoqueInput:
+      type: object
+      required:
+        - idVariacao
+        - quantidade
+      properties:
+        idVariacao:
+          type: integer
+          format: int64
+          description: O ID da variação (SKU) que terá o estoque movimentado.
+          example: 101
+        quantidade:
+          type: integer
+          description: Quantidade de itens que entraram ou saíram do estoque.
+          minimum: 1
+          example: 5
+        descricaoMotivo:
+          type: string
+          description: "Descrição ou motivo da movimentação (Ex: ID da Venda, Nota Fiscal, Ajuste de inventário)."
+          maxLength: 100
+        usuarioId:
+          type: integer
+          format: int64
+          description: "ID do usuário que realizou a operação."
+
+    MovimentacaoEstoqueRepresetation:
+      type: object
+      description: "Representa um registro de movimentação de estoque (entrada ou saída)."
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        variacaoProduto:
+          $ref: '#/components/schemas/VariacaoProdutoRepresetation'
+        tipoMovimentacao:
+          type: string
+          enum:
+            - ENTRADA
+            - SAIDA
+        quantidade:
+          type: integer
+          description: "Quantidade de itens que foram movimentados."
+        dataMovimentacao:
+          type: string
+          format: date-time
+          description: "Data e hora em que a movimentação foi registrada."
+          readOnly: true
+        descricaoMotivo:
+          type: string
+          description: "Descrição ou motivo da movimentação (Ex: ID da Venda, Nota Fiscal, Ajuste de inventário)."
+        usuarioId:
+          type: integer
+          format: int64
+          description: "ID do usuário que realizou a operação."
+
+    # PRODUTO & CATEGORIA
+    VariacaoProdutoRepresetation:
+      type: object
+      description: "Representa uma variação específica de cor e tamanho de um produto (SKU)."
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        identificador:
+          type: string
+          description: "Código de Barras/SKU único para esta variação (ex: CAMBASUP)."
+          example: 'CAMBASUP'
+        cor:
+          type: string
+          description: "Cor da variação (ex: Azul Marinho, Branco)."
+          maxLength: 50
+          example: "Azul Marinho"
+        tamanho:
+          type: string
+          description: "Tamanho da variação (ex: P, M, G, GG, 38, 40)."
+          maxLength: 10
+          example: "P"
+        precoVenda:
+          type: number
+          description: "Preço de venda opcional que sobrescreve o preço do produto principal."
+          example: 28.0
+        precoCompra:
+          type: number
+          description: "Preço de compra que o produto foi obtido."
+          example: 28.0
+        quantidadeEstoque:
+          type: integer
+          description: "Soma total do estoque de todas as variações."
+          readOnly: true
+
+    ProdutoRepresetation:
+      type: object
+      description: "Produtos da Loja"
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1
+        nome:
+          type: string
+          maxLength: 100
+          example: "Camiseta Básica Algodão"
+        descricao:
+          type: string
+          maxLength: 200
+          example: "Camiseta 100% Algodão, fio 30.1, gola careca."
+        precoVenda:
+          type: number
+          example: 25.0
+        categoria:
+          $ref: '#/components/schemas/CategoriaRepresetation'
+        genero:
+          $ref: '#/components/schemas/GeneroRepresetation'
+        variacoes:
+          type: array
+          description: "Lista de todas as variações (SKUs) disponíveis para este produto."
+          items:
+            $ref: '#/components/schemas/VariacaoProdutoRepresetation'
+        quantidadeTotalEstoque:
+          type: integer
+          description: "Soma total do estoque de todas as variações."
+          readOnly: true
+
+    CategoriaRepresetation:
+      type: object
+      description: "Categoria do Produto"
+      required:
+        - descricao
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        descricao:
+          type: string
+          maxLength: 100
+
+    GeneroRepresetation:
+      type: string
+      description: "Gênero do produto (Masculino, Feminino ou UNISSEX)"
+      enum:
+        - MASCULINO
+        - FEMININO
+        - UNISSEX
+
+    # ERROS
+    ErroRepresetation:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        detalhes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErroDetalheRepresetation'
+    ErroDetalheRepresetation:
+      type: object
+      properties:
+        campo:
+          type: string
+        mensagem:
+          type: string
+  responses:
+    BadRequest:
+      description: "Requisição inválida"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    NotFound:
+      description: "Recurso não encontrado"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    InternalServerError:
+      description: "Erro interno do servidor"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'

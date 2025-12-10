@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: jnstore-sboot-orch
+
+server:
+  port: 8081
+
+feign:
+  client:
+    produto:
+      url: http://localhost:8082
+    venda:
+      url: http://localhost:8083

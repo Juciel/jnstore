@@ -1,0 +1,25 @@
+<div class="categoria-form container py-3">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <a class="btn btn-secondary" routerLink="/categorias">&larr; Voltar</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="mb-3">
+      <label class="form-label">Descrição</label>
+      <input class="form-control" [class.is-invalid]="form.get('descricao')?.invalid && form.get('descricao')?.touched"
+        formControlName="descricao" placeholder="Ex: Camisetas, Calças, Acessórios" />
+      <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="invalid-feedback">
+        <div *ngIf="form.get('descricao')?.errors?.['required']">Descrição é obrigatória.</div>
+        <div *ngIf="form.get('descricao')?.errors?.['minlength']">Mínimo 3 caracteres.</div>
+        <div *ngIf="form.get('descricao')?.errors?.['maxlength']">Máximo 100 caracteres.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving">{{ saving ? 'Salvando...' :
+        'Salvar Categoria' }}</button>
+    </div>
+  </form>
+
+  <div *ngIf="saveError" class="alert alert-danger">{{ saveError }}</div>
+</div>
