@@ -6,10 +6,12 @@ import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,5 +48,16 @@ public class VendaController implements VendasApi {
     @Override
     public ResponseEntity<List<VendaRepresentation>> listarVendasPorIdVariacao(List<Long> idVariacao) {
         return ResponseEntity.ok(mapper.toRepresetationList(service.listarVendasPorIdVariacao(idVariacao)));
+    }
+
+    @Override
+    public ResponseEntity<List<VendaRepresentation>> listarVendasPorCaixaId(Long caixaId) {
+        return ResponseEntity.ok(mapper.toRepresetationList(service.listarVendasPorCaixaId(caixaId)));
+    }
+
+    @Override
+    public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(service.listarPaginado(pageable, dataInicial, dataFinal));
     }
 }

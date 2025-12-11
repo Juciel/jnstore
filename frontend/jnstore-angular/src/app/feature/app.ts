@@ -33,6 +33,7 @@ export class App {
       '/caixa': 'Caixa',
       '/caixa/abrir': 'Abrir Caixa',
       '/caixa/fechar/:id': 'Fechar Caixa',
+      '/caixa/retirada/:id': 'Retirar Valor do Caixa',
       '/vendas': 'Vendas',
       '/vendas/nova': 'Registrar Venda'
     };

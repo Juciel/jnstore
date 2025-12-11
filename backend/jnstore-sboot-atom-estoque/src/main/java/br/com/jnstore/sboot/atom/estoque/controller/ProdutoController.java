@@ -5,6 +5,7 @@ import br.com.jnstore.sboot.atom.estoque.mapper.ProdutoMapper;
 import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.estoque.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,12 @@ public class ProdutoController implements ProdutosApi {
     @Override
     public ResponseEntity<List<ProdutoRepresetation>> getAll() {
         return ResponseEntity.ok(mapper.toRepresetationList(service.getAll()));
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, String termo) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(service.getAllPaginado(pageable, termo));
     }
 
     @Override
@@ -41,6 +48,8 @@ public class ProdutoController implements ProdutosApi {
                 .map(produtoExistente -> {
                     var produtoParaAtualizar = mapper.toDomain(produtoRepresetation);
                     produtoParaAtualizar.setId(id);
+                    produtoParaAtualizar.setDataCriacao(produtoExistente.getDataCriacao());
+                    produtoParaAtualizar.setIdUsuarioCriacao(produtoExistente.getIdUsuarioCriacao());
                     var produtoAtualizado = service.update(produtoParaAtualizar);
                     return ResponseEntity.ok(mapper.toRepresetation(produtoAtualizado));
                 })
@@ -63,7 +72,7 @@ public class ProdutoController implements ProdutosApi {
     }
 
     @Override
-    public ResponseEntity<List<ProdutoRepresetation>> autocomplete(String termo) {
-        return ResponseEntity.ok(mapper.toRepresetationList(service.autocomplete(termo)));
+    public ResponseEntity<List<ProdutoRepresetation>> getProdutosPorVariacao(List<Long> idVariacao) {
+        return ResponseEntity.ok(mapper.toRepresetationList(service.getProdutosPorVariacao(idVariacao)));
     }
 }

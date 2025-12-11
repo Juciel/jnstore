@@ -4,6 +4,7 @@ import br.com.jnstore.sboot.atom.estoque.api.CategoriasApi;
 import br.com.jnstore.sboot.atom.estoque.model.CategoriaRepresetation;
 import br.com.jnstore.sboot.atom.estoque.service.CategoriaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,12 @@ public class CategoriaController implements CategoriasApi {
     @Override
     public ResponseEntity<List<CategoriaRepresetation>> listarCategorias() {
         return ResponseEntity.ok(categoriaService.listarTodas());
+    }
+
+    @Override
+    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size, String descricao) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(categoriaService.listarPaginado(pageable, descricao));
     }
 
     @Override

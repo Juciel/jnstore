@@ -3,7 +3,12 @@
   <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
   <div class="row">
-    <div class="col-lg-4 col-12">
+
+  </div>
+
+  <div class="row mt-4">
+    <!-- Card: Valor do Caixa (hoje) -->
+    <div class="col-lg-3 col-12">
       <div class="small-box bg-warning">
         <div class="inner">
           <h3>{{ caixaValor | currency:'BRL':'symbol':'1.2-2' }}</h3>
@@ -15,7 +20,8 @@
       </div>
     </div>
 
-    <div class="col-lg-4 col-12">
+    <!-- Card: Produtos Vendidos (hoje) -->
+    <div class="col-lg-3 col-12">
       <div class="small-box bg-success">
         <div class="inner">
           <h3>{{ produtosVendidosCount }}</h3>
@@ -27,7 +33,8 @@
       </div>
     </div>
 
-    <div class="col-lg-4 col-12">
+    <!-- Card: Valor Vendido (hoje) -->
+    <div class="col-lg-3 col-12">
       <div class="small-box bg-primary">
         <div class="inner">
           <h3>{{ valorVendido | currency:'BRL':'symbol':'1.2-2' }}</h3>
@@ -38,18 +45,88 @@
         </div>
       </div>
     </div>
-  </div>
-  
-  <!-- <div class="row mt-4">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Histórico de Vendas (últimos 7 dias)</h3>
+
+    <!-- Card: Número de Vendas Hoje -->
+    <div class="col-lg-3 col-12">
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3>
+            {{ numeroVendasHoje?.total }}
+            <sup *ngIf="numeroVendasHoje?.variacao !== undefined">
+              <i class="fas" [class.fa-arrow-up]="numeroVendasHoje!.variacao > 0" [class.fa-arrow-down]="numeroVendasHoje!.variacao < 0" [class.text-success]="numeroVendasHoje!.variacao > 0" [class.text-danger]="numeroVendasHoje!.variacao < 0"></i>
+              {{ numeroVendasHoje?.variacao | number:'1.1-1' }}%
+            </sup>
+          </h3>
+          <p>Número de Vendas (Hoje)</p>
         </div>
-        <div class="card-body">
-          <canvas #salesChart></canvas>
+        <div class="icon">
+          <i class="fas fa-shopping-cart"></i>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
+
+  <div class="row mt-4">
+    <!-- Card: Produtos Mais Vendidos -->
+    <div class="col-lg-6 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Top 5 Produtos Mais Vendidos</h3>
+        </div>
+        <div class="card-body p-0">
+          <ul class="products-list product-list-in-card pl-2 pr-2">
+            <li class="item" *ngFor="let produto of topProdutosVendidos">
+              <div class="product-img">
+                <i class="fas fa-tag fa-2x text-primary"></i>
+              </div>
+              <div class="product-info">
+                <a href="javascript:void(0)" class="product-title">{{ produto.nome }}
+                  <span class="badge badge-warning float-right">{{ produto.valorVenda | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </a>
+                <span class="product-description">
+                  Vendidos: {{ produto.quantidadeTotalEstoque }} <!-- Assumindo que 'quantidadeEstoque' aqui representa a quantidade vendida para o top 5 -->
+                </span>
+              </div>
+            </li>
+            <li class="item" *ngIf="topProdutosVendidos.length === 0">
+              <div class="product-info">
+                <span class="product-description">Nenhum produto vendido ainda.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Produtos com Baixo Estoque -->
+    <div class="col-lg-6 col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Produtos com Baixo Estoque</h3>
+        </div>
+        <div class="card-body p-0">
+          <ul class="products-list product-list-in-card pl-2 pr-2">
+            <li class="item" *ngFor="let produto of produtosBaixoEstoque">
+              <div class="product-img">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+              </div>
+              <div class="product-info">
+                <a href="javascript:void(0)" class="product-title">{{ produto.nome }}
+                  <span class="badge badge-danger float-right">Estoque: {{ produto.quantidadeTotalEstoque }}</span>
+                </a>
+                <span class="product-description">
+                  Categoria: {{ produto.categoria?.descricao || 'N/A' }}
+                </span>
+              </div>
+            </li>
+            <li class="item" *ngIf="produtosBaixoEstoque.length === 0">
+              <div class="product-info">
+                <span class="product-description">Nenhum produto com baixo estoque.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -11,6 +11,9 @@ public interface CategoriaMapper {
 
     CategoriaRepresetation toRepresentation(TbCategoria entity);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "idUsuarioCriacao", ignore = true)
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "idUsuarioAtualizacao", ignore = true)
+    @Mapping(target = "dataAtualizacao", ignore = true)
     TbCategoria toEntity(CategoriaRepresetation representation);
 }

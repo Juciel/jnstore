@@ -2,19 +2,19 @@ import { Component, Inject, PLATFORM_ID, ChangeDetectorRef, OnInit, OnDestroy } 
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
-import { VendaService } from '../../services/venda.service';
-import { ProdutoService } from '../../services/produto.service';
-import { ProdutoRepresetation, VariacaoProdutoRepresetation } from '../../models';
-import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
-import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
+import { VendaService } from 'src/app/feature/services/venda.service';
+import { ProdutoService } from 'src/app/feature/services/produto.service';
+import { PageProdutoRepresentation, ProdutoRepresetation, VariacaoProdutoRepresetation } from 'src/app/feature/models';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, map } from 'rxjs/operators';
+import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
 import { of, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-venda',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, CurrencyMaskDirective],
-  templateUrl: './venda.component.html',
-  styleUrls: ['./venda.component.scss']
+  templateUrl: './venda-form.component.html',
+  styleUrls: ['./venda-form.component.scss']
 })
 export class VendaComponent implements OnInit, OnDestroy {
   form: any;
@@ -90,7 +90,9 @@ export class VendaComponent implements OnInit, OnDestroy {
       switchMap(value => {
         const itemIndex = this.itens.controls.indexOf(itemGroup);
         if (typeof value === 'string' && value.length > 1) {
-          return this.produtoService.autocomplete(value);
+          return this.produtoService.getAllPaginado(0, 5, value).pipe(
+            map((response: PageProdutoRepresentation) => response.content || [])
+          );
         }
         if (itemIndex !== -1) this.autocompleteResults[itemIndex] = [];
         return of([]);

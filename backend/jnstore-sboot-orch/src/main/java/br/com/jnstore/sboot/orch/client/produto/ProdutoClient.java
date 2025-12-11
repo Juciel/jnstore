@@ -27,6 +27,9 @@ public interface ProdutoClient {
     @GetMapping("/produtos/new-sku")
     String getNewSku();
 
-    @GetMapping("/produtos/autocomplete")
-    List<ProdutoRepresetation> autocomplete(@RequestParam("termo") String termo);
+    @GetMapping("/produtos/por-variacao")
+    List<ProdutoRepresetation> listarProdutosPorIdVariacao(@RequestParam("idVariacao") List<Long> idVariacao);
+
+    @GetMapping("/produtos/paginado")
+    Object getAllPaginado(@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam("termo") String termo);
 }

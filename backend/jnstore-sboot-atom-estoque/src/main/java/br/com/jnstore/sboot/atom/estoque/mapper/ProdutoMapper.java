@@ -9,13 +9,17 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = CategoriaMapper.class)
 public interface ProdutoMapper {
 
     ProdutoRepresetation toRepresetation(TbProduto domain);
 
     List<ProdutoRepresetation> toRepresetationList(List<TbProduto> domainList);
 
+    @Mapping(target = "idUsuarioCriacao", ignore = true)
+    @Mapping(target = "dataCriacao", ignore = true)
+    @Mapping(target = "idUsuarioAtualizacao", ignore = true)
+    @Mapping(target = "dataAtualizacao", ignore = true)
     TbProduto toDomain(ProdutoRepresetation model);
 
     List<TbProduto> toDomainList(List<ProdutoRepresetation> modelList);

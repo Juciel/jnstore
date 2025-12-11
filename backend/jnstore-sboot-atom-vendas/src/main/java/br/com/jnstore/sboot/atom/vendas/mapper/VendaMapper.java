@@ -18,6 +18,7 @@ public interface VendaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "caixa", ignore = true)
     @Mapping(target = "dataVenda", ignore = true)
+    @Mapping(target = "idUsuarioVenda", ignore = true)
     TbVenda toDomain(VendaInput input);
 
     List<VendaRepresentation> toRepresetationList(List<TbVenda> tbVendas);

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { ProdutoRepresetation } from '../models';
+import { PageProdutoRepresentation, ProdutoRepresetation } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class ProdutoService {
@@ -41,8 +41,16 @@ export class ProdutoService {
    * Busca produtos para autocomplete.
    * @param termo Termo de busca para o autocomplete (SKU, nome ou categoria)
    */
-  autocomplete(termo: string): Observable<ProdutoRepresetation[]> {
-    const params = new HttpParams().set('termo', termo);
-    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/autocomplete`, { params });
+  getAllPaginado(page: number, size: number, termo: string): Observable<PageProdutoRepresentation> {
+    const params = new HttpParams().set('page', page).set('size', size).set('termo', termo);
+    return this.http.get<PageProdutoRepresentation>(`${this.baseUrl}/produtos/paginado`, { params });
+  }
+
+  getTopProdutosVendidos(limit: number = 5): Observable<ProdutoRepresetation[]> {
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/top-vendidos?limit=${limit}`);
+  }
+
+  getProdutosBaixoEstoque(limit: number = 5): Observable<ProdutoRepresetation[]> {
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/baixo-estoque?limit=${limit}`);
   }
 }

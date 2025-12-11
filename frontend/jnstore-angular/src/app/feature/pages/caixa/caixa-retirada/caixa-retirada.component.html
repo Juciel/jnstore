@@ -7,22 +7,22 @@
 
   <div class="card mb-4">
     <div class="card-header bg-success text-white">
-      Fechar Caixa
+      Retirada do Caixa
     </div>
     <div class="card-body">
       <p><strong>Valor Inicial:</strong> {{ caixa.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</p>
       <p><strong>Data de Abertura:</strong> {{ caixa.dataAbertura | date:'dd/MM/yyyy HH:mm':'UTC' }}</p>
-      <p><strong>Status:</strong> Aberto</p>
+      <p><strong>Status:</strong> {{ caixa.status | titlecase }}</p>
       <form (ngSubmit)="fecharCaixa()" #f="ngForm" novalidate>
         <div class="mb-3">
           <label class="form-label">Valor Final</label>
-          <input class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask />
+          <input class="form-control" type="text" [(ngModel)]="valorRetirada" name="valorRetirada" required #valorCtrl="ngModel" currencyMask />
           <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor final.</div>
         </div>
         <div class="mb-3">
           <button type="submit" class="btn btn-primary" [disabled]="valorCtrl.invalid">
             <span *ngIf="closing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            {{ closing ? 'Fechando...' : 'Fechar Caixa' }}
+            {{ closing ? 'Retirando...' : 'Retirada do Caixa' }}
           </button>
         </div>
       </form>
@@ -36,5 +36,5 @@
 </div>
 
 <div *ngIf="!caixa" class="alert alert-warning mt-3">
-  Nenhum ID de caixa fornecido para fechamento.
+  Nenhum ID de caixa fornecido para retirada.
 </div>

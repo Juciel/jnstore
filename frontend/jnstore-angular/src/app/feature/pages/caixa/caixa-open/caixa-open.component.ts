@@ -2,8 +2,8 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router'; // Importar Router
-import { CaixaService } from '../../services/caixa.service';
-import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
+import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
 
 @Component({
   selector: 'app-caixa-open',
@@ -13,7 +13,6 @@ import { CurrencyMaskDirective } from '../../directives/currency-mask.directive'
   styleUrls: ['./caixa-open.component.scss']
 })
 export class CaixaOpenComponent implements OnInit {
-  usuarioId?: number;
   valor?: number;
   opened: any = null;
   opening = false;
@@ -50,10 +49,9 @@ export class CaixaOpenComponent implements OnInit {
       this.openError = 'O valor inicial é obrigatório.';
       return;
     }
-    this.usuarioId = 1;
     this.opening = true;
     this.openError = null;
-    this.caixaService.abrirCaixa({ usuarioId: this.usuarioId, valor: this.valor }).subscribe({
+    this.caixaService.abrirCaixa({ valor: this.valor }).subscribe({
       next: res => {
          this.router.navigate(['/caixa'], { state: { successMessage: 'Caixa aberto com sucesso!' } });
       },

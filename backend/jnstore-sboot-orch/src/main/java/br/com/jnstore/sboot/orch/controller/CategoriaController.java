@@ -41,4 +41,9 @@ public class CategoriaController implements CategoriasApi {
         categoriaService.deletarCategoria(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size, String descricao) {
+        return ResponseEntity.ok(categoriaService.listarCategoriasPaginado(page, size, descricao));
+    }
 }

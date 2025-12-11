@@ -32,4 +32,8 @@ public class CategoriaService {
     public void deletarCategoria(Long id) {
         categoriaClient.delete(id);
     }
+
+    public Object listarCategoriasPaginado(Integer page, Integer size, String descricao) {
+        return categoriaClient.listarCategoriasPaginado(page, size, descricao);
+    }
 }

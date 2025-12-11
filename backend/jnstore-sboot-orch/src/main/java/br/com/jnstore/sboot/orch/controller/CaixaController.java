@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,11 @@ public class CaixaController implements CaixasApi {
     }
 
     @Override
+    public ResponseEntity<CaixaRepresentation> retiradaCaixa(Long id, CaixaInput caixaInput) {
+        return ResponseEntity.ok(service.retiradaCaixa(id, caixaInput));
+    }
+
+    @Override
     public ResponseEntity<List<CaixaRepresentation>> listarCaixas() {
         return ResponseEntity.ok(service.listarCaixas());
     }
@@ -40,5 +46,10 @@ public class CaixaController implements CaixasApi {
     @Override
     public ResponseEntity<CaixaRepresentation> buscarCaixaPorId(Long id) {
         return ResponseEntity.ok(service.buscarCaixaPorId(id));
+    }
+
+    @Override
+    public ResponseEntity<Object> listarCaixasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
+        return ResponseEntity.ok(service.listarCaixasPaginado(page, size, dataInicial, dataFinal));
     }
 }

@@ -2,7 +2,6 @@ export interface MovimentacaoEstoqueInput {
   idVariacao: number;
   quantidade: number;
   descricaoMotivo?: string;
-  usuarioId?: number;
 }
 
 export interface MovimentacaoEstoqueRepresetation {
@@ -12,5 +11,4 @@ export interface MovimentacaoEstoqueRepresetation {
   quantidade?: number;
   dataMovimentacao?: string; // date-time
   descricaoMotivo?: string;
-  usuarioId?: number;
 }

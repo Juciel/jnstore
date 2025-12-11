@@ -18,6 +18,10 @@ export class CaixaService {
     return this.http.post<CaixaRepresentation>(`${this.baseUrl}/caixas/${id}/fechar`, input);
   }
 
+  retiradaCaixa(id: number, input: CaixaInput): Observable<CaixaRepresentation> {
+    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/caixas/${id}/retirar`, input);
+  }
+
   consultaCaixaAbertoHoje(): Observable<CaixaRepresentation | null> {
     return this.http.get<CaixaRepresentation | null>(`${this.baseUrl}/caixas/abrir`);
   }

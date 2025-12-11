@@ -2,23 +2,29 @@ package br.com.jnstore.sboot.orch.service;
 
 import br.com.jnstore.sboot.atom.estoque.model.ItemMovimentacaoEstoqueRepresentation;
 import br.com.jnstore.sboot.atom.estoque.model.MovimentacaoEstoqueInput;
+import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
+import br.com.jnstore.sboot.atom.estoque.model.VariacaoProdutoRepresetation;
 import br.com.jnstore.sboot.atom.vendas.model.*;
 import br.com.jnstore.sboot.orch.client.produto.MovimentacaoEstoqueClient;
+import br.com.jnstore.sboot.orch.client.produto.ProdutoClient;
 import br.com.jnstore.sboot.orch.client.venda.CaixaClient;
 import br.com.jnstore.sboot.orch.client.venda.VendaClient;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class VendaService {
     private final VendaClient vendaClient;
     private final CaixaClient caixaClient;
+    private final ProdutoClient produtoClient;
     private final MovimentacaoEstoqueClient movimentacaoEstoqueClient;
 
     public VendaRepresentation registrarVenda(VendaInput vendaInput) {
@@ -101,5 +107,70 @@ public class VendaService {
             registrarSaidaEstoque(vendaInput);
             throw new RuntimeException("Erro ao desfazer venda", e);
         }
+    }
+
+    public VendaDetalheRepresentation buscarDetalhesVendaPorId(Long id) {
+        VendaRepresentation vendaRepresentation = vendaClient.buscarVendaPorId(id);
+        VendaDetalheRepresentation vendaDetalheRepresentation = new VendaDetalheRepresentation();
+        vendaDetalheRepresentation.setId(id);
+        vendaDetalheRepresentation.setCaixa(caixaClient.buscarCaixaPorId(vendaRepresentation.getCaixaId()));
+        vendaDetalheRepresentation.setDataVenda(vendaRepresentation.getDataVenda());
+        vendaDetalheRepresentation.setTotalBruto(vendaRepresentation.getTotalBruto());
+        vendaDetalheRepresentation.setDesconto(vendaRepresentation.getDesconto());
+        vendaDetalheRepresentation.setTotalLiquido(vendaRepresentation.getTotalLiquido());
+        vendaDetalheRepresentation.setPagamentos(vendaRepresentation.getPagamentos());
+
+        List<Long> idVariacoes = vendaRepresentation.getItens().stream()
+                .map(ItemVendaRepresentation::getVarianteId)
+                .collect(Collectors.toList());
+
+        List<ProdutoRepresetation> produtosComVariacoes = produtoClient.listarProdutosPorIdVariacao(idVariacoes);
+
+        List<ItemVendaProdutoRepresentation> itensDetalhes = new ArrayList<>();
+
+        for (ItemVendaRepresentation itemVenda : vendaRepresentation.getItens()) {
+            ItemVendaProdutoRepresentation itemVendaProdutoRepresentation = new ItemVendaProdutoRepresentation();
+
+            itemVendaProdutoRepresentation.setId(itemVenda.getId());
+            itemVendaProdutoRepresentation.setPrecoUnitario(itemVenda.getPrecoUnitario());
+            itemVendaProdutoRepresentation.setQuantidade(itemVenda.getQuantidade());
+            itemVendaProdutoRepresentation.setVarianteId(itemVenda.getVarianteId());
+
+            ProdutoRepresetation produtoAssociado = produtosComVariacoes.stream()
+                    .filter(p -> p.getVariacoes().stream()
+                            .anyMatch(v -> v.getId().equals(itemVenda.getVarianteId())))
+                    .findFirst()
+                    .orElse(null);
+
+            if (produtoAssociado != null) {
+                VariacaoProdutoRepresetation variacaoAssociada = produtoAssociado.getVariacoes().stream()
+                        .filter(v -> v.getId().equals(itemVenda.getVarianteId()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (variacaoAssociada != null) {
+                    itemVendaProdutoRepresentation.setIdProduto(produtoAssociado.getId());
+                    itemVendaProdutoRepresentation.setNomeProduto(produtoAssociado.getNome());
+                    itemVendaProdutoRepresentation.setDescricaoProduto(produtoAssociado.getDescricao());
+                    itemVendaProdutoRepresentation.setDescricaoCategoria(produtoAssociado.getCategoria().getDescricao());
+                    itemVendaProdutoRepresentation.setDescricaoGenero(produtoAssociado.getGenero().getValue());
+
+                    itemVendaProdutoRepresentation.setIdentificador(variacaoAssociada.getIdentificador());
+                    itemVendaProdutoRepresentation.setCor(variacaoAssociada.getCor());
+                    itemVendaProdutoRepresentation.setTamanho(variacaoAssociada.getTamanho());
+                }
+            }
+            itensDetalhes.add(itemVendaProdutoRepresentation);
+        }
+        vendaDetalheRepresentation.setItens(itensDetalhes);
+        return vendaDetalheRepresentation;
+    }
+
+    public List<VendaRepresentation> listarVendasPorCaixaId(Long id) {
+        return vendaClient.listarVendasPorCaixaId(id);
+    }
+
+    public Object listarVendasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
+        return vendaClient.listarVendasPaginado(page, size, dataInicial, dataFinal);
     }
 }

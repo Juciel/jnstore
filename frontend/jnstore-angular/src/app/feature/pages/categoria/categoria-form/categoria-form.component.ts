@@ -3,8 +3,8 @@ import { CommonModule, isPlatformServer } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CategoriaService } from '../../services/categoria.service';
-import { CategoriaRepresetation } from '../../models';
+import { CategoriaService } from 'src/app/feature/services/categoria.service';
+import { CategoriaRepresetation } from 'src/app/feature/models';
 
 @Component({
   selector: 'app-categoria-form',

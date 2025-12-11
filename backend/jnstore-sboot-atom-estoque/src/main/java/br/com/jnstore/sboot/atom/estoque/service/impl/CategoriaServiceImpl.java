@@ -7,9 +7,13 @@ import br.com.jnstore.sboot.atom.estoque.repository.CategoriaRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.CategoriaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -31,6 +35,17 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
+    public Page<CategoriaRepresetation> listarPaginado(Pageable pageable, String descricao) {
+        Page<TbCategoria> pageResult;
+        if (StringUtils.hasText(descricao)) {
+            pageResult = categoriaRepository.findByDescricaoContainingIgnoreCase(descricao, pageable);
+        } else {
+            pageResult = categoriaRepository.findAll(pageable);
+        }
+        return pageResult.map(categoriaMapper::toRepresentation);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public CategoriaRepresetation buscarPorId(Long id) {
         return categoriaRepository.findById(id)
@@ -46,6 +61,8 @@ public class CategoriaServiceImpl implements CategoriaService {
                     throw new IllegalArgumentException("Já existe uma categoria com a descrição '" + categoria.getDescricao() + "'.");
                 });
         TbCategoria entity = categoriaMapper.toEntity(categoria);
+        entity.setIdUsuarioCriacao(1L); // Placeholder para usuário logado
+        entity.setDataCriacao(LocalDateTime.now());
         return categoriaMapper.toRepresentation(categoriaRepository.save(entity));
     }
 
@@ -74,6 +91,8 @@ public class CategoriaServiceImpl implements CategoriaService {
                 });
 
         entity.setDescricao(categoria.getDescricao());
+        entity.setIdUsuarioAtualizacao(1L); // Placeholder para usuário logado
+        entity.setDataAtualizacao(LocalDateTime.now());
         return categoriaMapper.toRepresentation(categoriaRepository.save(entity));
     }
 }

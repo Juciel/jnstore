@@ -1,6 +1,7 @@
 package br.com.jnstore.sboot.atom.estoque.repository;
 
 import br.com.jnstore.sboot.atom.estoque.domain.TbProduto;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +22,9 @@ public interface ProdutoRepository extends JpaRepository<TbProduto, Long> {
             "WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :termo, '%')) " +
             "OR LOWER(c.descricao) LIKE LOWER(CONCAT('%', :termo, '%')) " +
             "OR LOWER(v.identificador) LIKE LOWER(CONCAT('%', :termo, '%'))")
-    List<TbProduto> searchByTerm(@Param("termo") String termo, Pageable pageable);
+    Page<TbProduto> searchByTerm(@Param("termo") String termo, Pageable pageable);
 
     Optional<TbProduto> findByCategoriaId(Long id);
+
+    List<TbProduto> findDistinctByVariacoes_IdIn(List<Long> idVariacao);
 }

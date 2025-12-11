@@ -2,31 +2,21 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // Importa
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CaixaService } from '../../services/caixa.service';
-import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
-
-// A interface Caixa foi ajustada para refletir CaixaRepresentation
-interface Caixa {
-  id?: number;
-  usuarioId?: number;
-  dataAbertura?: string;
-  valorInicial?: number;
-  dataFechamento?: string;
-  valorFinal?: number; // Alterado de valorFechamento para valorFinal
-}
+import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
+import { CaixaRepresentation } from 'src/app/feature/models';
 
 @Component({
-  selector: 'app-caixa-close',
+  selector: 'app-caixa-retirada',
   standalone: true,
   imports: [CommonModule, FormsModule, CurrencyMaskDirective],
-  templateUrl: './caixa-close.component.html',
-  styleUrls: ['./caixa-close.component.scss']
+  templateUrl: './caixa-retirada.component.html',
+  styleUrls: ['./caixa-retirada.component.scss']
 })
-export class CaixaCloseComponent implements OnInit {
+export class CaixaRetiradaComponent implements OnInit {
   caixaId: number | null = null;
-  caixa: Caixa | undefined;
-  valorFechamento?: number; // Mantido para o input do formulário
-  usuarioId: number = 1;
+  caixa: CaixaRepresentation | undefined;
+  valorRetirada?: number; // Mantido para o input do formulário
   closing = false;
   closeError: string | null = null;
 
@@ -49,11 +39,11 @@ export class CaixaCloseComponent implements OnInit {
 
   buscarCaixaPorId(id: number): void {
     this.caixaService.buscarPorId(id).subscribe({
-      next: (caixa: Caixa) => {
+      next: (caixa: CaixaRepresentation) => {
         this.caixa = caixa;
-        // Se o caixa já tiver um valorFinal, exibi-lo no campo valorFechamento
+        // Se o caixa já tiver um valorFinal, exibi-lo no campo valorRetirada
         if (this.caixa.valorFinal !== undefined && this.caixa.valorFinal !== null) {
-          this.valorFechamento = this.caixa.valorFinal;
+          this.valorRetirada = this.caixa.valorFinal;
         }
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       },
@@ -68,26 +58,26 @@ export class CaixaCloseComponent implements OnInit {
   fecharCaixa(): void {
     if (!this.caixaId) {
       this.closeError = 'ID do caixa não encontrado.';
-      console.error('fecharCaixa: ID do caixa não encontrado.'); // Log para depuração
+      console.error('retiradaCaixa: ID do caixa não encontrado.'); // Log para depuração
       return;
     }
-    if (this.valorFechamento === undefined || this.valorFechamento === null) {
-      this.closeError = 'O valor de fechamento é obrigatório.';
-      console.error('fecharCaixa: Valor de fechamento é obrigatório.'); // Log para depuração
+    if (this.valorRetirada === undefined || this.valorRetirada === null) {
+      this.closeError = 'O valor de retirada é obrigatório.';
+      console.error('retiradaCaixa: Valor de retirada é obrigatório.'); // Log para depuração
       return;
     }
 
     this.closing = true;
     this.closeError = null;
 
-    this.caixaService.fecharCaixa(this.caixaId, { usuarioId: this.usuarioId, valor: this.valorFechamento }).subscribe({
+    this.caixaService.retiradaCaixa(this.caixaId, { valor: this.valorRetirada }).subscribe({
       next: res => {
-        this.router.navigate(['/caixa'], { state: { successMessage: 'Caixa fechado com sucesso!' } });
+        this.router.navigate(['/caixa'], { state: { successMessage: 'Caixa retirado com sucesso!' } });
       },
       error: e => {
-        this.closeError = e?.error?.message || e?.message || 'Erro ao fechar caixa';
+        this.closeError = e?.error?.message || e?.message || 'Erro ao retirar caixa';
         this.closing = false;
-        console.error('fecharCaixa: Erro ao fechar caixa:', e); // Log para depuração
+        console.error('retiradaCaixa: Erro ao retirar caixa:', e); // Log para depuração
         this.cdr.detectChanges();
       }
     });

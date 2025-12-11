@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, Inject, PLATFORM_ID, ChangeDetectorRef
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ProdutoService } from '../../../services/produto.service';
+import { ProdutoService } from 'src/app/feature/services/produto.service';
 
 // Declaração para o Bootstrap, para que o TypeScript não reclame.
 declare var bootstrap: any;

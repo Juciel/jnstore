@@ -47,7 +47,7 @@ public class ProdutoController implements ProdutosApi {
     }
 
     @Override
-    public ResponseEntity<List<ProdutoRepresetation>> autocomplete(String termo) {
-        return ResponseEntity.ok(service.autocomplete(termo));
+    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, String termo) {
+        return ResponseEntity.ok(service.getAllPaginado(page, size, termo));
     }
 }

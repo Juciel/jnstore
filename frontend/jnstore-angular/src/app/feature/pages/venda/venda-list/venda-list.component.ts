@@ -1,11 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { VendaService } from '../../services/venda.service';
-import { ConfirmDialogService } from '../../components/confirm-dialog/confirm-dialog.service';
-import { VendaRepresentation } from '../../models';
+import { VendaService } from 'src/app/feature/services/venda.service';
+import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/confirm-dialog.service';
+import { VendaRepresentation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { VendaDetalheComponent } from 'src/app/feature/pages/venda/venda-detalhe/venda-detalhe.component';
 
 @Component({
   selector: 'app-venda-list',
@@ -23,7 +25,8 @@ export class VendaListComponent implements OnInit {
   constructor(
     private vendaService: VendaService,
     private confirmDialog: ConfirmDialogService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -51,6 +54,15 @@ export class VendaListComponent implements OnInit {
     });
   }
 
+  detalharVenda(id: number | undefined): void {
+    if (!id) return;
+
+    this.dialog.open(VendaDetalheComponent, {
+      data: { vendaId: id },
+      width: '600px'
+    });
+  }
+
   deleteVenda(id: number | undefined): void {
     if (!id) return;
     this.confirmDialog.open({
@@ -64,9 +76,8 @@ export class VendaListComponent implements OnInit {
       this.deleting = true;
       this.vendaService.deletarVenda(id).subscribe({
         next: () => { this.vendas = this.vendas.filter(v => v.id !== id); this.deleting = false; this.cdr.detectChanges();},
-        error: (e) => { alert(e?.error?.message || e?.message || 'Erro ao deletar venda'); this.deleting = false; this.cdr.detectChanges();}
+        error: (e) => { this.error = (e?.error?.message || e?.message || 'Erro ao deletar venda'); this.deleting = false; this.cdr.detectChanges();}
       });
     });
   }
 }
-

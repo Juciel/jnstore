@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { VendaInput, VendaRepresentation } from '../models';
+import { VendaInput, VendaRepresentation, VendaDetalheRepresentation } from '../models';
+
+interface VendaStats {
+  total: number;
+  variacao: number; // Variação percentual em relação ao período anterior
+}
 
 @Injectable({ providedIn: 'root' })
 export class VendaService {
@@ -22,7 +27,23 @@ export class VendaService {
     return this.http.get<VendaRepresentation>(`${this.baseUrl}/vendas/${id}`);
   }
 
+  detalharVenda(id: number): Observable<VendaDetalheRepresentation> {
+    return this.http.get<VendaDetalheRepresentation>(`${this.baseUrl}/vendas/detalhes/${id}`);
+  }
+
   deletarVenda(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/vendas/${id}`);
+  }
+
+  getVendasByCaixaId(caixaId: number): Observable<VendaRepresentation[]> {
+    return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/vendas/caixa/${caixaId}`);
+  }
+
+  getVendasTotaisPorPeriodo(periodo: 'hoje' | 'semana' | 'mes'): Observable<VendaStats> {
+    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/totais?periodo=${periodo}`);
+  }
+
+  getNumeroVendasPorPeriodo(periodo: 'hoje' | 'semana' | 'mes'): Observable<VendaStats> {
+    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/quantidade?periodo=${periodo}`);
   }
 }

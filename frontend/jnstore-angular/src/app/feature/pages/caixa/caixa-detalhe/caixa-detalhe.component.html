@@ -1,0 +1,29 @@
+<div class="caixa-detalhe-container">
+  <h2 mat-dialog-title>Detalhes do Caixa #{{ caixa?.id }}</h2>
+  <mat-dialog-content>
+    <div *ngIf="loading" class="loading-spinner">Carregando...</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+    <div *ngIf="!loading && !error && caixa">
+      <p><strong>Data Abertura:</strong> {{ caixa.dataAbertura | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Data Fechamento:</strong> {{ caixa.dataFechamento ? (caixa.dataFechamento | date: 'dd/MM/yyyy HH:mm') : 'Em aberto' }}</p>
+      <p><strong>Valor Inicial:</strong> {{ caixa.valorInicial | currency: 'BRL' }}</p>
+      <p><strong>Valor Final:</strong> {{ caixa.valorFinal | currency: 'BRL' }}</p>
+      <p><strong>Status:</strong> {{ caixa.status | titlecase }}</p>
+
+      <h3>Vendas Realizadas</h3>
+      <div *ngIf="vendas.length > 0; else noVendas">
+        <ul>
+          <li *ngFor="let venda of vendas">
+            <a href="javascript:void(0)" (click)="abrirDetalheVenda(venda.id)">Venda #{{ venda.id }}</a> - {{ venda.totalLiquido | currency: 'BRL' }}
+          </li>
+        </ul>
+      </div>
+      <ng-template #noVendas>
+        <p>Nenhuma venda registrada para este caixa.</p>
+      </ng-template>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="fechar()">Fechar</button>
+  </mat-dialog-actions>
+</div>

@@ -21,7 +21,7 @@
           <td>{{ v.dataVenda ? (v.dataVenda | date:'dd/MM/yyyy HH:mm:ss':'UTC') : '-' }}</td>
           <td>{{ v.totalLiquido != null ? (v.totalLiquido | currency:'BRL':'symbol':'1.2-2') : (v.totalBruto | currency:'BRL':'symbol':'1.2-2') }}</td>
           <td>
-            <a [routerLink]="['/caixas', v.id, 'detalhes']" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></a>
+            <button (click)="detalharVenda(v.id)" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></button>
             <button (click)="deleteVenda(v.id)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
           </td>
         </tr>

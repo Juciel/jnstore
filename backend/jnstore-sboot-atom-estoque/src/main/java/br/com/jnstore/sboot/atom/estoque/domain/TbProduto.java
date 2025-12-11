@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -54,5 +55,17 @@ public class TbProduto {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotalLucro;
+
+    @Column(name = "ID_USUARIO_CRIACAO", nullable = false)
+    private Long idUsuarioCriacao;
+
+    @Column(name = "DATA_CRIACAO", nullable = false)
+    private LocalDateTime dataCriacao;
+
+    @Column(name = "ID_USUARIO_ATUALIZACAO")
+    private Long idUsuarioAtualizacao;
+
+    @Column(name = "DATA_ATUALIZACAO")
+    private LocalDateTime dataAtualizacao;
 
 }

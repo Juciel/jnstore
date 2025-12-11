@@ -5,6 +5,7 @@ import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @FeignClient(name = "vendas", url = "${feign.client.venda.url}")
@@ -24,4 +25,12 @@ public interface VendaClient {
 
     @GetMapping("/vendas/por-variacao")
     List<VendaRepresentation> listarVendasPorIdVariacao(@RequestParam("idVariacao") List<Long> idVariacao);
+
+    @GetMapping("/vendas/caixa/{caixaId}")
+    List<VendaRepresentation> listarVendasPorCaixaId(@PathVariable("caixaId") Long caixaId);
+
+    @GetMapping("/vendas/paginado")
+    Object listarVendasPaginado(@RequestParam("page") Integer page,
+                                @RequestParam("size") Integer size,
+                                @RequestParam("dataInicial") LocalDate dataInicial,@RequestParam("dataFinal")  LocalDate dataFinal);
 }

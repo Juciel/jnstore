@@ -74,6 +74,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
+  /produtos/paginado:
+    get:
+      tags:
+        - Produto
+      summary: "Lista produtos de forma paginada"
+      operationId: getAllPaginado
+      parameters:
+        - name: page
+          in: query
+          description: "Número da página (começando em 0)"
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: "Tamanho da página"
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: termo
+          in: query
+          description: "Termo de busca para filtrar por SKU, nome ou categoria"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Lista paginada de produtos"
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: "Parâmetros de paginação inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
   /produtos/{id}:
     get:
       tags:
@@ -209,19 +256,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/autocomplete:
+  /produtos/por-variacao:
     get:
       tags:
         - Produto
-      operationId: autocomplete
-      summary: "Busca produtos para autocomplete"
+      summary: "Busca produtos a partir de uma lista de IDs de variação"
+      operationId: getProdutosPorVariacao
       parameters:
-        - name: termo
+        - name: idVariacao
           in: query
           required: true
+          description: "Lista de IDs de variação para buscar os produtos associadas."
           schema:
-            type: string
-          description: "Termo de busca para o autocomplete (SKU, nome ou categoria)"
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
       responses:
         '200':
           description: "Lista de produtos encontrados"
@@ -232,7 +284,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ProdutoRepresetation'
         '400':
-          description: "Termo de busca não informado"
+          description: "Parâmetros de busca inválidos"
           content:
             application/json:
               schema:
@@ -291,6 +343,53 @@ paths:
                 $ref: '#/components/schemas/ErroRepresetation'
         '500':
           description: "Erro interno no servidor"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /categorias/paginado:
+    get:
+      tags:
+        - Categoria
+      summary: "Lista categorias de forma paginada"
+      operationId: listarCategoriasPaginado
+      parameters:
+        - name: page
+          in: query
+          description: "Número da página (começando em 0)"
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: "Tamanho da página"
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: descricao
+          in: query
+          description: "Filtro pela descrição da categoria"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Lista paginada de categorias"
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: "Parâmetros de paginação inválidos"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
           content:
             application/json:
               schema:

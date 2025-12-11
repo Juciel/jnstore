@@ -89,7 +89,7 @@ public class ProdutoService {
         return produtoClient.getNewSku();
     }
 
-    public List<ProdutoRepresetation> autocomplete(String termo) {
-        return produtoClient.autocomplete(termo);
+    public Object getAllPaginado(Integer page, Integer size, String termo) {
+        return produtoClient.getAllPaginado(page, size, termo);
     }
 }

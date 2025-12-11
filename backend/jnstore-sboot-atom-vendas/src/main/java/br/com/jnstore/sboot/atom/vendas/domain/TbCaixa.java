@@ -1,5 +1,6 @@
 package br.com.jnstore.sboot.atom.vendas.domain;
 
+import br.com.jnstore.sboot.atom.vendas.domain.enums.StatusCaixa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,8 @@ public class TbCaixa {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "USUARIO_ID", nullable = false)
-    private Long usuarioId;
+    @Column(name = "ID_USUARIO_ABERTURA", nullable = false)
+    private Long idUsuarioAbertura;
 
     @Column(name = "DATA_ABERTURA", nullable = false)
     private LocalDateTime dataAbertura;
@@ -29,9 +30,25 @@ public class TbCaixa {
     @Column(name = "VALOR_INICIAL", nullable = false)
     private BigDecimal valorInicial;
 
+    @Column(name = "ID_USUARIO_FECHAMENTO")
+    private Long idUsuarioFechamento;
+
     @Column(name = "DATA_FECHAMENTO")
     private LocalDateTime dataFechamento;
 
     @Column(name = "VALOR_FINAL")
     private BigDecimal valorFinal;
+
+    @Column(name = "ID_USUARIO_RETIRADA")
+    private Long idUsuarioRetirada;
+
+    @Column(name = "DATA_RETIRADA")
+    private LocalDateTime dataRetirada;
+
+    @Column(name = "VALOR_RETIRADA")
+    private BigDecimal valorRetirada;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS", nullable = false)
+    private StatusCaixa status;
 }

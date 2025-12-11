@@ -5,6 +5,7 @@ import br.com.jnstore.sboot.atom.vendas.model.PagamentoInput;
 import br.com.jnstore.sboot.atom.vendas.model.PagamentoRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface PagamentoMapper {

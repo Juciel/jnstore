@@ -10,22 +10,29 @@
     <table *ngIf="!loading && caixas.length" class="table table-striped">
       <thead>
         <tr>
+          <th>Status</th>
           <th>Data Abertura</th>
-          <th>Data Fechamento</th>
           <th>Valor Inicial</th>
+          <th>Data Fechamento</th>
           <th>Valor Final</th>
+          <th>Data Retirada</th>
+          <th>Valor Retirada</th>
           <th style="width: 120px;">Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let caixa of caixas">
+          <td>{{ caixa.status | titlecase }}</td>
           <td>{{ caixa.dataAbertura | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
-          <td>{{ caixa.dataFechamento | date:'dd/MM/yyyy HH:mm':'UTC'}}</td>
           <td>{{ caixa.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ caixa.dataFechamento | date:'dd/MM/yyyy HH:mm':'UTC'}}</td>
           <td>{{ caixa.valorFinal | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ caixa.dataRetirada | date:'dd/MM/yyyy HH:mm':'UTC'}}</td>
+          <td>{{ caixa.valorRetirada | currency:'BRL':'symbol':'1.2-2' }}</td>
           <td>
-            <a [routerLink]="['/caixas', caixa.id, 'detalhes']" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></a>
-            <button [routerLink]="['/caixa/fechar', caixa.id]" *ngIf="caixa.dataFechamento === null" class="btn btn-sm btn-warning me-2" title="Fechar Caixa"><i class="fas fa-lock"></i></button>
+            <button (click)="detalharCaixa(caixa.id)" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></button>
+            <button [routerLink]="['/caixa/fechar', caixa.id]" *ngIf="caixa.status === 'ABERTO'" class="btn btn-sm btn-warning me-2" title="Fechar Caixa"><i class="fas fa-lock"></i></button>
+            <button [routerLink]="['/caixa/retirada', caixa.id]" *ngIf="caixa.status === 'FECHADO'" class="btn btn-sm btn-warning me-2" title="Retirada Caixa"><i class="fas fa-dolly"></i></button>
           </td>
         </tr>
       </tbody>

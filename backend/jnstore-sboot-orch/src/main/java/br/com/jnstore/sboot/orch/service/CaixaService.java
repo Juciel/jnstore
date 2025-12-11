@@ -6,6 +6,7 @@ import br.com.jnstore.sboot.orch.client.venda.CaixaClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,5 +33,13 @@ public class CaixaService {
 
     public CaixaRepresentation consultaCaixaAbertoHoje() {
         return caixaClient.consultaCaixaAbertoHoje();
+    }
+
+    public Object listarCaixasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
+        return caixaClient.listarCaixasPaginado(page, size, dataInicial, dataFinal);
+    }
+
+    public CaixaRepresentation retiradaCaixa(Long id, CaixaInput caixaInput) {
+        return caixaClient.retiradaCaixa(id, caixaInput);
     }
 }

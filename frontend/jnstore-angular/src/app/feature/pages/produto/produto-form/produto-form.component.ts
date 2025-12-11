@@ -3,14 +3,14 @@ import { CommonModule, isPlatformServer } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProdutoService } from '../../services/produto.service';
-import { CategoriaService } from '../../services/categoria.service';
-import { CategoriaRepresetation, ProdutoRepresetation } from '../../models';
-import { CurrencyMaskDirective } from '../../directives/currency-mask.directive';
-import { VariacaoModalComponent } from './variacoes/variacao-modal.component';
-import { LoadingService } from '../../services/loading.service';
+import { ProdutoService } from 'src/app/feature/services/produto.service';
+import { CategoriaService } from 'src/app/feature/services/categoria.service';
+import { CategoriaRepresetation, ProdutoRepresetation } from 'src/app/feature/models';
+import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
+import { LoadingService } from 'src/app/feature/services/loading.service';
 import { delay, finalize, of } from 'rxjs';
-import { VariacaoTabelaComponent } from './variacoes/variacao-tabela.component';
+import { VariacaoModalComponent } from 'src/app/feature/pages/produto/variacoes/variacao-modal.component';
+import { VariacaoTabelaComponent } from 'src/app/feature/pages/produto/variacoes/variacao-tabela.component';
 
 @Component({
   selector: 'app-produto-form',

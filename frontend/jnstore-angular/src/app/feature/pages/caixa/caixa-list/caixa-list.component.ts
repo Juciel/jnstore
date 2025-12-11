@@ -1,16 +1,18 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { CaixaService } from '../../services/caixa.service';
-import { ConfirmDialogService } from '../../components/confirm-dialog/confirm-dialog.service';
-import { CaixaRepresentation } from '../../models';
+import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/confirm-dialog.service';
+import { CaixaRepresentation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Importar MatDialog e MatDialogModule
+import { CaixaDetalheComponent } from 'src/app/feature/pages/caixa/caixa-detalhe/caixa-detalhe.component'; // Importar CaixaDetalheComponent
 
 @Component({
   selector: 'app-caixa-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MatDialogModule], // Adicionar MatDialogModule aos imports
   templateUrl: './caixa-list.component.html',
   styleUrls: ['./caixa-list.component.scss']
 })
@@ -25,7 +27,8 @@ export class CaixaListComponent implements OnInit {
     private caixaService: CaixaService,
     private confirmDialog: ConfirmDialogService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // Injetar MatDialog
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state?.['successMessage']) {
@@ -81,6 +84,15 @@ export class CaixaListComponent implements OnInit {
           this.cdr.detectChanges();
         }
       });
+    });
+  }
+
+  detalharCaixa(id: number | undefined): void {
+    if (!id) return;
+
+    this.dialog.open(CaixaDetalheComponent, {
+      data: { caixaId: id },
+      width: '800px' // Ajuste a largura conforme necessário
     });
   }
 

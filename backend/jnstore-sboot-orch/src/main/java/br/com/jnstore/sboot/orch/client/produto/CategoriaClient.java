@@ -23,4 +23,7 @@ public interface CategoriaClient {
 
     @DeleteMapping("/categorias/{id}")
     void delete(@PathVariable("id") Long id);
+
+    @GetMapping("/categorias/paginado")
+    Object listarCategoriasPaginado(@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam("descricao") String descricao);
 }

@@ -17,7 +17,7 @@
     <div class="card-body">
       <p><strong>Valor Inicial:</strong> {{ opened.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</p>
       <p><strong>Data de Abertura:</strong> {{ opened.dataAbertura | date:'dd/MM/yyyy HH:mm':'UTC' }}</p>
-      <p><strong>Status:</strong> Aberto</p>
+      <p><strong>Status:</strong> {{ opened.status | titlecase }}</p>
     </div>
   </div>
 

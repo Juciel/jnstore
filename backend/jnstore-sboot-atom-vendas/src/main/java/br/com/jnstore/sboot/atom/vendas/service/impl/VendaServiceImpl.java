@@ -4,15 +4,20 @@ import br.com.jnstore.sboot.atom.vendas.domain.TbCaixa;
 import br.com.jnstore.sboot.atom.vendas.domain.TbVenda;
 import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
+import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.repository.CaixaRepository;
 import br.com.jnstore.sboot.atom.vendas.repository.VendaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -54,6 +59,7 @@ public class VendaServiceImpl implements VendaService {
         tbCaixa.setValorFinal(valorFinalCaixa.add(tbVenda.getTotalLiquido()));
         caixaRepository.save(tbCaixa);
 
+        tbVenda.setIdUsuarioVenda(1L);
         return repository.save(tbVenda);
     }
 
@@ -80,6 +86,26 @@ public class VendaServiceImpl implements VendaService {
     @Transactional(readOnly = true)
     public List<TbVenda> listarVendasPorIdVariacao(List<Long> idVariacao) {
         return repository.listarVendasPorIdVariacao(idVariacao);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TbVenda> listarVendasPorCaixaId(Long caixaId) {
+        return repository.findByCaixaId(caixaId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<VendaRepresentation> listarPaginado(PageRequest pageable, LocalDate dataInicial, LocalDate dataFinal) {
+        Page<TbVenda> pageResult;
+        if (dataInicial != null && dataFinal != null) {
+            LocalDateTime inicioDoDia = dataInicial.atStartOfDay();
+            LocalDateTime fimDoDia = dataFinal.atTime(LocalTime.MAX);
+            pageResult = repository.searchByDataVendaBetween(inicioDoDia, fimDoDia, pageable);
+        } else {
+            pageResult = repository.findAll(pageable);
+        }
+        return pageResult.map(mapper::toRepresentation);
     }
 
     @Override
