@@ -305,6 +305,120 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
+  /produtos/top-vendidos:
+    get:
+      tags:
+        - Produto
+      operationId: getTopVendidos
+      summary: "Lista os produtos mais vendidos"
+      parameters:
+        - name: limit
+          in: query
+          description: "Número máximo de produtos mais vendidos a serem retornados."
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 5
+      responses:
+        '200':
+          description: "Lista de produtos mais vendidos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoRepresetation'
+        '400':
+          description: "Parâmetro 'limit' inválido"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /produtos/baixo-estoque:
+    get:
+      tags:
+        - Produto
+      operationId: getBaixoEstoque
+      summary: "Lista os produtos com baixo estoque"
+      parameters:
+        - name: limit
+          in: query
+          description: "Número máximo de produtos com baixo estoque a serem retornados."
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 5
+      responses:
+        '200':
+          description: "Lista de produtos com baixo estoque"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoRepresetation'
+        '400':
+          description: "Parâmetro 'limit' inválido"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
+  /produtos/em-falta:
+    get:
+      tags:
+        - Produto
+      operationId: getEmFalta
+      summary: "Lista os produtos em falta no estoque"
+      parameters:
+        - name: limit
+          in: query
+          description: "Número máximo de produtos em falta a serem retornados."
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 5
+      responses:
+        '200':
+          description: "Lista de produtos em falta"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoRepresetation'
+        '400':
+          description: "Parâmetro 'limit' inválido"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+        '500':
+          description: "Erro interno"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroRepresetation'
+
   /categorias:
     get:
       tags:

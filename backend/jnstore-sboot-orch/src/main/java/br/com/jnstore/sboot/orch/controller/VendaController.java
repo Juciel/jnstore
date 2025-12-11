@@ -1,9 +1,7 @@
 package br.com.jnstore.sboot.orch.controller;
 
 import br.com.jnstore.sboot.atom.vendas.api.VendasApi;
-import br.com.jnstore.sboot.atom.vendas.model.VendaDetalheRepresentation;
-import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
-import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
+import br.com.jnstore.sboot.atom.vendas.model.*;
 import br.com.jnstore.sboot.orch.service.VendaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,7 +49,27 @@ public class VendaController implements VendasApi {
     }
 
     @Override
+    public ResponseEntity<List<ItemVendaProdutoRepresentation>> getTopVendidos(Integer limit) {
+        return ResponseEntity.ok(service.getTopVendidos(limit));
+    }
+
+    @Override
     public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
         return ResponseEntity.ok(service.listarVendasPaginado(page, size, sort, dataInicial, dataFinal));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getVendasTotaisPorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getVendasTotaisPorPeriodo(periodo));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getVendasQuantidadePorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getVendasQuantidadePorPeriodo(periodo));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getTicketMedioPorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getTicketMedioPorPeriodo(periodo));
     }
 }

@@ -35,4 +35,10 @@ public interface ProdutoClient {
                           @RequestParam("size") Integer size,
                           @RequestParam("sort") List<String> sort,
                           @RequestParam("termo") String termo);
+
+    @GetMapping("/produtos/baixo-estoque")
+    List<ProdutoRepresetation> getBaixoEstoque(@RequestParam("limit") Integer limit);
+
+    @GetMapping("/produtos/em-falta")
+    List<ProdutoRepresetation> getEmFalta(@RequestParam("limit") Integer limit);
 }

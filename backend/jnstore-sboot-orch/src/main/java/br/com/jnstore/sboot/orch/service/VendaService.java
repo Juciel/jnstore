@@ -109,6 +109,10 @@ public class VendaService {
         }
     }
 
+    public List<VendaRepresentation> listarVendasPorIdVariacao(List<Long> idVariacao){
+        return vendaClient.listarVendasPorIdVariacao(idVariacao);
+    }
+
     public VendaDetalheRepresentation buscarDetalhesVendaPorId(Long id) {
         VendaRepresentation vendaRepresentation = vendaClient.buscarVendaPorId(id);
         VendaDetalheRepresentation vendaDetalheRepresentation = new VendaDetalheRepresentation();
@@ -126,9 +130,45 @@ public class VendaService {
 
         List<ProdutoRepresetation> produtosComVariacoes = produtoClient.listarProdutosPorIdVariacao(idVariacoes);
 
+        List<ItemVendaProdutoRepresentation> itensDetalhes = getItemVendaProdutoRepresentations(vendaRepresentation.getItens(), produtosComVariacoes);
+        vendaDetalheRepresentation.setItens(itensDetalhes);
+        return vendaDetalheRepresentation;
+    }
+
+    public List<VendaRepresentation> listarVendasPorCaixaId(Long id) {
+        return vendaClient.listarVendasPorCaixaId(id);
+    }
+
+    public Object listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        return vendaClient.listarVendasPaginado(page, size, sort, dataInicial, dataFinal);
+    }
+
+    public List<ItemVendaProdutoRepresentation> getTopVendidos(Integer limit) {
+        List<ItemVendaRepresentation> itens = vendaClient.getTopVendidos(limit);
+        List<Long> idVariacoes = itens.stream()
+                .map(ItemVendaRepresentation::getVarianteId)
+                .collect(Collectors.toList());
+        List<ProdutoRepresetation> produtosComVariacoes = produtoClient.listarProdutosPorIdVariacao(idVariacoes);
+
+        return getItemVendaProdutoRepresentations(itens, produtosComVariacoes);
+    }
+
+    public VendaStats getVendasTotaisPorPeriodo(String periodo) {
+        return vendaClient.getVendasTotaisPorPeriodo(periodo);
+    }
+
+    public VendaStats getVendasQuantidadePorPeriodo(String periodo) {
+        return vendaClient.getVendasQuantidadePorPeriodo(periodo);
+    }
+
+    public VendaStats getTicketMedioPorPeriodo(String periodo) {
+        return vendaClient.getTicketMedioPorPeriodo(periodo);
+    }
+
+    public static List<ItemVendaProdutoRepresentation> getItemVendaProdutoRepresentations(List<ItemVendaRepresentation> itens, List<ProdutoRepresetation> produtosComVariacoes) {
         List<ItemVendaProdutoRepresentation> itensDetalhes = new ArrayList<>();
 
-        for (ItemVendaRepresentation itemVenda : vendaRepresentation.getItens()) {
+        for (ItemVendaRepresentation itemVenda : itens) {
             ItemVendaProdutoRepresentation itemVendaProdutoRepresentation = new ItemVendaProdutoRepresentation();
 
             itemVendaProdutoRepresentation.setId(itemVenda.getId());
@@ -162,15 +202,7 @@ public class VendaService {
             }
             itensDetalhes.add(itemVendaProdutoRepresentation);
         }
-        vendaDetalheRepresentation.setItens(itensDetalhes);
-        return vendaDetalheRepresentation;
+        return itensDetalhes;
     }
 
-    public List<VendaRepresentation> listarVendasPorCaixaId(Long id) {
-        return vendaClient.listarVendasPorCaixaId(id);
-    }
-
-    public Object listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
-        return vendaClient.listarVendasPaginado(page, size, sort, dataInicial, dataFinal);
-    }
 }

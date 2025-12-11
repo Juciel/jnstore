@@ -25,4 +25,8 @@ public interface ProdutoService {
     String getNewSku();
 
     List<TbProduto> getProdutosPorVariacao(List<Long> idVariacao);
+
+    List<ProdutoRepresetation> getEmFalta(Integer limit);
+
+    List<ProdutoRepresetation> getBaixoEstoque(Integer limit);
 }

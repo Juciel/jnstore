@@ -5,14 +5,17 @@ import br.com.jnstore.sboot.atom.vendas.domain.TbVenda;
 import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
+import br.com.jnstore.sboot.atom.vendas.model.VendaStats;
 import br.com.jnstore.sboot.atom.vendas.repository.CaixaRepository;
 import br.com.jnstore.sboot.atom.vendas.repository.VendaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
+import br.com.jnstore.sboot.atom.vendas.util.CalculationUtil;
+import br.com.jnstore.sboot.atom.vendas.util.DateCalculationUtil;
 import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,6 +114,57 @@ public class VendaServiceImpl implements VendaService {
             pageResult = repository.findAll(sortedPageable);
         }
         return pageResult.map(mapper::toRepresentation);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VendaStats getVendasTotaisPorPeriodo(String periodo) {
+        Pair<LocalDateTime, LocalDateTime> currentPeriodDates = DateCalculationUtil.getPeriodDates(periodo, 0);
+        BigDecimal currentTotal = repository.sumTotalLiquidoByDataVendaBetween(currentPeriodDates.getFirst(), currentPeriodDates.getSecond());
+        currentTotal = currentTotal != null ? currentTotal : BigDecimal.ZERO;
+
+        Pair<LocalDateTime, LocalDateTime> previousPeriodDates = DateCalculationUtil.getPeriodDates(periodo, -1);
+        BigDecimal previousTotal = repository.sumTotalLiquidoByDataVendaBetween(previousPeriodDates.getFirst(), previousPeriodDates.getSecond());
+        previousTotal = previousTotal != null ? previousTotal : BigDecimal.ZERO;
+
+        VendaStats vendaStats = new VendaStats();
+        vendaStats.setTotal(currentTotal);
+        vendaStats.setVariacao(CalculationUtil.calculateVariation(currentTotal, previousTotal));
+        return vendaStats;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VendaStats getVendasQuantidadePorPeriodo(String periodo) {
+        Pair<LocalDateTime, LocalDateTime> currentPeriodDates = DateCalculationUtil.getPeriodDates(periodo, 0);
+        Long currentQuantity = repository.countByDataVendaBetween(currentPeriodDates.getFirst(), currentPeriodDates.getSecond());
+        currentQuantity = currentQuantity != null ? currentQuantity : 0L;
+
+        Pair<LocalDateTime, LocalDateTime> previousPeriodDates = DateCalculationUtil.getPeriodDates(periodo, -1);
+        Long previousQuantity = repository.countByDataVendaBetween(previousPeriodDates.getFirst(), previousPeriodDates.getSecond());
+        previousQuantity = previousQuantity != null ? previousQuantity : 0L;
+
+        VendaStats vendaStats = new VendaStats();
+        vendaStats.setTotal(BigDecimal.valueOf(currentQuantity));
+        vendaStats.setVariacao(CalculationUtil.calculateVariation(BigDecimal.valueOf(currentQuantity), BigDecimal.valueOf(previousQuantity)));
+        return vendaStats;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VendaStats getTicketMedioPorPeriodo(String periodo) {
+        Pair<LocalDateTime, LocalDateTime> currentPeriodDates = DateCalculationUtil.getPeriodDates(periodo, 0);
+        BigDecimal currentTicketMedio = repository.avgTotalLiquidoByDataVendaBetween(currentPeriodDates.getFirst(), currentPeriodDates.getSecond());
+        currentTicketMedio = currentTicketMedio != null ? currentTicketMedio : BigDecimal.ZERO;
+
+        Pair<LocalDateTime, LocalDateTime> previousPeriodDates = DateCalculationUtil.getPeriodDates(periodo, -1);
+        BigDecimal previousTicketMedio = repository.avgTotalLiquidoByDataVendaBetween(previousPeriodDates.getFirst(), previousPeriodDates.getSecond());
+        previousTicketMedio = previousTicketMedio != null ? previousTicketMedio : BigDecimal.ZERO;
+
+        VendaStats vendaStats = new VendaStats();
+        vendaStats.setTotal(currentTicketMedio);
+        vendaStats.setVariacao(CalculationUtil.calculateVariation(currentTicketMedio, previousTicketMedio));
+        return vendaStats;
     }
 
     @Override

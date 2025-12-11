@@ -1,9 +1,13 @@
 package br.com.jnstore.sboot.atom.vendas.controller;
 
 import br.com.jnstore.sboot.atom.vendas.api.VendasApi;
+import br.com.jnstore.sboot.atom.vendas.mapper.ItemVendaMapper;
 import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
+import br.com.jnstore.sboot.atom.vendas.model.ItemVendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
+import br.com.jnstore.sboot.atom.vendas.model.VendaStats;
+import br.com.jnstore.sboot.atom.vendas.service.ItemVendaService;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
 import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +26,9 @@ import java.util.List;
 public class VendaController implements VendasApi {
 
     private final VendaService service;
+    private final ItemVendaService itemVendaService;
     private final VendaMapper mapper;
+    private final ItemVendaMapper itemVendaMapper;
 
     @Override
     public ResponseEntity<VendaRepresentation> registrarVenda(VendaInput vendaInput) {
@@ -67,5 +73,25 @@ public class VendaController implements VendasApi {
         Pageable pageable = PageRequest.of(page, size, sortObject);
 
         return ResponseEntity.ok(service.listarPaginado(pageable, dataInicial, dataFinal));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getVendasTotaisPorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getVendasTotaisPorPeriodo(periodo));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getVendasQuantidadePorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getVendasQuantidadePorPeriodo(periodo));
+    }
+
+    @Override
+    public ResponseEntity<VendaStats> getTicketMedioPorPeriodo(String periodo) {
+        return ResponseEntity.ok(service.getTicketMedioPorPeriodo(periodo));
+    }
+
+    @Override
+    public ResponseEntity<List<ItemVendaRepresentation>> getTopVendidos(Integer limit) {
+        return ResponseEntity.ok(itemVendaMapper.toRepresetationList(itemVendaService.getTopVendidos(limit)));
     }
 }

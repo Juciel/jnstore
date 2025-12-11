@@ -54,11 +54,12 @@ export class ProdutoService {
     return this.http.get<PageProdutoRepresentation>(`${this.baseUrl}/produtos/paginado`, { params });
   }
 
-  getTopProdutosVendidos(limit: number = 5): Observable<ProdutoRepresetation[]> {
-    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/top-vendidos?limit=${limit}`);
-  }
-
   getProdutosBaixoEstoque(limit: number = 5): Observable<ProdutoRepresetation[]> {
     return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/baixo-estoque?limit=${limit}`);
   }
+
+  getProdutosEmFalta(limit: number = 5): Observable<ProdutoRepresetation[]> {
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/em-falta?limit=${limit}`);
+  }
+
 }

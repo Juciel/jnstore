@@ -27,4 +27,8 @@ public interface ProdutoRepository extends JpaRepository<TbProduto, Long> {
     Optional<TbProduto> findByCategoriaId(Long id);
 
     List<TbProduto> findDistinctByVariacoes_IdIn(List<Long> idVariacao);
+
+    Page<TbProduto> findByQuantidadeTotalEstoqueEquals(Integer quantidade, Pageable pageable);
+
+    Page<TbProduto> findByQuantidadeTotalEstoqueGreaterThanAndQuantidadeTotalEstoqueLessThanEqual(Integer minQuantidade, Integer maxQuantidade, Pageable pageable);
 }

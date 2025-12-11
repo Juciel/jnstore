@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,4 +20,13 @@ public interface VendaRepository extends JpaRepository<TbVenda, Long> {
     List<TbVenda> findByCaixaId(Long caixaId);
 
     Page<TbVenda> searchByDataVendaBetween(LocalDateTime inicioDoDia, LocalDateTime fimDoDia, Pageable pageable);
+
+    @Query("SELECT SUM(v.totalLiquido) FROM TbVenda v WHERE v.dataVenda BETWEEN :startDate AND :endDate")
+    BigDecimal sumTotalLiquidoByDataVendaBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(v) FROM TbVenda v WHERE v.dataVenda BETWEEN :startDate AND :endDate")
+    Long countByDataVendaBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT AVG(v.totalLiquido) FROM TbVenda v WHERE v.dataVenda BETWEEN :startDate AND :endDate")
+    BigDecimal avgTotalLiquidoByDataVendaBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

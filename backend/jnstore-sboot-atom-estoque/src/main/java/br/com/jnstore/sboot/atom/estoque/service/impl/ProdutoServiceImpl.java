@@ -7,9 +7,10 @@ import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.VariacaoProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.ProdutoService;
-import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,6 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public Page<ProdutoRepresetation> getAllPaginado(Pageable pageable, String termo) {
-        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
         Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
 
         Page<TbProduto> pageResult;
@@ -56,7 +57,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public TbProduto create(TbProduto produto) {
-        produto.setIdUsuarioCriacao(1L); // Placeholder para usuário logado
+        produto.setIdUsuarioCriacao(1L);
         produto.setDataCriacao(LocalDateTime.now());
         atualizarValoresTotaisProduto(produto);
         return repository.save(produto);
@@ -65,7 +66,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public TbProduto update(TbProduto produto) {
-        produto.setIdUsuarioAtualizacao(1L); // Placeholder para usuário logado
+        produto.setIdUsuarioAtualizacao(1L);
         produto.setDataAtualizacao(LocalDateTime.now());
         atualizarValoresTotaisProduto(produto);
        return repository.save(produto);
@@ -88,7 +89,7 @@ public class ProdutoServiceImpl implements ProdutoService {
         String newSku;
         do {
             long random = ThreadLocalRandom.current().nextLong(1000, 10000);
-            newSku = String.format("%d-%d-%d", produtoId, variacaoId, random);
+            newSku = String.format("%d%d%d", produtoId, variacaoId, random);
         } while (variacaoProdutoRepository.existsByIdentificador(newSku));
 
         return newSku;
@@ -97,6 +98,24 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     public List<TbProduto> getProdutosPorVariacao(List<Long> idVariacao) {
         return repository.findDistinctByVariacoes_IdIn(idVariacao);
+    }
+
+    @Override
+    public List<ProdutoRepresetation> getEmFalta(Integer limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return repository.findByQuantidadeTotalEstoqueEquals(0, pageable)
+                .stream()
+                .map(produtoMapper::toRepresetation)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProdutoRepresetation> getBaixoEstoque(Integer limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return repository.findByQuantidadeTotalEstoqueGreaterThanAndQuantidadeTotalEstoqueLessThanEqual(0, limit, pageable)
+                .stream()
+                .map(produtoMapper::toRepresetation)
+                .collect(Collectors.toList());
     }
 
     private static void atualizarValoresTotaisProduto(TbProduto produto) {

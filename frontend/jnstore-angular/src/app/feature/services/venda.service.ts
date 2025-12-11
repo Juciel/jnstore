@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { VendaInput, VendaRepresentation, VendaDetalheRepresentation, PageVendaRepresentation } from '../models';
+import { VendaInput, VendaRepresentation, VendaDetalheRepresentation, PageVendaRepresentation, ItemVendaProdutoRepresentation } from '../models';
 
 interface VendaStats {
   total: number;
@@ -39,12 +39,20 @@ export class VendaService {
     return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/vendas/caixa/${caixaId}`);
   }
 
-  getVendasTotaisPorPeriodo(periodo: 'hoje' | 'semana' | 'mes'): Observable<VendaStats> {
+  getTopProdutosVendidos(limit: number = 5): Observable<ItemVendaProdutoRepresentation[]> {
+    return this.http.get<ItemVendaProdutoRepresentation[]>(`${this.baseUrl}/vendas/produtos/top-vendidos?limit=${limit}`);
+  }
+
+  getVendasTotaisPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
     return this.http.get<VendaStats>(`${this.baseUrl}/vendas/totais?periodo=${periodo}`);
   }
 
-  getNumeroVendasPorPeriodo(periodo: 'hoje' | 'semana' | 'mes'): Observable<VendaStats> {
+  getNumeroVendasPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
     return this.http.get<VendaStats>(`${this.baseUrl}/vendas/quantidade?periodo=${periodo}`);
+  }
+
+  getTicketMedioPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
+    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/ticket-medio?periodo=${periodo}`);
   }
 
   getAllPaginado(page: number, size: number, sort: string[], dataInicial?: string, dataFinal?: string): Observable<PageVendaRepresentation> {

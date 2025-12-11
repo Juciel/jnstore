@@ -83,4 +83,14 @@ public class ProdutoController implements ProdutosApi {
     public ResponseEntity<List<ProdutoRepresetation>> getProdutosPorVariacao(List<Long> idVariacao) {
         return ResponseEntity.ok(mapper.toRepresetationList(service.getProdutosPorVariacao(idVariacao)));
     }
+
+    @Override
+    public ResponseEntity<List<ProdutoRepresetation>> getBaixoEstoque(Integer limit) {
+        return ResponseEntity.ok(service.getBaixoEstoque(limit));
+    }
+
+    @Override
+    public ResponseEntity<List<ProdutoRepresetation>> getEmFalta(Integer limit) {
+        return ResponseEntity.ok(service.getEmFalta(limit));
+    }
 }

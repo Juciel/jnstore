@@ -3,6 +3,7 @@ package br.com.jnstore.sboot.orch.service;
 import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.estoque.model.VariacaoProdutoRepresetation;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
+import br.com.jnstore.sboot.orch.client.produto.CategoriaClient;
 import br.com.jnstore.sboot.orch.client.produto.ProdutoClient;
 import br.com.jnstore.sboot.orch.client.venda.VendaClient;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class ProdutoService {
 
     private final ProdutoClient produtoClient;
-    private final CategoriaService categoriaService;
+    private final CategoriaClient categoriaClient;
     private final VendaClient vendaClient;
 
     public List<ProdutoRepresetation> getAll(){
@@ -37,7 +38,7 @@ public class ProdutoService {
             throw new IllegalArgumentException("É necessário adicionar pelo menos uma variação ao produto.");
         }
 
-        produto.setCategoria(categoriaService.buscarCategoriaPorId(produto.getCategoria().getId()));
+        produto.setCategoria(categoriaClient.buscarCategoriaPorId(produto.getCategoria().getId()));
         return produtoClient.create(produto);
     }
 
@@ -89,7 +90,19 @@ public class ProdutoService {
         return produtoClient.getNewSku();
     }
 
+    public List<ProdutoRepresetation> listarProdutosPorIdVariacao(List<Long> idVariacao){
+        return produtoClient.listarProdutosPorIdVariacao(idVariacao);
+    }
+
     public Object getAllPaginado(Integer page, Integer size, List<String> sort, String termo) {
         return produtoClient.getAllPaginado(page, size, sort, termo);
+    }
+
+    public List<ProdutoRepresetation> getBaixoEstoque(Integer limit) {
+        return produtoClient.getBaixoEstoque(limit);
+    }
+
+    public List<ProdutoRepresetation> getEmFalta(Integer limit) {
+        return produtoClient.getEmFalta(limit);
     }
 }

@@ -1,7 +1,9 @@
 package br.com.jnstore.sboot.orch.client.venda;
 
+import br.com.jnstore.sboot.atom.vendas.model.ItemVendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
+import br.com.jnstore.sboot.atom.vendas.model.VendaStats;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -36,4 +38,16 @@ public interface VendaClient {
                                 @RequestParam("sort") List<String> sort,
                                 @RequestParam("dataInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                 @RequestParam("dataFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal);
+
+    @GetMapping("/vendas/produtos/top-vendidos")
+    List<ItemVendaRepresentation> getTopVendidos(@RequestParam("limit") Integer limit);
+
+    @GetMapping("/vendas/totais")
+    VendaStats getVendasTotaisPorPeriodo(@RequestParam("periodo") String periodo);
+
+    @GetMapping("/vendas/quantidade")
+    VendaStats getVendasQuantidadePorPeriodo(@RequestParam("periodo") String periodo);
+
+    @GetMapping("/vendas/ticket-medio")
+    VendaStats getTicketMedioPorPeriodo(@RequestParam("periodo") String periodo);
 }

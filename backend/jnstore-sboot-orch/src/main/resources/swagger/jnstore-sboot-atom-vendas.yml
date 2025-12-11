@@ -443,6 +443,123 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /vendas/totais:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna o valor total das vendas para um período específico"
+      operationId: getVendasTotaisPorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para agregação das vendas."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Valor total das vendas para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/quantidade:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna a quantidade total de itens vendidos para um período específico"
+      operationId: getVendasQuantidadePorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para agregação da quantidade de vendas."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Quantidade total de itens vendidos para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/ticket-medio:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna o valor do ticket médio das vendas para um período específico"
+      operationId: getTicketMedioPorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para cálculo do ticket médio."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Valor do ticket médio para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /vendas/produtos/top-vendidos:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna os produtos mais vendidos."
+      operationId: getTopVendidos
+      parameters:
+        - name: limit
+          in: query
+          description: "Número máximo de produtos a serem retornados."
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: "Lista de produtos mais vendidos."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemVendaProdutoRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   schemas:
     CaixaInput:
@@ -702,6 +819,19 @@ components:
           type: string
         mensagem:
           type: string
+
+    VendaStats:
+      type: object
+      description: "Estatísticas de vendas para um período."
+      properties:
+        total:
+          type: number
+          description: "Valor total ou quantidade total de vendas."
+          example: 1234.56
+        variacao:
+          type: number
+          description: "Variação percentual em relação ao período anterior."
+          example: 10.50
 
   responses:
     BadRequest:
