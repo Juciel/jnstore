@@ -6,11 +6,12 @@ import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/
 import { ProdutoRepresetation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { FormsModule } from '@angular/forms'; // Importar FormsModule
 
 @Component({
   selector: 'app-produto-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule], // Adicionar FormsModule aqui
   templateUrl: './produto-list.component.html',
   styleUrls: ['./produto-list.component.scss']
 })
@@ -21,6 +22,18 @@ export class ProdutoListComponent implements OnInit {
   deleting = false;
   successMessage: string | null = null;
 
+  // Propriedades de paginação e filtro
+  currentPage: number = 0;
+  pageSize: number = 5;
+  totalPages: number = 0;
+  totalElements: number = 0;
+  nomeFilter: string = '';
+
+  // Propriedades de ordenação
+  sortColumn: string = 'nome';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  sort: string[] = [];
+
   constructor(
     private produtoService: ProdutoService,
     private confirmDialog: ConfirmDialogService,
@@ -30,10 +43,14 @@ export class ProdutoListComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state?.['successMessage']) {
       this.successMessage = navigation.extras.state['successMessage'];
-      setTimeout(() => this.successMessage = null, 5000); // Limpa a mensagem após 5 segundos
+      setTimeout(() => this.successMessage = null, 5000);
+
+      // Limpar o estado de navegação para que a mensagem não persista em recarregamentos ou navegações futuras
+      const state = { ...history.state };
+      delete state.successMessage;
+      history.replaceState(state, '', this.router.url);
     }
   }
-
 
   ngOnInit(): void {
     this.load();
@@ -42,21 +59,70 @@ export class ProdutoListComponent implements OnInit {
   load(): void {
     this.loading = true;
     this.error = null;
-    console.log('Starting to load produtos...');
-    this.produtoService.getAll().pipe(
+    this.sort = [`${this.sortColumn},${this.sortDirection}`];
+    console.log('Starting to load produtos with pagination, filter and sort...', this.sort);
+    this.produtoService.getAllPaginado(this.currentPage, this.pageSize, this.sort, this.nomeFilter).pipe(
       timeout(10000),
       catchError(e => {
         console.error('Error loading produtos:', e);
-        this.error = e?.error?.message || e?.message || 'Erro ao carregar produto';
-        return of([]);
+        this.error = (e?.error?.message || e?.message || 'Erro ao carregar produtos');
+        this.loading = false;
+        this.cdr.detectChanges();
+        return of({ content: [], totalPages: 0, totalElements: 0 });
       })
     ).subscribe(res => {
       console.log('Response received:', res);
-      this.produtos = Array.isArray(res) ? res : [];
+      this.produtos = res.content || [];
+      this.totalPages = res.totalPages || 0;
+      this.totalElements = res.totalElements || 0;
       this.loading = false;
       console.log('Loading set to false');
       try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
     });
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 0;
+    this.load();
+  }
+
+  toggleSort(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.currentPage = 0;
+    this.load();
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 0;
+    this.load();
+  }
+
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.load();
+    }
+  }
+
+  getPagesArray(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    let startPage = Math.max(0, this.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(this.totalPages - 1, startPage + maxPagesToShow - 1);
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   deleteProduto(id: number | undefined, nome: string | undefined): void {
@@ -73,7 +139,7 @@ export class ProdutoListComponent implements OnInit {
       this.deleting = true;
       this.produtoService.delete(id).subscribe({
         next: () => {
-          this.produtos = this.produtos.filter(p => p.id !== id);
+          this.load(); // Recarregar a lista após a exclusão
           this.deleting = false;
           this.cdr.detectChanges();
         },

@@ -47,12 +47,17 @@ export class VendaService {
     return this.http.get<VendaStats>(`${this.baseUrl}/vendas/quantidade?periodo=${periodo}`);
   }
 
-  getAllPaginado(page: number, size: number, sort: string[], dataInicial: string, dataFinal: string): Observable<PageVendaRepresentation> {
+  getAllPaginado(page: number, size: number, sort: string[], dataInicial?: string, dataFinal?: string): Observable<PageVendaRepresentation> {
     let params = new HttpParams()
       .set('page', page)
-      .set('size', size)
-      .set('dataInicial', dataInicial)
-      .set('dataFinal', dataFinal);
+      .set('size', size);
+
+    if (dataInicial) {
+      params = params.set('dataInicial', dataInicial);
+    }
+    if (dataFinal) {
+      params = params.set('dataFinal', dataFinal);
+    }
 
     sort.forEach(s => {
       params = params.append('sort', s);

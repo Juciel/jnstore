@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { VendaService } from 'src/app/feature/services/venda.service';
 import { ProdutoService } from 'src/app/feature/services/produto.service';
@@ -33,6 +34,7 @@ export class VendaComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private vendaService: VendaService,
     private produtoService: ProdutoService,
+    private route: ActivatedRoute, private router: Router,
     @Inject(PLATFORM_ID) private platformId: any,
     private cdr: ChangeDetectorRef
   ) {
@@ -175,9 +177,7 @@ export class VendaComponent implements OnInit, OnDestroy {
     this.submitError = null;
     this.vendaService.registrarVenda(payload).subscribe({
       next: res => {
-        this.saved = res;
-        this.submitting = false;
-        this.cdr.detectChanges();
+        this.router.navigate(['/vendas'], { state: { successMessage: 'Venda registrada com sucesso!' } });
       },
       error: e => {
         this.submitError = e?.error?.message || e?.message || 'Erro ao registrar venda';

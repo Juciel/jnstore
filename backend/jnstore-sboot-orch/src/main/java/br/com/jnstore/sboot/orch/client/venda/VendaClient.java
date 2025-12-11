@@ -3,6 +3,7 @@ package br.com.jnstore.sboot.orch.client.venda;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -33,6 +34,6 @@ public interface VendaClient {
     Object listarVendasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
                                 @RequestParam("sort") List<String> sort,
-                                @RequestParam("dataInicial") LocalDate dataInicial,
-                                @RequestParam("dataFinal")  LocalDate dataFinal);
+                                @RequestParam("dataInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                @RequestParam("dataFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal);
 }

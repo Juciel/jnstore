@@ -3,6 +3,7 @@ package br.com.jnstore.sboot.orch.client.venda;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaInput;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,8 +31,8 @@ public interface CaixaClient {
     Object listarCaixasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
                                 @RequestParam("sort") List<String> sort,
-                                @RequestParam("dataInicial") LocalDate dataInicial,
-                                @RequestParam("dataFinal")  LocalDate dataFinal);
+                                @RequestParam("dataInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                @RequestParam("dataFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal);
 
     @PostMapping("/caixas/{id}/retirar")
     CaixaRepresentation retiradaCaixa(@PathVariable("id") Long id, @RequestBody(required = false) CaixaInput caixaInput);

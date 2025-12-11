@@ -38,12 +38,17 @@ export class CaixaService {
     return this.http.delete<void>(`${this.baseUrl}/caixas/${id}`);
   }
 
-  getAllPaginado(page: number, size: number, sort: string[], dataInicial: string, dataFinal: string): Observable<PageCaixaRepresentation> {
+  getAllPaginado(page: number, size: number, sort: string[], dataInicial?: string, dataFinal?: string): Observable<PageCaixaRepresentation> {
     let params = new HttpParams()
       .set('page', page)
-      .set('size', size)
-      .set('dataInicial', dataInicial)
-      .set('dataFinal', dataFinal);
+      .set('size', size);
+
+    if (dataInicial) {
+      params = params.set('dataInicial', dataInicial);
+    }
+    if (dataFinal) {
+      params = params.set('dataFinal', dataFinal);
+    }
 
     sort.forEach(s => {
       params = params.append('sort', s);
