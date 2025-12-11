@@ -22,6 +22,11 @@ export class CaixaDetalheComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
+  totalPix: number = 0;
+  totalDinheiro: number = 0;
+  totalCredito: number = 0;
+  totalDebito: number = 0;
+
   constructor(
     public dialogRef: MatDialogRef<CaixaDetalheComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { caixaId: number },
@@ -48,12 +53,47 @@ export class CaixaDetalheComponent implements OnInit {
             })
           ).subscribe(vendas => {
             this.vendas = vendas;
+            this.calcularTotaisPagamentos();
             this.loading = false;
           });
         } else {
           this.loading = false;
         }
       });
+    }
+  }
+
+  private calcularTotaisPagamentos(): void {
+    this.totalPix = 0;
+    this.totalDinheiro = 0;
+    this.totalCredito = 0;
+    this.totalDebito = 0;
+
+    if (!this.vendas) {
+      return;
+    }
+
+    for (const venda of this.vendas) {
+      if (venda.pagamentos) {
+        for (const pagamento of venda.pagamentos) {
+          if (pagamento.valorPago) {
+            switch (pagamento.forma) {
+              case 'PIX':
+                this.totalPix += pagamento.valorPago;
+                break;
+              case 'DINHEIRO':
+                this.totalDinheiro += pagamento.valorPago;
+                break;
+              case 'CREDITO':
+                this.totalCredito += pagamento.valorPago;
+                break;
+              case 'DEBITO':
+                this.totalDebito += pagamento.valorPago;
+                break;
+            }
+          }
+        }
+      }
     }
   }
 

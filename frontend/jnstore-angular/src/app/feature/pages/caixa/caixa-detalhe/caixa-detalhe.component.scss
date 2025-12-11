@@ -24,3 +24,19 @@ li {
   margin-bottom: 5px;
   border-radius: 4px;
 }
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.info-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.info-table td:first-child {
+  font-weight: bold;
+  width: 40%; /* Ajuste a largura conforme necessário */
+}
