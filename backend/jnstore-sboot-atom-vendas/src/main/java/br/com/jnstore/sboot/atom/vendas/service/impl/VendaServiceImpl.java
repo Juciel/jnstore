@@ -8,9 +8,11 @@ import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.repository.CaixaRepository;
 import br.com.jnstore.sboot.atom.vendas.repository.VendaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
+import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,14 +98,17 @@ public class VendaServiceImpl implements VendaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<VendaRepresentation> listarPaginado(PageRequest pageable, LocalDate dataInicial, LocalDate dataFinal) {
+    public Page<VendaRepresentation> listarPaginado(Pageable pageable, LocalDate dataInicial, LocalDate dataFinal) {
+        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
+        Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
+
         Page<TbVenda> pageResult;
         if (dataInicial != null && dataFinal != null) {
             LocalDateTime inicioDoDia = dataInicial.atStartOfDay();
             LocalDateTime fimDoDia = dataFinal.atTime(LocalTime.MAX);
-            pageResult = repository.searchByDataVendaBetween(inicioDoDia, fimDoDia, pageable);
+            pageResult = repository.searchByDataVendaBetween(inicioDoDia, fimDoDia, sortedPageable);
         } else {
-            pageResult = repository.findAll(pageable);
+            pageResult = repository.findAll(sortedPageable);
         }
         return pageResult.map(mapper::toRepresentation);
     }

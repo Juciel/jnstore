@@ -4,8 +4,11 @@ import br.com.jnstore.sboot.atom.estoque.api.ProdutosApi;
 import br.com.jnstore.sboot.atom.estoque.mapper.ProdutoMapper;
 import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.estoque.service.ProdutoService;
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort; // Importar Sort
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +27,13 @@ public class ProdutoController implements ProdutosApi {
     }
 
     @Override
-    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, String termo) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, List<String> sort, String termo) { // Adicionado List<String> sort
+        // Usa a utilidade para construir o objeto Sort
+        Sort sortObject = PaginationUtil.createSortFromStrings(sort);
+
+        // Cria o Pageable com os parâmetros de paginação e ordenação
+        Pageable pageable = PageRequest.of(page, size, sortObject);
+
         return ResponseEntity.ok(service.getAllPaginado(pageable, termo));
     }
 

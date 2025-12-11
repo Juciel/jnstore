@@ -35,8 +35,8 @@ public class CaixaService {
         return caixaClient.consultaCaixaAbertoHoje();
     }
 
-    public Object listarCaixasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        return caixaClient.listarCaixasPaginado(page, size, dataInicial, dataFinal);
+    public Object listarCaixasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        return caixaClient.listarCaixasPaginado(page, size, sort, dataInicial, dataFinal);
     }
 
     public CaixaRepresentation retiradaCaixa(Long id, CaixaInput caixaInput) {

@@ -3,8 +3,11 @@ package br.com.jnstore.sboot.atom.estoque.controller;
 import br.com.jnstore.sboot.atom.estoque.api.CategoriasApi;
 import br.com.jnstore.sboot.atom.estoque.model.CategoriaRepresetation;
 import br.com.jnstore.sboot.atom.estoque.service.CategoriaService;
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +26,13 @@ public class CategoriaController implements CategoriasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size, String descricao) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size, List<String> sort, String descricao) {
+        // Usa a utilidade para construir o objeto Sort
+        Sort sortObject = PaginationUtil.createSortFromStrings(sort);
+
+        // Cria o Pageable com os parâmetros de paginação e ordenação
+        Pageable pageable = PageRequest.of(page, size, sortObject);
+
         return ResponseEntity.ok(categoriaService.listarPaginado(pageable, descricao));
     }
 

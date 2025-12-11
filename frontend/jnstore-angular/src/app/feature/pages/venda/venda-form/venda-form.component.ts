@@ -90,7 +90,7 @@ export class VendaComponent implements OnInit, OnDestroy {
       switchMap(value => {
         const itemIndex = this.itens.controls.indexOf(itemGroup);
         if (typeof value === 'string' && value.length > 1) {
-          return this.produtoService.getAllPaginado(0, 5, value).pipe(
+          return this.produtoService.getAllPaginado(0, 5, [], value).pipe(
             map((response: PageProdutoRepresentation) => response.content || [])
           );
         }

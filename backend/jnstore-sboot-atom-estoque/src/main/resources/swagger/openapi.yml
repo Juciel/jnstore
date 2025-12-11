@@ -95,6 +95,15 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou nome,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: ["id,desc", "nome,asc"]
         - name: termo
           in: query
           description: "Termo de busca para filtrar por SKU, nome ou categoria"
@@ -369,6 +378,15 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou descricao,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: ["id,desc", "descricao,asc"]
         - name: descricao
           in: query
           description: "Filtro pela descrição da categoria"

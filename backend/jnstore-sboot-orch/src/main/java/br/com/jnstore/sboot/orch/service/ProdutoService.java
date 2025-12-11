@@ -89,7 +89,7 @@ public class ProdutoService {
         return produtoClient.getNewSku();
     }
 
-    public Object getAllPaginado(Integer page, Integer size, String termo) {
-        return produtoClient.getAllPaginado(page, size, termo);
+    public Object getAllPaginado(Integer page, Integer size, List<String> sort, String termo) {
+        return produtoClient.getAllPaginado(page, size, sort, termo);
     }
 }

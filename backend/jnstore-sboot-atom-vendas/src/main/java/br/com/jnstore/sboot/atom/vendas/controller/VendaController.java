@@ -5,8 +5,11 @@ import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.service.VendaService;
+import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +59,13 @@ public class VendaController implements VendasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        // Usa a utilidade para construir o objeto Sort
+        Sort sortObject = PaginationUtil.createSortFromStrings(sort);
+
+        // Cria o Pageable com os parâmetros de paginação e ordenação
+        Pageable pageable = PageRequest.of(page, size, sortObject);
+
         return ResponseEntity.ok(service.listarPaginado(pageable, dataInicial, dataFinal));
     }
 }

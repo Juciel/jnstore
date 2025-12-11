@@ -7,6 +7,7 @@ import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.VariacaoProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.ProdutoService;
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,11 +36,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public Page<ProdutoRepresetation> getAllPaginado(Pageable pageable, String termo) {
+        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
+        Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
+
         Page<TbProduto> pageResult;
         if (StringUtils.hasText(termo)) {
-            pageResult = repository.searchByTerm(termo, pageable);
+            pageResult = repository.searchByTerm(termo, sortedPageable);
         } else {
-            pageResult = repository.findAll(pageable);
+            pageResult = repository.findAll(sortedPageable);
         }
         return pageResult.map(produtoMapper::toRepresetation);
     }

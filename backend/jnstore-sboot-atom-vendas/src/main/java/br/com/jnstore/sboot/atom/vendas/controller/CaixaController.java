@@ -5,8 +5,11 @@ import br.com.jnstore.sboot.atom.vendas.mapper.CaixaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaInput;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.service.CaixaService;
+import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,8 +61,13 @@ public class CaixaController implements CaixasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarCaixasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        PageRequest pageable = PageRequest.of(page, size);
+    public ResponseEntity<Object> listarCaixasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        // Usa a utilidade para construir o objeto Sort
+        Sort sortObject = PaginationUtil.createSortFromStrings(sort);
+
+        // Cria o Pageable com os parâmetros de paginação e ordenação
+        Pageable pageable = PageRequest.of(page, size, sortObject);
+
         return ResponseEntity.ok(service.listarPaginado(pageable, dataInicial, dataFinal));
     }
 }

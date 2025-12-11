@@ -33,7 +33,7 @@ public class CategoriaService {
         categoriaClient.delete(id);
     }
 
-    public Object listarCategoriasPaginado(Integer page, Integer size, String descricao) {
-        return categoriaClient.listarCategoriasPaginado(page, size, descricao);
+    public Object listarCategoriasPaginado(Integer page, Integer size, List<String> sort, String descricao) {
+        return categoriaClient.listarCategoriasPaginado(page, size, sort, descricao);
     }
 }

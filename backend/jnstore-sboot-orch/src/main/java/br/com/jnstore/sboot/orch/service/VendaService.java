@@ -170,7 +170,7 @@ public class VendaService {
         return vendaClient.listarVendasPorCaixaId(id);
     }
 
-    public Object listarVendasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        return vendaClient.listarVendasPaginado(page, size, dataInicial, dataFinal);
+    public Object listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        return vendaClient.listarVendasPaginado(page, size, sort, dataInicial, dataFinal);
     }
 }

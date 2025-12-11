@@ -32,5 +32,7 @@ public interface VendaClient {
     @GetMapping("/vendas/paginado")
     Object listarVendasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
-                                @RequestParam("dataInicial") LocalDate dataInicial,@RequestParam("dataFinal")  LocalDate dataFinal);
+                                @RequestParam("sort") List<String> sort,
+                                @RequestParam("dataInicial") LocalDate dataInicial,
+                                @RequestParam("dataFinal")  LocalDate dataFinal);
 }

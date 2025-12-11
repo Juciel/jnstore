@@ -159,6 +159,15 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou descricao,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: [ "id,desc", "descricao,asc" ]
         - name: dataInicial
           in: query
           description: "Filtro para data de abertura inicial (formato YYYY-MM-DD)"
@@ -271,6 +280,15 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou descricao,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: [ "id,desc", "descricao,asc" ]
         - name: dataInicial
           in: query
           description: "Filtro para data da venda inicial (formato YYYY-MM-DD)"

@@ -6,6 +6,7 @@ import br.com.jnstore.sboot.atom.vendas.mapper.CaixaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.repository.CaixaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.CaixaService;
+import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable; // Alterado para Pageable
@@ -85,13 +86,16 @@ public class CaixaServiceImpl implements CaixaService {
 
     @Override
     public Page<CaixaRepresentation> listarPaginado(Pageable pageable, LocalDate dataInicial, LocalDate dataFinal) {
+        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
+        Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
+
         Page<TbCaixa> pageResult;
         if (dataInicial != null && dataFinal != null) {
             LocalDateTime inicioDoDia = dataInicial.atStartOfDay();
             LocalDateTime fimDoDia = dataFinal.atTime(LocalTime.MAX);
-            pageResult = repository.findByDataAberturaBetween(inicioDoDia, fimDoDia, pageable);
+            pageResult = repository.findByDataAberturaBetween(inicioDoDia, fimDoDia, sortedPageable);
         } else {
-            pageResult = repository.findAll(pageable);
+            pageResult = repository.findAll(sortedPageable);
         }
         return pageResult.map(mapper::toRepresentation);
     }

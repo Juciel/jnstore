@@ -49,7 +49,7 @@ public class CaixaController implements CaixasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarCaixasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        return ResponseEntity.ok(service.listarCaixasPaginado(page, size, dataInicial, dataFinal));
+    public ResponseEntity<Object> listarCaixasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        return ResponseEntity.ok(service.listarCaixasPaginado(page, size, sort, dataInicial, dataFinal));
     }
 }

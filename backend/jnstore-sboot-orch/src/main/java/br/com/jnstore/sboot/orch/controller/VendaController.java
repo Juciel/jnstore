@@ -51,7 +51,7 @@ public class VendaController implements VendasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, LocalDate dataInicial, LocalDate dataFinal) {
-        return ResponseEntity.ok(service.listarVendasPaginado(page, size, dataInicial, dataFinal));
+    public ResponseEntity<Object> listarVendasPaginado(Integer page, Integer size, List<String> sort, LocalDate dataInicial, LocalDate dataFinal) {
+        return ResponseEntity.ok(service.listarVendasPaginado(page, size, sort, dataInicial, dataFinal));
     }
 }

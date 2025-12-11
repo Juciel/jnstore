@@ -29,7 +29,9 @@ public interface CaixaClient {
     @GetMapping("/caixas/paginado")
     Object listarCaixasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
-                                @RequestParam("dataInicial") LocalDate dataInicial,@RequestParam("dataFinal")  LocalDate dataFinal);
+                                @RequestParam("sort") List<String> sort,
+                                @RequestParam("dataInicial") LocalDate dataInicial,
+                                @RequestParam("dataFinal")  LocalDate dataFinal);
 
     @PostMapping("/caixas/{id}/retirar")
     CaixaRepresentation retiradaCaixa(@PathVariable("id") Long id, @RequestBody(required = false) CaixaInput caixaInput);

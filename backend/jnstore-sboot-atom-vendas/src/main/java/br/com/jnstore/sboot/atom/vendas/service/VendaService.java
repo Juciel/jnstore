@@ -5,6 +5,7 @@ import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,5 +18,5 @@ public interface VendaService {
     void desfazerVenda(Long vendaId);
     List<TbVenda> listarVendasPorIdVariacao(List<Long> idVariacao);
     List<TbVenda> listarVendasPorCaixaId(Long caixaId);
-    Page<VendaRepresentation> listarPaginado(PageRequest pageable, LocalDate dataInicial, LocalDate dataFinal);
+    Page<VendaRepresentation> listarPaginado(Pageable pageable, LocalDate dataInicial, LocalDate dataFinal);
 }

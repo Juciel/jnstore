@@ -43,7 +43,7 @@ public class CategoriaController implements CategoriasApi {
     }
 
     @Override
-    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size, String descricao) {
-        return ResponseEntity.ok(categoriaService.listarCategoriasPaginado(page, size, descricao));
+    public ResponseEntity<Object> listarCategoriasPaginado(Integer page, Integer size,List<String> sort, String descricao) {
+        return ResponseEntity.ok(categoriaService.listarCategoriasPaginado(page, size, sort, descricao));
     }
 }

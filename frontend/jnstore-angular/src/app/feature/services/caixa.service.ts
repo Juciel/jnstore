@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CaixaInput, CaixaRepresentation } from '../models';
+import { CaixaInput, CaixaRepresentation, PageCaixaRepresentation } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class CaixaService {
@@ -36,5 +36,19 @@ export class CaixaService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/caixas/${id}`);
+  }
+
+  getAllPaginado(page: number, size: number, sort: string[], dataInicial: string, dataFinal: string): Observable<PageCaixaRepresentation> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('dataInicial', dataInicial)
+      .set('dataFinal', dataFinal);
+
+    sort.forEach(s => {
+      params = params.append('sort', s);
+    });
+
+    return this.http.get<PageCaixaRepresentation>(`${this.baseUrl}/caixas/paginado`, { params });
   }
 }

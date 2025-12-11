@@ -31,5 +31,8 @@ public interface ProdutoClient {
     List<ProdutoRepresetation> listarProdutosPorIdVariacao(@RequestParam("idVariacao") List<Long> idVariacao);
 
     @GetMapping("/produtos/paginado")
-    Object getAllPaginado(@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam("termo") String termo);
+    Object getAllPaginado(@RequestParam("page") Integer page,
+                          @RequestParam("size") Integer size,
+                          @RequestParam("sort") List<String> sort,
+                          @RequestParam("termo") String termo);
 }

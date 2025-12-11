@@ -2,7 +2,7 @@ package br.com.jnstore.sboot.atom.vendas.repository;
 
 import br.com.jnstore.sboot.atom.vendas.domain.TbVenda;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,5 +18,5 @@ public interface VendaRepository extends JpaRepository<TbVenda, Long> {
 
     List<TbVenda> findByCaixaId(Long caixaId);
 
-    Page<TbVenda> searchByDataVendaBetween(LocalDateTime inicioDoDia, LocalDateTime fimDoDia, PageRequest pageable);
+    Page<TbVenda> searchByDataVendaBetween(LocalDateTime inicioDoDia, LocalDateTime fimDoDia, Pageable pageable);
 }

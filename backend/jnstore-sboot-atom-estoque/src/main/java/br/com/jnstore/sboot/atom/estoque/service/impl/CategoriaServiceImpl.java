@@ -6,6 +6,7 @@ import br.com.jnstore.sboot.atom.estoque.model.CategoriaRepresetation;
 import br.com.jnstore.sboot.atom.estoque.repository.CategoriaRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.CategoriaService;
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +37,14 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public Page<CategoriaRepresetation> listarPaginado(Pageable pageable, String descricao) {
+        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
+        Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
+
         Page<TbCategoria> pageResult;
         if (StringUtils.hasText(descricao)) {
-            pageResult = categoriaRepository.findByDescricaoContainingIgnoreCase(descricao, pageable);
+            pageResult = categoriaRepository.findByDescricaoContainingIgnoreCase(descricao, sortedPageable);
         } else {
-            pageResult = categoriaRepository.findAll(pageable);
+            pageResult = categoriaRepository.findAll(sortedPageable);
         }
         return pageResult.map(categoriaMapper::toRepresentation);
     }

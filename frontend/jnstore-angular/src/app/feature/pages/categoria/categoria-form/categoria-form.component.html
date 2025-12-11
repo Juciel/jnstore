@@ -7,7 +7,7 @@
     <div class="mb-3">
       <label class="form-label">Descrição</label>
       <input class="form-control" [class.is-invalid]="form.get('descricao')?.invalid && form.get('descricao')?.touched"
-        formControlName="descricao" placeholder="Ex: Camisetas, Calças, Acessórios" />
+        formControlName="descricao" placeholder="Ex: Camisetas, Calças, Acessórios" maxlength="100"/>
       <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="invalid-feedback">
         <div *ngIf="form.get('descricao')?.errors?.['required']">Descrição é obrigatória.</div>
         <div *ngIf="form.get('descricao')?.errors?.['minlength']">Mínimo 3 caracteres.</div>

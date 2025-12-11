@@ -47,7 +47,7 @@ public class ProdutoController implements ProdutosApi {
     }
 
     @Override
-    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, String termo) {
-        return ResponseEntity.ok(service.getAllPaginado(page, size, termo));
+    public ResponseEntity<Object> getAllPaginado(Integer page, Integer size, List<String> sort, String termo) {
+        return ResponseEntity.ok(service.getAllPaginado(page, size, sort, termo));
     }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { VendaInput, VendaRepresentation, VendaDetalheRepresentation } from '../models';
+import { VendaInput, VendaRepresentation, VendaDetalheRepresentation, PageVendaRepresentation } from '../models';
 
 interface VendaStats {
   total: number;
@@ -45,5 +45,19 @@ export class VendaService {
 
   getNumeroVendasPorPeriodo(periodo: 'hoje' | 'semana' | 'mes'): Observable<VendaStats> {
     return this.http.get<VendaStats>(`${this.baseUrl}/vendas/quantidade?periodo=${periodo}`);
+  }
+
+  getAllPaginado(page: number, size: number, sort: string[], dataInicial: string, dataFinal: string): Observable<PageVendaRepresentation> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('dataInicial', dataInicial)
+      .set('dataFinal', dataFinal);
+
+    sort.forEach(s => {
+      params = params.append('sort', s);
+    });
+
+    return this.http.get<PageVendaRepresentation>(`${this.baseUrl}/vendas/paginado`, { params });
   }
 }

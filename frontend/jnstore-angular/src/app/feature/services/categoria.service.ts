@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CategoriaRepresetation } from '../models';
+import { PageCategoriaRepresentation, CategoriaRepresetation } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaService {
@@ -28,5 +28,18 @@ export class CategoriaService {
 
   deletar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/categorias/${id}`);
+  }
+
+  getAllPaginado(page: number, size: number, sort: string[], descricao: string): Observable<PageCategoriaRepresentation> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('descricao', descricao);
+
+    sort.forEach(s => {
+      params = params.append('sort', s);
+    });
+
+    return this.http.get<PageCategoriaRepresentation>(`${this.baseUrl}/categorias/paginado`, { params });
   }
 }

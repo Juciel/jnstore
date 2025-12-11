@@ -41,8 +41,16 @@ export class ProdutoService {
    * Busca produtos para autocomplete.
    * @param termo Termo de busca para o autocomplete (SKU, nome ou categoria)
    */
-  getAllPaginado(page: number, size: number, termo: string): Observable<PageProdutoRepresentation> {
-    const params = new HttpParams().set('page', page).set('size', size).set('termo', termo);
+  getAllPaginado(page: number, size: number, sort: string[], termo: string): Observable<PageProdutoRepresentation> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('termo', termo);
+
+    sort.forEach(s => {
+      params = params.append('sort', s);
+    });
+
     return this.http.get<PageProdutoRepresentation>(`${this.baseUrl}/produtos/paginado`, { params });
   }
 
