@@ -1,49 +1,55 @@
 <div class="venda-detalhe-container">
   <h2 mat-dialog-title>Detalhes da Venda #{{ venda?.id }}</h2>
   <mat-dialog-content>
-    <div *ngIf="loading" class="loading-indicator">Carregando...</div>
-    <div *ngIf="error" class="error-message">{{ error }}</div>
-    <div *ngIf="venda">
-      <p><strong>Data:</strong> {{ venda.dataVenda | date:'dd/MM/yyyy HH:mm' }}</p>
-      <p><strong>Total Bruto:</strong> {{ venda.totalBruto | currency:'BRL' }}</p>
-      <p><strong>Desconto:</strong> {{ venda.desconto | currency:'BRL' }}</p>
-      <p><strong>Total Líquido:</strong> {{ venda.totalLiquido | currency:'BRL' }}</p>
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div *ngIf="!loading">
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div *ngIf="venda">
+        <p><strong>Data:</strong> {{ venda.dataVenda | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Total Bruto:</strong> {{ venda.totalBruto | currency:'BRL' }}</p>
+        <p><strong>Desconto:</strong> {{ venda.desconto | currency:'BRL' }}</p>
+        <p><strong>Total Líquido:</strong> {{ venda.totalLiquido | currency:'BRL' }}</p>
 
-      <h5>Itens da Venda</h5>
-      <table class="table">
-        <thead>
+        <h5>Itens da Venda</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Preço Unitário</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of venda.itens">
+              <td>{{ item.identificador }} {{ item.nomeProduto }}</td>
+              <td>{{ item.quantidade }}</td>
+              <td>{{ item.precoUnitario | currency:'BRL' }}</td>
+              <td>{{ ((item.precoUnitario || 0) * (item.quantidade || 0)) | currency:'BRL' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h5>Pagamento</h5>
+        <table class="table">
+          <thead>
           <tr>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Preço Unitário</th>
-            <th>Subtotal</th>
+            <th>Forma de Pagamento</th>
+            <th>Valor Pago</th>
           </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of venda.itens">
-            <td>{{ item.identificador }} {{ item.nomeProduto }}</td>
-            <td>{{ item.quantidade }}</td>
-            <td>{{ item.precoUnitario | currency:'BRL' }}</td>
-            <td>{{ ((item.precoUnitario || 0) * (item.quantidade || 0)) | currency:'BRL' }}</td>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of venda.pagamentos">
+            <td>{{ item.forma }}</td>
+            <td>{{ item.valorPago  | currency:'BRL'}}</td>
           </tr>
-        </tbody>
-      </table>
-
-      <h5>Pagamento</h5>
-      <table class="table">
-        <thead>
-        <tr>
-          <th>Forma de Pagamento</th>
-          <th>Valor Pago</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of venda.pagamentos">
-          <td>{{ item.forma }}</td>
-          <td>{{ item.valorPago  | currency:'BRL'}}</td>
-        </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">

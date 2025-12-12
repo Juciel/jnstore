@@ -15,7 +15,7 @@ import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.
 export class CaixaOpenComponent implements OnInit {
   valor?: number;
   opened: any = null;
-  opening = false;
+  loading = false;
   openError: string | null = null;
 
   constructor(private caixaService: CaixaService, private cdr: ChangeDetectorRef, private router: Router) { } // Injetar Router
@@ -25,6 +25,7 @@ export class CaixaOpenComponent implements OnInit {
   }
 
   verificarCaixaAberto() {
+    this.loading = true;
     this.caixaService.consultaCaixaAbertoHoje().subscribe({
       next: (res: any) => {
         this.opened = res;
@@ -32,9 +33,11 @@ export class CaixaOpenComponent implements OnInit {
           // Se o caixa foi fechado, não o consideramos "aberto" nesta tela
           this.opened = null;
         }
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (e) => {
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });
@@ -49,7 +52,7 @@ export class CaixaOpenComponent implements OnInit {
       this.openError = 'O valor inicial é obrigatório.';
       return;
     }
-    this.opening = true;
+    this.loading = true;
     this.openError = null;
     this.caixaService.abrirCaixa({ valor: this.valor }).subscribe({
       next: res => {
@@ -57,7 +60,7 @@ export class CaixaOpenComponent implements OnInit {
       },
       error: e => {
         this.openError = e?.error?.message || e?.message || 'Erro ao abrir caixa';
-        this.opening = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (er) { /* ignore */ }
       }
     });

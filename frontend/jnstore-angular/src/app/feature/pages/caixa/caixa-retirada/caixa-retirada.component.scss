@@ -1,5 +1,12 @@
-.caixa-open { max-width: 480px }
-.caixa-open label { display:block; margin-bottom:8px }
-.caixa-open input { width:100%; padding:6px }
-.error { color:#c00 }
-.success { color:#080 }
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}

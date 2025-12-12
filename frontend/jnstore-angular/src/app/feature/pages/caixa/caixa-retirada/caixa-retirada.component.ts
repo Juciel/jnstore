@@ -17,7 +17,7 @@ export class CaixaRetiradaComponent implements OnInit {
   caixaId: number | null = null;
   caixa: CaixaRepresentation | undefined;
   valorRetirada?: number; // Mantido para o input do formulário
-  closing = false;
+  loading = false;
   closeError: string | null = null;
 
   constructor(
@@ -38,6 +38,7 @@ export class CaixaRetiradaComponent implements OnInit {
   }
 
   buscarCaixaPorId(id: number): void {
+    this.loading = true;
     this.caixaService.buscarPorId(id).subscribe({
       next: (caixa: CaixaRepresentation) => {
         this.caixa = caixa;
@@ -45,17 +46,19 @@ export class CaixaRetiradaComponent implements OnInit {
         if (this.caixa.valorFinal !== undefined && this.caixa.valorFinal !== null) {
           this.valorRetirada = this.caixa.valorFinal;
         }
+        this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       },
       error: e => {
         this.closeError = e?.message || 'Erro ao buscar caixa';
         console.error('buscarCaixaPorId: Erro ao buscar caixa:', e); // Log para depuração
+        this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças mesmo em caso de erro
       }
     });
   }
 
-  fecharCaixa(): void {
+  retiradaCaixa(): void {
     if (!this.caixaId) {
       this.closeError = 'ID do caixa não encontrado.';
       console.error('retiradaCaixa: ID do caixa não encontrado.'); // Log para depuração
@@ -67,7 +70,7 @@ export class CaixaRetiradaComponent implements OnInit {
       return;
     }
 
-    this.closing = true;
+    this.loading = true;
     this.closeError = null;
 
     this.caixaService.retiradaCaixa(this.caixaId, { valor: this.valorRetirada }).subscribe({
@@ -76,7 +79,7 @@ export class CaixaRetiradaComponent implements OnInit {
       },
       error: e => {
         this.closeError = e?.error?.message || e?.message || 'Erro ao retirar caixa';
-        this.closing = false;
+        this.loading = false;
         console.error('retiradaCaixa: Erro ao retirar caixa:', e); // Log para depuração
         this.cdr.detectChanges();
       }

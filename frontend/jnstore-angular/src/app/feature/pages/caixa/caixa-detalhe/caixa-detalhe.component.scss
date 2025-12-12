@@ -1,42 +1,49 @@
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
 .caixa-detalhe-container {
-  padding: 20px;
-}
-
-.loading-spinner {
-  text-align: center;
-  padding: 20px;
-}
-
-.error-message {
-  color: red;
-  text-align: center;
-  padding: 20px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background-color: #f4f4f4;
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 4px;
+  min-width: 500px;
 }
 
 .info-table {
   width: 100%;
-  border-collapse: collapse;
   margin-bottom: 20px;
+  border-collapse: collapse;
 }
 
-.info-table td {
+.info-table td, .info-table th {
   padding: 8px;
   border: 1px solid #ddd;
 }
 
-.info-table td:first-child {
-  font-weight: bold;
-  width: 40%; /* Ajuste a largura conforme necessário */
+.info-table th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.vendas-table-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 15px;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
 }

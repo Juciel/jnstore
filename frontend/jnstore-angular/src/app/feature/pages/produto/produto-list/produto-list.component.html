@@ -4,90 +4,97 @@
     <a class="btn btn-primary" routerLink="/produtos/novo">Adicionar Produto</a>
   </div>
   <div class="card-body">
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-    <div *ngIf="loading">Carregando...</div>
-    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-    <div class="mb-3">
-      <input type="text" class="form-control" placeholder="Filtrar por nome" [(ngModel)]="nomeFilter" (input)="onFilterChange()">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
 
-    <table *ngIf="!loading && produtos.length" class="table table-striped">
-      <thead>
-        <tr>
-          <th (click)="toggleSort('nome')" style="cursor: pointer;">
-            Nome
-            <i *ngIf="sortColumn === 'nome' && sortDirection === 'asc'" class="fas fa-sort-up"></i>
-            <i *ngIf="sortColumn === 'nome' && sortDirection === 'desc'" class="fas fa-sort-down"></i>
-            <i *ngIf="sortColumn !== 'nome'" class="fas fa-sort"></i>
-          </th>
-          <th>Categoria</th>
-          <th>Preço para venda</th>
-          <th>Qtd</th>
-          <th>Valor da Compra</th>
-          <th>Valor de Venda</th>
-          <th>Lucro</th>
-          <th style="width: 120px;">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let p of produtos">
-          <td>{{ p.nome }}</td>
-          <td>{{ p.categoria?.descricao || '-' }}</td>
-          <td>{{ p.valorVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
-          <td>{{ p.quantidadeTotalEstoque }}</td>
-          <td>{{ p.valorTotalCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
-          <td>{{ p.valorTotalVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
-          <td>{{ p.valorTotalLucro | currency:'BRL':'symbol':'1.2-2' }}</td>
-          <td>
-            <a [routerLink]="['/produtos', p.id, 'editar']" class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></a>
-            <button (click)="deleteProduto(p.id, p.nome)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div *ngIf="!loading && !produtos.length && !nomeFilter" class="text-muted">Nenhum produto encontrado.</div>
-    <div *ngIf="!loading && !produtos.length && nomeFilter" class="text-muted">Nenhum produto encontrado para o filtro "{{ nomeFilter }}".</div>
+    <div *ngIf="!loading">
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-    <div *ngIf="totalPages > 0 || totalElements > 0" class="d-flex justify-content-between align-items-center mt-4">
-      <div class="d-flex align-items-center gap-3">
-        <label for="pageSizeSelect" class="mb-0 text-nowrap">Itens por página:</label>
-        <select id="pageSizeSelect" class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-          <option [ngValue]="5">5</option>
-          <option [ngValue]="10">10</option>
-          <option [ngValue]="20">20</option>
-          <option [ngValue]="50">50</option>
-          <option [ngValue]="100">100</option>
-        </select>
-        <span class="text-nowrap">Total de itens: {{ totalElements }}</span>
+      <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Filtrar por nome" [(ngModel)]="nomeFilter" (input)="onFilterChange()">
       </div>
-      <nav aria-label="Page navigation">
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link" (click)="goToPage(0)" aria-label="Primeira">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
-              <span aria-hidden="true">&lsaquo;</span>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
-            <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-            <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Próxima">
-              <span aria-hidden="true">&rsaquo;</span>
-            </a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-            <a class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Última">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+
+      <table *ngIf="produtos.length" class="table table-striped">
+        <thead>
+          <tr>
+            <th (click)="toggleSort('nome')" style="cursor: pointer;">
+              Nome
+              <i *ngIf="sortColumn === 'nome' && sortDirection === 'asc'" class="fas fa-sort-up"></i>
+              <i *ngIf="sortColumn === 'nome' && sortDirection === 'desc'" class="fas fa-sort-down"></i>
+              <i *ngIf="sortColumn !== 'nome'" class="fas fa-sort"></i>
+            </th>
+            <th>Categoria</th>
+            <th>Preço para venda</th>
+            <th>Qtd</th>
+            <th>Valor da Compra</th>
+            <th>Valor de Venda</th>
+            <th>Lucro</th>
+            <th style="width: 120px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of produtos">
+            <td>{{ p.nome }}</td>
+            <td>{{ p.categoria?.descricao || '-' }}</td>
+            <td>{{ p.valorVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ p.quantidadeTotalEstoque }}</td>
+            <td>{{ p.valorTotalCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ p.valorTotalVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ p.valorTotalLucro | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>
+              <a [routerLink]="['/produtos', p.id, 'editar']" class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></a>
+              <button (click)="deleteProduto(p.id, p.nome)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!produtos.length && !nomeFilter" class="text-muted">Nenhum produto encontrado.</div>
+      <div *ngIf="!produtos.length && nomeFilter" class="text-muted">Nenhum produto encontrado para o filtro "{{ nomeFilter }}".</div>
+
+      <div *ngIf="totalPages > 0 || totalElements > 0" class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex align-items-center gap-3">
+          <label for="pageSizeSelect" class="mb-0 text-nowrap">Itens por página:</label>
+          <select id="pageSizeSelect" class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+            <option [ngValue]="100">100</option>
+          </select>
+          <span class="text-nowrap">Total de itens: {{ totalElements }}</span>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(0)" aria-label="Primeira">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
+              <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Próxima">
+                <span aria-hidden="true">&rsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Última">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </div>

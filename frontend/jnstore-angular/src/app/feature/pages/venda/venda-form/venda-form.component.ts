@@ -20,7 +20,7 @@ import { of, Subject } from 'rxjs';
 export class VendaComponent implements OnInit, OnDestroy {
   form: any;
   saved: any = null;
-  submitting = false;
+  loading = false;
   submitError: string | null = null;
 
   // --- Totals ---
@@ -173,7 +173,7 @@ export class VendaComponent implements OnInit, OnDestroy {
       totalLiquido : totalPago
     };
 
-    this.submitting = true;
+    this.loading = true;
     this.submitError = null;
     this.vendaService.registrarVenda(payload).subscribe({
       next: res => {
@@ -181,7 +181,7 @@ export class VendaComponent implements OnInit, OnDestroy {
       },
       error: e => {
         this.submitError = e?.error?.message || e?.message || 'Erro ao registrar venda';
-        this.submitting = false;
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });

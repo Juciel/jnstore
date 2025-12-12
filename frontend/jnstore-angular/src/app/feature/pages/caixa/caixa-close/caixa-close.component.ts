@@ -17,7 +17,7 @@ export class CaixaCloseComponent implements OnInit {
   caixaId: number | null = null;
   caixa: CaixaRepresentation | undefined;
   valorFechamento?: number; // Mantido para o input do formulário
-  closing = false;
+  loading = false;
   closeError: string | null = null;
 
   constructor(
@@ -38,6 +38,7 @@ export class CaixaCloseComponent implements OnInit {
   }
 
   buscarCaixaPorId(id: number): void {
+    this.loading = true;
     this.caixaService.buscarPorId(id).subscribe({
       next: (caixa: CaixaRepresentation) => {
         this.caixa = caixa;
@@ -45,11 +46,13 @@ export class CaixaCloseComponent implements OnInit {
         if (this.caixa.valorFinal !== undefined && this.caixa.valorFinal !== null) {
           this.valorFechamento = this.caixa.valorFinal;
         }
+        this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       },
       error: e => {
         this.closeError = e?.message || 'Erro ao buscar caixa';
         console.error('buscarCaixaPorId: Erro ao buscar caixa:', e); // Log para depuração
+        this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças mesmo em caso de erro
       }
     });
@@ -67,7 +70,7 @@ export class CaixaCloseComponent implements OnInit {
       return;
     }
 
-    this.closing = true;
+    this.loading = true;
     this.closeError = null;
 
     this.caixaService.fecharCaixa(this.caixaId, { valor: this.valorFechamento }).subscribe({
@@ -76,7 +79,7 @@ export class CaixaCloseComponent implements OnInit {
       },
       error: e => {
         this.closeError = e?.error?.message || e?.message || 'Erro ao fechar caixa';
-        this.closing = false;
+        this.loading = false;
         console.error('fecharCaixa: Erro ao fechar caixa:', e); // Log para depuração
         this.cdr.detectChanges();
       }

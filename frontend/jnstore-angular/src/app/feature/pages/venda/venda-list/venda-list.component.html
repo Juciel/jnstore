@@ -4,83 +4,90 @@
     <a class="btn btn-primary" routerLink="/vendas/nova">Registrar Venda</a>
   </div>
   <div class="card-body">
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-    <div *ngIf="loading">Carregando...</div>
-    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-    <div class="mb-3 d-flex gap-3">
-      <input type="date" class="form-control" placeholder="Data Inicial" [(ngModel)]="dataInicialFilter" (input)="onFilterChange()">
-      <input type="date" class="form-control" placeholder="Data Final" [(ngModel)]="dataFinalFilter" (input)="onFilterChange()">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
 
-    <table *ngIf="!loading && vendas.length" class="table table-striped">
-      <thead>
-        <tr>
-          <th (click)="toggleSort('id')" style="cursor: pointer;">
-            ID
-            <i *ngIf="sortColumn === 'id' && sortDirection === 'asc'" class="fas fa-sort-up"></i>
-            <i *ngIf="sortColumn === 'id' && sortDirection === 'desc'" class="fas fa-sort-down"></i>
-            <i *ngIf="sortColumn !== 'id'" class="fas fa-sort"></i>
-          </th>
-          <th>Data</th>
-          <th>Total</th>
-          <th style="width: 120px;">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let v of vendas">
-          <td>{{ v.id }}</td>
-          <td>{{ v.dataVenda ? (v.dataVenda | date:'dd/MM/yyyy HH:mm:ss':'UTC') : '-' }}</td>
-          <td>{{ v.totalLiquido != null ? (v.totalLiquido | currency:'BRL':'symbol':'1.2-2') : (v.totalBruto | currency:'BRL':'symbol':'1.2-2') }}</td>
-          <td>
-            <button (click)="detalharVenda(v.id)" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></button>
-            <button (click)="deleteVenda(v.id)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div *ngIf="!loading && !vendas.length && (!dataInicialFilter && !dataFinalFilter)" class="text-muted">Nenhuma venda registrada.</div>
-    <div *ngIf="!loading && !vendas.length && (dataInicialFilter || dataFinalFilter)" class="text-muted">Nenhuma venda encontrada para o filtro.</div>
+    <div *ngIf="!loading">
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-    <div *ngIf="totalPages > 0 || totalElements > 0" class="d-flex justify-content-between align-items-center mt-4">
-      <div class="d-flex align-items-center gap-3">
-        <label for="pageSizeSelect" class="mb-0 text-nowrap">Itens por página:</label>
-        <select id="pageSizeSelect" class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-          <option [ngValue]="5">5</option>
-          <option [ngValue]="10">10</option>
-          <option [ngValue]="20">20</option>
-          <option [ngValue]="50">50</option>
-          <option [ngValue]="100">100</option>
-        </select>
-        <span class="text-nowrap">Total de itens: {{ totalElements }}</span>
+      <div class="mb-3 d-flex gap-3">
+        <input type="date" class="form-control" placeholder="Data Inicial" [(ngModel)]="dataInicialFilter" (input)="onFilterChange()">
+        <input type="date" class="form-control" placeholder="Data Final" [(ngModel)]="dataFinalFilter" (input)="onFilterChange()">
       </div>
-      <nav aria-label="Page navigation">
-        <ul class="pagination mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link" (click)="goToPage(0)" aria-label="Primeira">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === 0">
-            <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
-              <span aria-hidden="true">&lsaquo;</span>
-            </a>
-          </li>
-          <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
-            <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-            <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Próxima">
-              <span aria-hidden="true">&rsaquo;</span>
-            </a>
-          </li>
-          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
-            <a class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Última">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+
+      <table *ngIf="vendas.length" class="table table-striped">
+        <thead>
+          <tr>
+            <th (click)="toggleSort('id')" style="cursor: pointer;">
+              ID
+              <i *ngIf="sortColumn === 'id' && sortDirection === 'asc'" class="fas fa-sort-up"></i>
+              <i *ngIf="sortColumn === 'id' && sortDirection === 'desc'" class="fas fa-sort-down"></i>
+              <i *ngIf="sortColumn !== 'id'" class="fas fa-sort"></i>
+            </th>
+            <th>Data</th>
+            <th>Total</th>
+            <th style="width: 120px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of vendas">
+            <td>{{ v.id }}</td>
+            <td>{{ v.dataVenda ? (v.dataVenda | date:'dd/MM/yyyy HH:mm:ss':'UTC') : '-' }}</td>
+            <td>{{ v.totalLiquido != null ? (v.totalLiquido | currency:'BRL':'symbol':'1.2-2') : (v.totalBruto | currency:'BRL':'symbol':'1.2-2') }}</td>
+            <td>
+              <button (click)="detalharVenda(v.id)" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></button>
+              <button (click)="deleteVenda(v.id)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!vendas.length && (!dataInicialFilter && !dataFinalFilter)" class="text-muted">Nenhuma venda registrada.</div>
+      <div *ngIf="!vendas.length && (dataInicialFilter || dataFinalFilter)" class="text-muted">Nenhuma venda encontrada para o filtro.</div>
+
+      <div *ngIf="totalPages > 0 || totalElements > 0" class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex align-items-center gap-3">
+          <label for="pageSizeSelect" class="mb-0 text-nowrap">Itens por página:</label>
+          <select id="pageSizeSelect" class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+            <option [ngValue]="100">100</option>
+          </select>
+          <span class="text-nowrap">Total de itens: {{ totalElements }}</span>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(0)" aria-label="Primeira">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
+              <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Próxima">
+                <span aria-hidden="true">&rsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Última">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </div>

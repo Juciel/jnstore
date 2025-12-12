@@ -15,13 +15,12 @@ import { CategoriaRepresetation } from 'src/app/feature/models';
 })
 export class CategoriaFormComponent implements OnInit {
   form: any;
-  saving = false;
+  loading = false;
   saveError: string | null = null;
   categorias: CategoriaRepresetation[] = [];
 
   isEditMode = false;
   categoriaId: number | null = null;
-  loadingCategoria = false;
 
   constructor(private fb: FormBuilder, private categoriaService: CategoriaService,
               private route: ActivatedRoute, private router: Router,
@@ -46,16 +45,16 @@ export class CategoriaFormComponent implements OnInit {
 
   loadCategoria(): void {
     if (!this.categoriaId) return;
-    this.loadingCategoria = true;
+    this.loading = true;
     this.categoriaService.buscarPorId(this.categoriaId).subscribe({
       next: (c) => {
         this.form.patchValue({ descricao: c.descricao });
-        this.loadingCategoria = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
       },
       error: (e) => {
         this.saveError = 'Erro ao carregar categoria: ' + (e?.error?.message || e?.message || 'desconhecido');
-        this.loadingCategoria = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (er) { /* ignore */ }
       }
     });
@@ -67,7 +66,7 @@ export class CategoriaFormComponent implements OnInit {
     const categoria: CategoriaRepresetation = {
       descricao: raw.descricao ?? undefined
     };
-    this.saving = true;
+    this.loading = true;
     this.saveError = null;
     try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
 
@@ -81,7 +80,7 @@ export class CategoriaFormComponent implements OnInit {
       },
       error: (err) => {
         this.saveError = err?.error?.message || err?.message || 'Erro ao salvar categoria';
-        this.saving = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
       }
     });

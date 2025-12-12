@@ -23,14 +23,12 @@ export class ProdutoFormComponent implements OnInit {
   form: any;
 
   categorias: CategoriaRepresetation[] = [];
-  loadingCategorias = false;
+  loading = false;
   categoriasError: string | null = null;
-  saving = false;
   saveError: string | null = null;
 
   isEditMode = false;
   produtoId: number | null = null;
-  loadingProduto = false;
 
   @ViewChild(VariacaoModalComponent) variacaoModal!: VariacaoModalComponent;
 
@@ -65,7 +63,7 @@ export class ProdutoFormComponent implements OnInit {
 
   loadProduto(): void {
     if (!this.produtoId) return;
-    this.loadingProduto = true;
+    this.loading = true;
     this.produtoService.getById(this.produtoId).subscribe({
       next: (p) => {
         this.form.patchValue({
@@ -89,12 +87,12 @@ export class ProdutoFormComponent implements OnInit {
             }));
           });
         }
-        this.loadingProduto = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
       },
       error: (e) => {
         this.saveError = 'Erro ao carregar produto: ' + (e?.error?.message || e?.message || 'desconhecido');
-        this.loadingProduto = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (er) { /* ignore */ }
       }
     });
@@ -146,7 +144,7 @@ export class ProdutoFormComponent implements OnInit {
         quantidadeEstoque: v.quantidadeEstoque ?? undefined
       }))
     };
-    this.saving = true;
+    this.loading = true;
     this.saveError = null;
     try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
 
@@ -160,19 +158,19 @@ export class ProdutoFormComponent implements OnInit {
       },
       error: (err) => {
         this.saveError = err?.error?.message || err?.message || 'Erro ao salvar produto';
-        this.saving = false;
+        this.loading = false;
         try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
       }
     });
   }
 
   loadCategorias() {
-    this.loadingCategorias = true;
+    this.loading = true;
     this.loadingService.show();
     this.categoriasError = null;
     this.categoriaService.listarTodas().pipe(
       finalize(() => {
-        this.loadingCategorias = false;
+        this.loading = false;
         if (!this.isEditMode) this.loadingService.hide(); // Esconde o loading se não estiver carregando um produto
       })
     ).subscribe({ next: res => { this.categorias = res || []; try { this.cdr.detectChanges(); } catch (e) { /* ignore */ } }, error: e => { this.categoriasError = 'Erro ao carregar categoria: ' + (e?.error?.message || e?.message || 'desconhecido'); try { this.cdr.detectChanges(); } catch (er) { /* ignore */ } } });
