@@ -60,7 +60,6 @@ export class CategoriaListComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.sort = [`${this.sortColumn},${this.sortDirection}`]; // Atualiza o array sort
-    console.log('Starting to load categorias with pagination, filter and sort...', this.sort);
     this.categoriaService.getAllPaginado(this.currentPage, this.pageSize, this.sort, this.descricaoFilter).pipe(
       timeout(10000),
       catchError(e => {
@@ -71,12 +70,10 @@ export class CategoriaListComponent implements OnInit {
         return of({ content: [], totalPages: 0, totalElements: 0 }); // Retorna um objeto vazio para evitar erros
       })
     ).subscribe(res => {
-      console.log('Response received:', res);
       this.categorias = res.content || [];
       this.totalPages = res.totalPages || 0;
       this.totalElements = res.totalElements || 0;
       this.loading = false;
-      console.log('Loading set to false');
       try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
     });
   }

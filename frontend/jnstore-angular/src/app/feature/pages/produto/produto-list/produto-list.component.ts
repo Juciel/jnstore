@@ -60,7 +60,6 @@ export class ProdutoListComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.sort = [`${this.sortColumn},${this.sortDirection}`];
-    console.log('Starting to load produtos with pagination, filter and sort...', this.sort);
     this.produtoService.getAllPaginado(this.currentPage, this.pageSize, this.sort, this.nomeFilter).pipe(
       timeout(10000),
       catchError(e => {
@@ -71,12 +70,10 @@ export class ProdutoListComponent implements OnInit {
         return of({ content: [], totalPages: 0, totalElements: 0 });
       })
     ).subscribe(res => {
-      console.log('Response received:', res);
       this.produtos = res.content || [];
       this.totalPages = res.totalPages || 0;
       this.totalElements = res.totalElements || 0;
       this.loading = false;
-      console.log('Loading set to false');
       try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
     });
   }
