@@ -1,283 +1,292 @@
 <div class="container-fluid py-3">
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-  <div class="row">
-    <!-- Card: Vendas Totais Hoje -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>
-            R$ {{ vendasTotaisHoje?.total | number:'1.2-2' }}
-            <sup *ngIf="vendasTotaisHoje?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="vendasTotaisHoje!.variacao > 0" [class.fa-arrow-down]="vendasTotaisHoje!.variacao < 0" [class.text-success]="vendasTotaisHoje!.variacao > 0" [class.text-danger]="vendasTotaisHoje!.variacao < 0"></i>
-              {{ vendasTotaisHoje?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Vendas Totais (Hoje)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-dollar-sign"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card: Número de Vendas Hoje -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-secondary">
-        <div class="inner">
-          <h3>
-            {{ numeroVendasHoje?.total }}
-            <sup *ngIf="numeroVendasHoje?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="numeroVendasHoje!.variacao > 0" [class.fa-arrow-down]="numeroVendasHoje!.variacao < 0" [class.text-success]="numeroVendasHoje!.variacao > 0" [class.text-danger]="numeroVendasHoje!.variacao < 0"></i>
-              {{ numeroVendasHoje?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Número de Vendas (Hoje)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-shopping-cart"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card: Ticket Médio Hoje -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3>
-            R$ {{ ticketMedioHoje?.total | number:'1.2-2' }}
-            <sup *ngIf="ticketMedioHoje?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="ticketMedioHoje!.variacao > 0" [class.fa-arrow-down]="ticketMedioHoje!.variacao < 0" [class.text-success]="ticketMedioHoje!.variacao > 0" [class.text-danger]="ticketMedioHoje!.variacao < 0"></i>
-              {{ ticketMedioHoje?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Ticket Médio (Hoje)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-receipt"></i>
-        </div>
-      </div>
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-  <div class="row mt-4">
-    <!-- Card: Vendas Totais Semana -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>
-            R$ {{ vendasTotaisSemana?.total | number:'1.2-2' }}
-            <sup *ngIf="vendasTotaisSemana?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="vendasTotaisSemana!.variacao > 0" [class.fa-arrow-down]="vendasTotaisSemana!.variacao < 0" [class.text-success]="vendasTotaisSemana!.variacao > 0" [class.text-danger]="vendasTotaisSemana!.variacao < 0"></i>
-              {{ vendasTotaisSemana?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Vendas Totais (Semana)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-dollar-sign"></i>
+  <div *ngIf="!loading">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div class="row">
+      <!-- Card: Vendas Totais Hoje -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>
+              R$ {{ vendasTotaisHoje?.total | number:'1.2-2' }}
+              <sup *ngIf="vendasTotaisHoje?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(vendasTotaisHoje?.variacao || 0) > 0" [class.fa-arrow-down]="(vendasTotaisHoje?.variacao || 0) < 0" [class.text-success]="(vendasTotaisHoje?.variacao || 0) > 0" [class.text-danger]="(vendasTotaisHoje?.variacao || 0) < 0"></i>
+                {{ (vendasTotaisHoje?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Vendas Totais (Hoje)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Card: Número de Vendas Semana -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-secondary">
-        <div class="inner">
-          <h3>
-            {{ numeroVendasSemana?.total }}
-            <sup *ngIf="numeroVendasSemana?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="numeroVendasSemana!.variacao > 0" [class.fa-arrow-down]="numeroVendasSemana!.variacao < 0" [class.text-success]="numeroVendasSemana!.variacao > 0" [class.text-danger]="numeroVendasSemana!.variacao < 0"></i>
-              {{ numeroVendasSemana?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Número de Vendas (Semana)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-shopping-cart"></i>
+      <!-- Card: Número de Vendas Hoje -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-secondary">
+          <div class="inner">
+            <h3>
+              {{ numeroVendasHoje?.total }}
+              <sup *ngIf="numeroVendasHoje?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(numeroVendasHoje?.variacao || 0) > 0" [class.fa-arrow-down]="(numeroVendasHoje?.variacao || 0) < 0" [class.text-success]="(numeroVendasHoje?.variacao || 0) > 0" [class.text-danger]="(numeroVendasHoje?.variacao || 0) < 0"></i>
+                {{ (numeroVendasHoje?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Número de Vendas (Hoje)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Card: Ticket Médio Semana -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3>
-            R$ {{ ticketMedioSemana?.total | number:'1.2-2' }}
-            <sup *ngIf="ticketMedioSemana?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="ticketMedioSemana!.variacao > 0" [class.fa-arrow-down]="ticketMedioSemana!.variacao < 0" [class.text-success]="ticketMedioSemana!.variacao > 0" [class.text-danger]="ticketMedioSemana!.variacao < 0"></i>
-              {{ ticketMedioSemana?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Ticket Médio (Semana)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-receipt"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <!-- Card: Vendas Totais Mês -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-info">
-        <div class="inner">
-          <h3>
-            R$ {{ vendasTotaisMes?.total | number:'1.2-2' }}
-            <sup *ngIf="vendasTotaisMes?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="vendasTotaisMes!.variacao > 0" [class.fa-arrow-down]="vendasTotaisMes!.variacao < 0" [class.text-success]="vendasTotaisMes!.variacao > 0" [class.text-danger]="vendasTotaisMes!.variacao < 0"></i>
-              {{ vendasTotaisMes?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Vendas Totais (Mês)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-dollar-sign"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card: Número de Vendas Mês -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-secondary">
-        <div class="inner">
-          <h3>
-            {{ numeroVendasMes?.total }}
-            <sup *ngIf="numeroVendasMes?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="numeroVendasMes!.variacao > 0" [class.fa-arrow-down]="numeroVendasMes!.variacao < 0" [class.text-success]="numeroVendasMes!.variacao > 0" [class.text-danger]="numeroVendasMes!.variacao < 0"></i>
-              {{ numeroVendasMes?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Número de Vendas (Mês)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-shopping-cart"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card: Ticket Médio Mês -->
-    <div class="col-lg-4 col-12">
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3>
-            R$ {{ ticketMedioMes?.total | number:'1.2-2' }}
-            <sup *ngIf="ticketMedioMes?.variacao !== undefined">
-              <i class="fas" [class.fa-arrow-up]="ticketMedioMes!.variacao > 0" [class.fa-arrow-down]="ticketMedioMes!.variacao < 0" [class.text-success]="ticketMedioMes!.variacao > 0" [class.text-danger]="ticketMedioMes!.variacao < 0"></i>
-              {{ ticketMedioMes?.variacao | number:'1.1-1' }}%
-            </sup>
-          </h3>
-          <p>Ticket Médio (Mês)</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-receipt"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <!-- Card: Produtos Mais Vendidos -->
-    <div class="col-lg-6 col-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Top 5 Produtos Mais Vendidos</h5>
-        </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table m-0">
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Categoria</th>
-                  <th>Genero</th>
-                  <th>Vendidos</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let produto of topProdutosVendidos">
-                  <td>{{ produto.nomeProduto }}</td>
-                  <td>{{ produto.descricaoCategoria }}</td>
-                  <td>{{ produto.descricaoGenero  | titlecase }}</td>
-                  <td>{{ produto.quantidade }}</td>
-                </tr>
-                <tr *ngIf="topProdutosVendidos.length === 0">
-                  <td colspan="4" class="text-center">Nenhum produto vendido ainda.</td>
-                </tr>
-              </tbody>
-            </table>
+      <!-- Card: Ticket Médio Hoje -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>
+              R$ {{ ticketMedioHoje?.total | number:'1.2-2' }}
+              <sup *ngIf="ticketMedioHoje?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(ticketMedioHoje?.variacao || 0) > 0" [class.fa-arrow-down]="(ticketMedioHoje?.variacao || 0) < 0" [class.text-success]="(ticketMedioHoje?.variacao || 0) > 0" [class.text-danger]="(ticketMedioHoje?.variacao || 0) < 0"></i>
+                {{ (ticketMedioHoje?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Ticket Médio (Hoje)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-receipt"></i>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Card: Produtos com Baixo Estoque -->
-    <div class="col-lg-6 col-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Produtos com Baixo Estoque</h5>
+    <div class="row mt-4">
+      <!-- Card: Vendas Totais Semana -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>
+              R$ {{ vendasTotaisSemana?.total | number:'1.2-2' }}
+              <sup *ngIf="vendasTotaisSemana?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(vendasTotaisSemana?.variacao || 0) > 0" [class.fa-arrow-down]="(vendasTotaisSemana?.variacao || 0) < 0" [class.text-success]="(vendasTotaisSemana?.variacao || 0) > 0" [class.text-danger]="(vendasTotaisSemana?.variacao || 0) < 0"></i>
+                {{ (vendasTotaisSemana?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Vendas Totais (Semana)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
         </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table m-0">
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Categoria</th>
-                  <th>Genero</th>
-                  <th>Estoque</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let produto of produtosBaixoEstoque">
-                  <td>{{ produto.nome }}</td>
-                  <td>{{ produto.categoria?.descricao || 'N/A' }}</td>
-                  <td>{{ produto.genero  | titlecase }}</td>
-                  <td><span class="text-danger">{{ produto.quantidadeTotalEstoque }}</span></td>
-                </tr>
-                <tr *ngIf="produtosBaixoEstoque.length === 0">
-                  <td colspan="4" class="text-center">Nenhum produto com baixo estoque.</td>
-                </tr>
-              </tbody>
-            </table>
+      </div>
+
+      <!-- Card: Número de Vendas Semana -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-secondary">
+          <div class="inner">
+            <h3>
+              {{ numeroVendasSemana?.total }}
+              <sup *ngIf="numeroVendasSemana?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(numeroVendasSemana?.variacao || 0) > 0" [class.fa-arrow-down]="(numeroVendasSemana?.variacao || 0) < 0" [class.text-success]="(numeroVendasSemana?.variacao || 0) > 0" [class.text-danger]="(numeroVendasSemana?.variacao || 0) < 0"></i>
+                {{ (numeroVendasSemana?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Número de Vendas (Semana)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Ticket Médio Semana -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>
+              R$ {{ ticketMedioSemana?.total | number:'1.2-2' }}
+              <sup *ngIf="ticketMedioSemana?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(ticketMedioSemana?.variacao || 0) > 0" [class.fa-arrow-down]="(ticketMedioSemana?.variacao || 0) < 0" [class.text-success]="(ticketMedioSemana?.variacao || 0) > 0" [class.text-danger]="(ticketMedioSemana?.variacao || 0) < 0"></i>
+                {{ (ticketMedioSemana?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Ticket Médio (Semana)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-receipt"></i>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row mt-4">
-    <!-- Card: Produtos em Falta -->
-    <div class="col-lg-6 col-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title">Produtos em Falta</h5>
+    <div class="row mt-4">
+      <!-- Card: Vendas Totais Mês -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>
+              R$ {{ vendasTotaisMes?.total | number:'1.2-2' }}
+              <sup *ngIf="vendasTotaisMes?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(vendasTotaisMes?.variacao || 0) > 0" [class.fa-arrow-down]="(vendasTotaisMes?.variacao || 0) < 0" [class.text-success]="(vendasTotaisMes?.variacao || 0) > 0" [class.text-danger]="(vendasTotaisMes?.variacao || 0) < 0"></i>
+                {{ (vendasTotaisMes?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Vendas Totais (Mês)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
         </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table m-0">
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Categoria</th>
-                  <th>Genero</th>
-                  <th>Estoque</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let produto of produtosEmFalta">
-                  <td>{{ produto.nome }}</td>
-                  <td>{{ produto.categoria?.descricao || 'N/A' }}</td>
-                  <td>{{ produto.genero  | titlecase }}</td>
-                  <td><span class="text-danger">{{ produto.quantidadeTotalEstoque }}</span></td>
-                </tr>
-                <tr *ngIf="produtosEmFalta.length === 0">
-                  <td colspan="4" class="text-center">Nenhum produto em falta.</td>
-                </tr>
-              </tbody>
-            </table>
+      </div>
+
+      <!-- Card: Número de Vendas Mês -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-secondary">
+          <div class="inner">
+            <h3>
+              {{ numeroVendasMes?.total }}
+              <sup *ngIf="numeroVendasMes?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(numeroVendasMes?.variacao || 0) > 0" [class.fa-arrow-down]="(numeroVendasMes?.variacao || 0) < 0" [class.text-success]="(numeroVendasMes?.variacao || 0) > 0" [class.text-danger]="(numeroVendasMes?.variacao || 0) < 0"></i>
+                {{ (numeroVendasMes?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Número de Vendas (Mês)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Ticket Médio Mês -->
+      <div class="col-lg-4 col-12">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>
+              R$ {{ ticketMedioMes?.total | number:'1.2-2' }}
+              <sup *ngIf="ticketMedioMes?.variacao !== undefined">
+                <i class="fas" [class.fa-arrow-up]="(ticketMedioMes?.variacao || 0) > 0" [class.fa-arrow-down]="(ticketMedioMes?.variacao || 0) < 0" [class.text-success]="(ticketMedioMes?.variacao || 0) > 0" [class.text-danger]="(ticketMedioMes?.variacao || 0) < 0"></i>
+                {{ (ticketMedioMes?.variacao || 0) | number:'1.1-1' }}%
+              </sup>
+            </h3>
+            <p>Ticket Médio (Mês)</p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-receipt"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <!-- Card: Produtos Mais Vendidos -->
+      <div class="col-lg-6 col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Top 5 Produtos Mais Vendidos</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table m-0">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Genero</th>
+                    <th>Vendidos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let produto of topProdutosVendidos">
+                    <td>{{ produto.nomeProduto }}</td>
+                    <td>{{ produto.descricaoCategoria }}</td>
+                    <td>{{ produto.descricaoGenero  | titlecase }}</td>
+                    <td>{{ produto.quantidade }}</td>
+                  </tr>
+                  <tr *ngIf="topProdutosVendidos.length === 0">
+                    <td colspan="4" class="text-center">Nenhum produto vendido ainda.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Produtos com Baixo Estoque -->
+      <div class="col-lg-6 col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Produtos com Baixo Estoque</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table m-0">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Genero</th>
+                    <th>Estoque</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let produto of produtosBaixoEstoque">
+                    <td>{{ produto.nome }}</td>
+                    <td>{{ produto.categoria?.descricao || 'N/A' }}</td>
+                    <td>{{ produto.genero  | titlecase }}</td>
+                    <td><span class="text-danger">{{ produto.quantidadeTotalEstoque }}</span></td>
+                  </tr>
+                  <tr *ngIf="produtosBaixoEstoque.length === 0">
+                    <td colspan="4" class="text-center">Nenhum produto com baixo estoque.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <!-- Card: Produtos em Falta -->
+      <div class="col-lg-6 col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Produtos em Falta</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table m-0">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Genero</th>
+                    <th>Estoque</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let produto of produtosEmFalta">
+                    <td>{{ produto.nome }}</td>
+                    <td>{{ produto.categoria?.descricao || 'N/A' }}</td>
+                    <td>{{ produto.genero  | titlecase }}</td>
+                    <td><span class="text-danger">{{ produto.quantidadeTotalEstoque }}</span></td>
+                  </tr>
+                  <tr *ngIf="produtosEmFalta.length === 0">
+                    <td colspan="4" class="text-center">Nenhum produto em falta.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

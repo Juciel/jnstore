@@ -1,5 +1,7 @@
 import { Component, Inject, PLATFORM_ID, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { CaixaRepresentation, VendaRepresentation, ProdutoRepresetation, ItemVendaProdutoRepresentation } from '../../models'; // Importar ProdutoRepresetation
 import { CaixaService } from '../../services/caixa.service';
@@ -58,78 +60,45 @@ export class DashboardComponent implements AfterViewInit {
   loadDashboardCards() {
     this.loading = true;
     this.error = null;
-    const today = new Date();
 
-    // Vendas Totais Hoje
-    this.vendaService.getVendasTotaisPorPeriodo('hoje').subscribe({
-      next: (data) => this.vendasTotaisHoje = data,
-      error: (e) => console.error('Erro ao carregar vendas totais hoje:', e)
-    });
+    const requests = {
+      vendasTotaisHoje: this.vendaService.getVendasTotaisPorPeriodo('hoje').pipe(catchError(e => of(null))),
+      numeroVendasHoje: this.vendaService.getNumeroVendasPorPeriodo('hoje').pipe(catchError(e => of(null))),
+      ticketMedioHoje: this.vendaService.getTicketMedioPorPeriodo('hoje').pipe(catchError(e => of(null))),
+      vendasTotaisSemana: this.vendaService.getVendasTotaisPorPeriodo('semana').pipe(catchError(e => of(null))),
+      numeroVendasSemana: this.vendaService.getNumeroVendasPorPeriodo('semana').pipe(catchError(e => of(null))),
+      ticketMedioSemana: this.vendaService.getTicketMedioPorPeriodo('semana').pipe(catchError(e => of(null))),
+      vendasTotaisMes: this.vendaService.getVendasTotaisPorPeriodo('mes').pipe(catchError(e => of(null))),
+      numeroVendasMes: this.vendaService.getNumeroVendasPorPeriodo('mes').pipe(catchError(e => of(null))),
+      ticketMedioMes: this.vendaService.getTicketMedioPorPeriodo('mes').pipe(catchError(e => of(null))),
+      topProdutosVendidos: this.vendaService.getTopProdutosVendidos(5).pipe(catchError(e => of([]))),
+      produtosBaixoEstoque: this.produtoService.getProdutosBaixoEstoque(5).pipe(catchError(e => of([]))),
+      produtosEmFalta: this.produtoService.getProdutosEmFalta(5).pipe(catchError(e => of([])))
+    };
 
-    // Número de Vendas Hoje
-    this.vendaService.getNumeroVendasPorPeriodo('hoje').subscribe({
-      next: (data) => this.numeroVendasHoje = data,
-      error: (e) => console.error('Erro ao carregar número de vendas hoje:', e)
-    });
-
-    // Ticket Médio Hoje
-    this.vendaService.getTicketMedioPorPeriodo('hoje').subscribe({
-      next: (data) => this.ticketMedioHoje = data,
-      error: (e) => console.error('Erro ao carregar ticket médio hoje:', e)
-    });
-
-    // Vendas Totais Semana
-    this.vendaService.getVendasTotaisPorPeriodo('semana').subscribe({
-      next: (data) => this.vendasTotaisSemana = data,
-      error: (e) => console.error('Erro ao carregar vendas totais semana:', e)
-    });
-
-    // Número de Vendas Semana
-    this.vendaService.getNumeroVendasPorPeriodo('semana').subscribe({
-      next: (data) => this.numeroVendasSemana = data,
-      error: (e) => console.error('Erro ao carregar número de vendas semana:', e)
-    });
-
-    // Ticket Médio Semana
-    this.vendaService.getTicketMedioPorPeriodo('semana').subscribe({
-      next: (data) => this.ticketMedioSemana = data,
-      error: (e) => console.error('Erro ao carregar ticket médio semana:', e)
-    });
-
-    // Vendas Totais Mês
-    this.vendaService.getVendasTotaisPorPeriodo('mes').subscribe({
-      next: (data) => this.vendasTotaisMes = data,
-      error: (e) => console.error('Erro ao carregar vendas totais mês:', e)
-    });
-
-    // Número de Vendas Mês
-    this.vendaService.getNumeroVendasPorPeriodo('mes').subscribe({
-      next: (data) => this.numeroVendasMes = data,
-      error: (e) => console.error('Erro ao carregar número de vendas mês:', e)
-    });
-
-    // Ticket Médio Mês
-    this.vendaService.getTicketMedioPorPeriodo('mes').subscribe({
-      next: (data) => this.ticketMedioMes = data,
-      error: (e) => console.error('Erro ao carregar ticket médio mês:', e)
-    });
-
-    // Top Produtos Vendidos
-    this.vendaService.getTopProdutosVendidos(5).subscribe({
-      next: (data) => this.topProdutosVendidos = data,
-      error: (e) => console.error('Erro ao carregar top produtos vendidos:', e)
-    });
-
-    // Produtos com Baixo Estoque
-    this.produtoService.getProdutosBaixoEstoque(5).subscribe({
-      next: (data) => this.produtosBaixoEstoque = data,
-      error: (e) => console.error('Erro ao carregar produtos com baixo estoque:', e)
-    });
-
-    // Produtos em falta
-    this.produtoService.getProdutosEmFalta(5).subscribe({
-      next: (data) => this.produtosEmFalta = data,
-      error: (e) => console.error('Erro ao carregar produtos em falta:', e)
+    forkJoin(requests).subscribe({
+      next: (data: any) => {
+        this.vendasTotaisHoje = data.vendasTotaisHoje;
+        this.numeroVendasHoje = data.numeroVendasHoje;
+        this.ticketMedioHoje = data.ticketMedioHoje;
+        this.vendasTotaisSemana = data.vendasTotaisSemana;
+        this.numeroVendasSemana = data.numeroVendasSemana;
+        this.ticketMedioSemana = data.ticketMedioSemana;
+        this.vendasTotaisMes = data.vendasTotaisMes;
+        this.numeroVendasMes = data.numeroVendasMes;
+        this.ticketMedioMes = data.ticketMedioMes;
+        this.topProdutosVendidos = data.topProdutosVendidos;
+        this.produtosBaixoEstoque = data.produtosBaixoEstoque;
+        this.produtosEmFalta = data.produtosEmFalta;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        console.error('Erro ao carregar dados do dashboard:', e);
+        this.error = 'Erro ao carregar dados do dashboard.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
