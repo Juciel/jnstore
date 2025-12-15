@@ -14,6 +14,10 @@ spring:
       hibernate:
         format_sql: true
 
+jwt:
+  secret: "SecretoMuitoLongoParaSerSeguroNaoUseEmProducaoPorFavorAltereIsso"
+  expiration: "86400000" # 24 horas
+
 server:
   port: 8082
 

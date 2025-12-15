@@ -16,9 +16,9 @@ public interface ProdutoMapper {
 
     List<ProdutoRepresetation> toRepresetationList(List<TbProduto> domainList);
 
-    @Mapping(target = "idUsuarioCriacao", ignore = true)
+    @Mapping(target = "usuarioCriacao", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
-    @Mapping(target = "idUsuarioAtualizacao", ignore = true)
+    @Mapping(target = "usuarioAtualizacao", ignore = true)
     @Mapping(target = "dataAtualizacao", ignore = true)
     TbProduto toDomain(ProdutoRepresetation model);
 

@@ -31,6 +31,9 @@ public class TbMovimentacaoEstoque {
     @Column(length = 100)
     private String descricaoMotivo; // NF, ID da Venda, ou descrição do motivo
 
-    @Column(name = "usuario_id")
-    private Long usuarioId; // Quem fez a operação
+    @Column(name = "USUARIO_CRIACAO", nullable = false)
+    private String usuarioCriacao;
+
+    @Column(name = "DATA_CRIACAO", nullable = false)
+    private LocalDateTime dataCriacao;
 }

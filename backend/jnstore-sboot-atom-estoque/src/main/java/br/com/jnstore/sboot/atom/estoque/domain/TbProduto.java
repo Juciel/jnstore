@@ -62,14 +62,14 @@ public class TbProduto {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotalLucro;
 
-    @Column(name = "ID_USUARIO_CRIACAO", nullable = false)
-    private Long idUsuarioCriacao;
+    @Column(name = "USUARIO_CRIACAO", nullable = false)
+    private String usuarioCriacao;
 
     @Column(name = "DATA_CRIACAO", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @Column(name = "ID_USUARIO_ATUALIZACAO")
-    private Long idUsuarioAtualizacao;
+    @Column(name = "USUARIO_ATUALIZACAO")
+    private String usuarioAtualizacao;
 
     @Column(name = "DATA_ATUALIZACAO")
     private LocalDateTime dataAtualizacao;

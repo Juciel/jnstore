@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException; // Import adicionado
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -86,6 +88,46 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handler para exceções de autenticação (401 Unauthorized) lançadas pelo Feign.
+     * Retorna status 401 Unauthorized com uma mensagem clara.
+     */
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<ErroRepresetation> handleUnauthorizedException(
+            HttpClientErrorException.Unauthorized ex, HttpServletRequest request) {
+
+        ErroRepresetation erro = new ErroRepresetation();
+        erro.setTimestamp(OffsetDateTime.now());
+        erro.setStatus(HttpStatus.UNAUTHORIZED.value());
+        erro.setError(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        erro.setMessage("Autenticação falhou. Credenciais inválidas ou token ausente/expirado.");
+        erro.setPath(request.getRequestURI());
+
+        log.warn("Autenticação falhou (Feign 401 Unauthorized) para o caminho '{}': {}", request.getRequestURI(), ex.getMessage());
+
+        return new ResponseEntity<>(erro, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Handler para exceções de acesso negado (403 Forbidden).
+     * Retorna status 403 Forbidden.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErroRepresetation> handleAccessDeniedException(
+            AccessDeniedException ex, HttpServletRequest request) {
+
+        ErroRepresetation erro = new ErroRepresetation();
+        erro.setTimestamp(OffsetDateTime.now());
+        erro.setStatus(HttpStatus.FORBIDDEN.value());
+        erro.setError(HttpStatus.FORBIDDEN.getReasonPhrase());
+        erro.setMessage("Acesso negado. Você não tem permissão para executar esta operação.");
+        erro.setPath(request.getRequestURI());
+
+        log.warn("Acesso negado para o caminho '{}': {}", request.getRequestURI(), ex.getMessage());
+
+        return new ResponseEntity<>(erro, HttpStatus.FORBIDDEN);
+    }
+
+    /**
      * Handler genérico para outras exceções não tratadas especificamente.
      * Retorna status 500 Internal Server Error.
      */
@@ -103,5 +145,6 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
 }

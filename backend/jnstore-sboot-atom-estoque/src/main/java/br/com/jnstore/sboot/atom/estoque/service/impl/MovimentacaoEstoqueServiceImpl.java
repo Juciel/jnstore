@@ -9,6 +9,7 @@ import br.com.jnstore.sboot.atom.estoque.repository.MovimentacaoEstoqueRepositor
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.VariacaoProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.MovimentacaoEstoqueService;
+import br.com.jnstore.sboot.atom.estoque.util.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class MovimentacaoEstoqueServiceImpl implements MovimentacaoEstoqueServic
             movimentacao.setQuantidade(item.getQuantidade());
             movimentacao.setDataMovimentacao(LocalDateTime.now());
             movimentacao.setDescricaoMotivo(movimentacaoEstoqueInput.getDescricaoMotivo());
-            movimentacao.setUsuarioId(movimentacaoEstoqueInput.getUsuarioId());
+            movimentacao.setUsuarioCriacao(SecurityUtils.getAuthenticatedUsername());
 
             repository.save(movimentacao);
         });
@@ -80,7 +81,7 @@ public class MovimentacaoEstoqueServiceImpl implements MovimentacaoEstoqueServic
             movimentacao.setQuantidade(item.getQuantidade());
             movimentacao.setDataMovimentacao(LocalDateTime.now());
             movimentacao.setDescricaoMotivo(movimentacaoEstoqueInput.getDescricaoMotivo());
-            movimentacao.setUsuarioId(movimentacaoEstoqueInput.getUsuarioId());
+            movimentacao.setUsuarioCriacao(SecurityUtils.getAuthenticatedUsername());
 
             repository.save(movimentacao);
         });

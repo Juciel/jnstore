@@ -693,6 +693,13 @@ paths:
                 $ref: '#/components/schemas/ErroRepresetation'
 
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
 
     # 1. MovimentacaoEstoqueInput
@@ -914,3 +921,6 @@ components:
           type: string
           description: "Descrição específica do motivo da falha de validação."
           example: 'A quantidade deve ser um valor positivo.'
+
+security:
+  - bearerAuth: []

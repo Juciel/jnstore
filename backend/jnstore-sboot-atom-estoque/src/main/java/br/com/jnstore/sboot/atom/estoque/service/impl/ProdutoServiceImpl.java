@@ -8,6 +8,7 @@ import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.VariacaoProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.ProdutoService;
 import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil;
+import br.com.jnstore.sboot.atom.estoque.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +62,7 @@ public class ProdutoServiceImpl implements ProdutoService {
                 .ifPresent(c -> {
                     throw new IllegalArgumentException("Já existe um produto com esse nome '" + produto.getNome() + "'.");
                 });
-        produto.setIdUsuarioCriacao(1L);
+        produto.setUsuarioCriacao(SecurityUtils.getAuthenticatedUsername());
         produto.setDataCriacao(LocalDateTime.now());
         atualizarValoresTotaisProduto(produto);
         return repository.save(produto);
@@ -70,7 +71,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public TbProduto update(TbProduto produto) {
-        produto.setIdUsuarioAtualizacao(1L);
+        produto.setUsuarioAtualizacao(SecurityUtils.getAuthenticatedUsername());
         produto.setDataAtualizacao(LocalDateTime.now());
         atualizarValoresTotaisProduto(produto);
        return repository.save(produto);

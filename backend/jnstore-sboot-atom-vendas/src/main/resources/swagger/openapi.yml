@@ -668,6 +668,13 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     CaixaInput:
       type: object
@@ -985,3 +992,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErroRepresetation'
+
+security:
+  - bearerAuth: []

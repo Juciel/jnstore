@@ -2,6 +2,10 @@ spring:
   application:
     name: jnstore-sboot-orch
 
+jwt:
+  secret: "SecretoMuitoLongoParaSerSeguroNaoUseEmProducaoPorFavorAltereIsso"
+  expiration: "86400000" # 24 horas
+
 server:
   port: 8081
 

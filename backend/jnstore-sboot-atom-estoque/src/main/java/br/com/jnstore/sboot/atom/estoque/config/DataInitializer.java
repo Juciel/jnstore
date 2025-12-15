@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
                     log.info("Categoria Camisas não encontrado. Criando...");
                     TbCategoria newCategoria = new TbCategoria();
                     newCategoria.setDescricao(VALOR_INICIAL_CATEGORIA);
-                    newCategoria.setIdUsuarioCriacao(1L);
+                    newCategoria.setUsuarioCriacao("admin.jnstore");
                     newCategoria.setDataCriacao(LocalDateTime.now());
                     return categoriaRepository.save(newCategoria);
                 });

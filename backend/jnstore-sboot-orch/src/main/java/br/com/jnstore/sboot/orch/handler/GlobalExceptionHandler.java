@@ -28,6 +28,47 @@ public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
     /**
+     * Handler para exceções de autenticação (401 Unauthorized) lançadas pelo Feign.
+     * Retorna status 401 Unauthorized com uma mensagem clara.
+     */
+    @ExceptionHandler(FeignException.Unauthorized.class)
+    public ResponseEntity<ErroRepresetation> handleFeignUnauthorizedException(
+            FeignException.Unauthorized ex, HttpServletRequest request) {
+
+        ErroRepresetation erro = new ErroRepresetation();
+        erro.setTimestamp(OffsetDateTime.now());
+        erro.setStatus(HttpStatus.UNAUTHORIZED.value());
+        erro.setError(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        erro.setMessage("Autenticação falhou. Credenciais inválidas ou token ausente/expirado.");
+        erro.setPath(request.getRequestURI());
+
+        log.warn("Autenticação falhou (Feign 401 Unauthorized) para o caminho '{}': {}", request.getRequestURI(), ex.getMessage());
+
+        return new ResponseEntity<>(erro, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Handler para exceções de acesso negado (403 Forbidden) lançadas pelo Feign.
+     * Retorna status 403 Forbidden com uma mensagem clara.
+     */
+    @ExceptionHandler(FeignException.Forbidden.class)
+    public ResponseEntity<ErroRepresetation> handleFeignForbiddenException(
+            FeignException.Forbidden ex, HttpServletRequest request) {
+
+        ErroRepresetation erro = new ErroRepresetation();
+        erro.setTimestamp(OffsetDateTime.now());
+        erro.setStatus(HttpStatus.FORBIDDEN.value());
+        erro.setError(HttpStatus.FORBIDDEN.getReasonPhrase());
+        erro.setMessage("Acesso negado. Você não tem permissão para executar esta operação.");
+        erro.setPath(request.getRequestURI());
+
+        // Log a mensagem original do Feign para depuração, mas retorne a mensagem padronizada para o cliente.
+        log.warn("Acesso negado (Feign 403 Forbidden) para o caminho '{}': {}", request.getRequestURI(), ex.getMessage());
+
+        return new ResponseEntity<>(erro, HttpStatus.FORBIDDEN);
+    }
+
+    /**
      * Handler para exceções lançadas pelos clientes Feign.
      * Extrai a mensagem de erro original do microsserviço e a repassa.
      */

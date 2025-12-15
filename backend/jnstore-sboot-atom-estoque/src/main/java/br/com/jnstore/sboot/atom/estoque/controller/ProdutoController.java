@@ -57,7 +57,7 @@ public class ProdutoController implements ProdutoApi {
                     var produtoParaAtualizar = mapper.toDomain(produtoRepresetation);
                     produtoParaAtualizar.setId(id);
                     produtoParaAtualizar.setDataCriacao(produtoExistente.getDataCriacao());
-                    produtoParaAtualizar.setIdUsuarioCriacao(produtoExistente.getIdUsuarioCriacao());
+                    produtoParaAtualizar.setUsuarioCriacao(produtoExistente.getUsuarioCriacao());
                     var produtoAtualizado = service.update(produtoParaAtualizar);
                     return ResponseEntity.ok(mapper.toRepresetation(produtoAtualizado));
                 })

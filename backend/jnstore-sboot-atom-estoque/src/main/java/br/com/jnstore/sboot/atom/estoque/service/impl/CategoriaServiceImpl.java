@@ -6,7 +6,8 @@ import br.com.jnstore.sboot.atom.estoque.model.CategoriaRepresetation;
 import br.com.jnstore.sboot.atom.estoque.repository.CategoriaRepository;
 import br.com.jnstore.sboot.atom.estoque.repository.ProdutoRepository;
 import br.com.jnstore.sboot.atom.estoque.service.CategoriaService;
-import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil; // Importar PaginationUtil
+import br.com.jnstore.sboot.atom.estoque.util.PaginationUtil;
+import br.com.jnstore.sboot.atom.estoque.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +38,6 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public Page<CategoriaRepresetation> listarPaginado(Pageable pageable, String descricao) {
-        // Aplica a ordenação padrão por ID descendente se a paginação não tiver ordenação
         Pageable sortedPageable = PaginationUtil.applyDefaultSortIfUnsorted(pageable, "id");
 
         Page<TbCategoria> pageResult;
@@ -65,7 +65,7 @@ public class CategoriaServiceImpl implements CategoriaService {
                     throw new IllegalArgumentException("Já existe uma categoria com a descrição '" + categoria.getDescricao() + "'.");
                 });
         TbCategoria entity = categoriaMapper.toEntity(categoria);
-        entity.setIdUsuarioCriacao(1L); // Placeholder para usuário logado
+        entity.setUsuarioCriacao(SecurityUtils.getAuthenticatedUsername());
         entity.setDataCriacao(LocalDateTime.now());
         return categoriaMapper.toRepresentation(categoriaRepository.save(entity));
     }
@@ -95,7 +95,7 @@ public class CategoriaServiceImpl implements CategoriaService {
                 });
 
         entity.setDescricao(categoria.getDescricao());
-        entity.setIdUsuarioAtualizacao(1L); // Placeholder para usuário logado
+        entity.setUsuarioAtualizacao(SecurityUtils.getAuthenticatedUsername());
         entity.setDataAtualizacao(LocalDateTime.now());
         return categoriaMapper.toRepresentation(categoriaRepository.save(entity));
     }
