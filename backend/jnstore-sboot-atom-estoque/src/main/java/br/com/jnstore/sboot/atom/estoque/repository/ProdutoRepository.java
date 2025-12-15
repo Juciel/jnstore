@@ -31,4 +31,6 @@ public interface ProdutoRepository extends JpaRepository<TbProduto, Long> {
     Page<TbProduto> findByQuantidadeTotalEstoqueEquals(Integer quantidade, Pageable pageable);
 
     Page<TbProduto> findByQuantidadeTotalEstoqueGreaterThanAndQuantidadeTotalEstoqueLessThanEqual(Integer minQuantidade, Integer maxQuantidade, Pageable pageable);
+
+    Optional<TbProduto> findByNomeIgnoreCase(String nome);
 }

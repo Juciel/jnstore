@@ -57,6 +57,10 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public TbProduto create(TbProduto produto) {
+        repository.findByNomeIgnoreCase(produto.getNome())
+                .ifPresent(c -> {
+                    throw new IllegalArgumentException("Já existe um produto com esse nome '" + produto.getNome() + "'.");
+                });
         produto.setIdUsuarioCriacao(1L);
         produto.setDataCriacao(LocalDateTime.now());
         atualizarValoresTotaisProduto(produto);

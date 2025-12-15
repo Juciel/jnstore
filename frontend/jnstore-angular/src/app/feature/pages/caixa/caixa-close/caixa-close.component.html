@@ -13,6 +13,10 @@
 
       <h2 class="mb-3">Gerenciamento de Caixa</h2>
 
+      <div *ngIf="closeError" class="alert alert-danger mt-3">
+        {{ closeError }}
+      </div>
+
       <div class="card mb-4">
         <div class="card-header bg-success text-white">
           Fechar Caixa
@@ -35,18 +39,12 @@
           </form>
         </div>
       </div>
-
-      <div *ngIf="closeError" class="alert alert-danger mt-3">
-        {{ closeError }}
-      </div>
     </div>
 
     <div *ngIf="!caixa && !closeError" class="alert alert-warning mt-3">
       Nenhum ID de caixa fornecido para fechamento.
     </div>
 
-    <div *ngIf="closeError" class="alert alert-danger mt-3">
-      {{ closeError }}
-    </div>
+
   </div>
 </div>

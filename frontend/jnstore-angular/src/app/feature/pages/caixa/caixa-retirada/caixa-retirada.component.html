@@ -11,6 +11,10 @@
         <button class="btn btn-secondary" (click)="goBack()">&larr; Voltar</button>
       </div>
 
+      <div *ngIf="closeError" class="alert alert-danger mt-3">
+        {{ closeError }}
+      </div>
+
       <h2 class="mb-3">Gerenciamento de Caixa</h2>
 
       <div class="card mb-4">
@@ -36,17 +40,10 @@
         </div>
       </div>
 
-      <div *ngIf="closeError" class="alert alert-danger mt-3">
-        {{ closeError }}
-      </div>
     </div>
 
     <div *ngIf="!vendas && !closeError" class="alert alert-warning mt-3">
       Nenhum ID de caixa fornecido para retirada.
-    </div>
-
-    <div *ngIf="closeError" class="alert alert-danger mt-3">
-      {{ closeError }}
     </div>
   </div>
 </div>

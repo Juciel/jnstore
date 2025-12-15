@@ -10,6 +10,9 @@
       <a class="btn btn-secondary" routerLink="/vendas">&larr; Voltar</a>
     </div>
 
+    <div *ngIf="submitError" class="alert alert-danger">{{ submitError }}</div>
+    <div *ngIf="saved" class="alert alert-success">Venda registrada com ID {{ saved.id }}</div>
+
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div formArrayName="itens" class="mb-3">
         <h5>Itens</h5>
@@ -88,7 +91,5 @@
       </div>
     </form>
 
-    <div *ngIf="submitError" class="alert alert-danger">{{ submitError }}</div>
-    <div *ngIf="saved" class="alert alert-success">Venda registrada com ID {{ saved.id }}</div>
   </div>
 </div>

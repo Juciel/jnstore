@@ -9,6 +9,7 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
       <a class="btn btn-secondary" routerLink="/produtos">&larr; Voltar</a>
     </div>
+    <div *ngIf="saveError" class="alert alert-danger">{{ saveError }}</div>
     <div *ngIf="categoriasError" class="alert alert-danger">{{ categoriasError }}</div>
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="mb-3">
@@ -81,6 +82,5 @@
     </form>
     <app-variacao-modal #variacaoModal (save)="onVariacaoSave($event)"></app-variacao-modal>
 
-    <div *ngIf="saveError" class="alert alert-danger">{{ saveError }}</div>
   </div>
 </div>
