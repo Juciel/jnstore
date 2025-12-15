@@ -9,36 +9,36 @@ import java.util.List;
 @FeignClient(name = "produto", url = "${feign.client.produto.url}")
 public interface ProdutoClient {
 
-    @GetMapping("/produtos")
+    @GetMapping("/api/produtos")
     List<ProdutoRepresetation> getAll();
 
-    @GetMapping("/produtos/{id}")
+    @GetMapping("/api/produtos/{id}")
     ProdutoRepresetation getById(@PathVariable("id") Long id);
 
-    @PostMapping("/produtos")
+    @PostMapping("/api/produtos")
     ProdutoRepresetation create(@RequestBody ProdutoRepresetation produto);
 
-    @PutMapping("/produtos/{id}")
+    @PutMapping("/api/produtos/{id}")
     ProdutoRepresetation update(@PathVariable("id") Long id, @RequestBody ProdutoRepresetation produto);
 
-    @DeleteMapping("/produtos/{id}")
+    @DeleteMapping("/api/produtos/{id}")
     void delete(@PathVariable("id") Long id);
 
-    @GetMapping("/produtos/new-sku")
+    @GetMapping("/api/produtos/new-sku")
     String getNewSku();
 
-    @GetMapping("/produtos/por-variacao")
+    @GetMapping("/api/produtos/por-variacao")
     List<ProdutoRepresetation> listarProdutosPorIdVariacao(@RequestParam("idVariacao") List<Long> idVariacao);
 
-    @GetMapping("/produtos/paginado")
+    @GetMapping("/api/produtos/paginado")
     Object getAllPaginado(@RequestParam("page") Integer page,
                           @RequestParam("size") Integer size,
                           @RequestParam("sort") List<String> sort,
                           @RequestParam("termo") String termo);
 
-    @GetMapping("/produtos/baixo-estoque")
+    @GetMapping("/api/produtos/baixo-estoque")
     List<ProdutoRepresetation> getBaixoEstoque(@RequestParam("limit") Integer limit);
 
-    @GetMapping("/produtos/em-falta")
+    @GetMapping("/api/produtos/em-falta")
     List<ProdutoRepresetation> getEmFalta(@RequestParam("limit") Integer limit);
 }

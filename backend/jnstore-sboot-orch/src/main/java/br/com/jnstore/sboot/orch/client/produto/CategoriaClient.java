@@ -9,22 +9,22 @@ import java.util.List;
 @FeignClient(name = "categorias", url = "${feign.client.produto.url}")
 public interface CategoriaClient {
 
-    @GetMapping("/categorias")
+    @GetMapping("/api/categorias")
     List<CategoriaRepresetation> listarCategorias();
 
-    @GetMapping("/categorias/{id}")
+    @GetMapping("/api/categorias/{id}")
     CategoriaRepresetation buscarCategoriaPorId(@PathVariable("id") Long id);
 
-    @PostMapping("/categorias")
+    @PostMapping("/api/categorias")
     CategoriaRepresetation criarCategoria(@RequestBody CategoriaRepresetation categoriaRepresetation);
 
-    @PutMapping("/categorias/{id}")
+    @PutMapping("/api/categorias/{id}")
     CategoriaRepresetation atualizarCategoria(@PathVariable("id") Long id, @RequestBody CategoriaRepresetation categoriaRepresetation);
 
-    @DeleteMapping("/categorias/{id}")
+    @DeleteMapping("/api/categorias/{id}")
     void delete(@PathVariable("id") Long id);
 
-    @GetMapping("/categorias/paginado")
+    @GetMapping("/api/categorias/paginado")
     Object listarCategoriasPaginado(@RequestParam("page") Integer page,
                                     @RequestParam("size") Integer size,
                                     @RequestParam("sort") List<String> sort,

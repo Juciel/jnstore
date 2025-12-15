@@ -16,7 +16,7 @@ tags:
     description: "Operações relacionadas às categorias de produtos"
 
 paths:
-  /produtos:
+  /api/produtos:
     get:
       tags:
         - Produto
@@ -74,7 +74,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/paginado:
+  /api/produtos/paginado:
     get:
       tags:
         - Produto
@@ -130,7 +130,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/{id}:
+  /api/produtos/{id}:
     get:
       tags:
         - Produto
@@ -245,7 +245,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/new-sku:
+  /api/produtos/new-sku:
     get:
       tags:
         - Produto
@@ -265,7 +265,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/por-variacao:
+  /api/produtos/por-variacao:
     get:
       tags:
         - Produto
@@ -305,7 +305,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/top-vendidos:
+  /api/produtos/top-vendidos:
     get:
       tags:
         - Produto
@@ -343,7 +343,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/baixo-estoque:
+  /api/produtos/baixo-estoque:
     get:
       tags:
         - Produto
@@ -381,7 +381,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /produtos/em-falta:
+  /api/produtos/em-falta:
     get:
       tags:
         - Produto
@@ -419,7 +419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /categorias:
+  /api/categorias:
     get:
       tags:
         - Categoria
@@ -471,7 +471,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /categorias/paginado:
+  /api/categorias/paginado:
     get:
       tags:
         - Categoria
@@ -527,7 +527,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /categorias/{id}:
+  /api/categorias/{id}:
     get:
       tags:
         - Categoria
@@ -614,7 +614,7 @@ paths:
         '404':
           description: "Categoria não encontrada"
 
-  /estoque/entrada:
+  /api/estoque/entrada:
     post:
       tags:
         - Estoque
@@ -653,7 +653,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErroRepresetation'
 
-  /estoque/saida:
+  /api/estoque/saida:
     post:
       tags:
         - Estoque
@@ -811,6 +811,12 @@ components:
           description: "Preço de compra que o produto foi obtido."
           example: 28.0
         valorVenda:
+          type: number
+          example: 25.0
+        valorVendaPix:
+          type: number
+          example: 25.0
+        valorVendaCredito:
           type: number
           example: 25.0
         categoria:

@@ -1,6 +1,6 @@
 package br.com.jnstore.sboot.orch.controller;
 
-import br.com.jnstore.sboot.atom.vendas.api.VendasApi;
+import br.com.jnstore.sboot.atom.vendas.api.VendaApi;
 import br.com.jnstore.sboot.atom.vendas.model.*;
 import br.com.jnstore.sboot.orch.service.VendaService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class VendaController implements VendasApi {
+public class VendaController implements VendaApi {
 
     private final VendaService service;
 

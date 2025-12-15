@@ -103,14 +103,13 @@ public class VendaService {
         registrarEntradaEstoque(vendaInput);
         try {
             vendaClient.desfazerVenda(id);
+        } catch (FeignException e) {
+            registrarSaidaEstoque(vendaInput);
+            throw e;
         } catch (Exception e) {
             registrarSaidaEstoque(vendaInput);
             throw new RuntimeException("Erro ao desfazer venda", e);
         }
-    }
-
-    public List<VendaRepresentation> listarVendasPorIdVariacao(List<Long> idVariacao){
-        return vendaClient.listarVendasPorIdVariacao(idVariacao);
     }
 
     public VendaDetalheRepresentation buscarDetalhesVendaPorId(Long id) {

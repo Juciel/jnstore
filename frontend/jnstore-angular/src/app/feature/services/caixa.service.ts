@@ -11,31 +11,31 @@ export class CaixaService {
   constructor(private http: HttpClient) {}
 
   abrirCaixa(input: CaixaInput): Observable<CaixaRepresentation> {
-    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/caixas/abrir`, input);
+    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/api/api/caixas/abrir`, input);
   }
 
   fecharCaixa(id: number, input: CaixaInput): Observable<CaixaRepresentation> {
-    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/caixas/${id}/fechar`, input);
+    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/api/caixas/${id}/fechar`, input);
   }
 
   retiradaCaixa(id: number, input: CaixaInput): Observable<CaixaRepresentation> {
-    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/caixas/${id}/retirar`, input);
+    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/api/caixas/${id}/retirar`, input);
   }
 
   consultaCaixaAbertoHoje(): Observable<CaixaRepresentation | null> {
-    return this.http.get<CaixaRepresentation | null>(`${this.baseUrl}/caixas/abrir`);
+    return this.http.get<CaixaRepresentation | null>(`${this.baseUrl}/api/caixas/abrir`);
   }
 
   listarCaixas(): Observable<CaixaRepresentation[]> {
-    return this.http.get<CaixaRepresentation[]>(`${this.baseUrl}/caixas`);
+    return this.http.get<CaixaRepresentation[]>(`${this.baseUrl}/api/caixas`);
   }
 
   buscarPorId(id: number): Observable<CaixaRepresentation> {
-    return this.http.get<CaixaRepresentation>(`${this.baseUrl}/caixas/${id}`);
+    return this.http.get<CaixaRepresentation>(`${this.baseUrl}/api/caixas/${id}`);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/caixas/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/caixas/${id}`);
   }
 
   getAllPaginado(page: number, size: number, sort: string[], dataInicial?: string, dataFinal?: string): Observable<PageCaixaRepresentation> {
@@ -54,6 +54,6 @@ export class CaixaService {
       params = params.append('sort', s);
     });
 
-    return this.http.get<PageCaixaRepresentation>(`${this.baseUrl}/caixas/paginado`, { params });
+    return this.http.get<PageCaixaRepresentation>(`${this.baseUrl}/api/caixas/paginado`, { params });
   }
 }

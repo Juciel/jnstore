@@ -39,12 +39,14 @@
           <thead>
           <tr>
             <th>Forma de Pagamento</th>
+            <th>Número de Parcelas</th>
             <th>Valor Pago</th>
           </tr>
           </thead>
           <tbody>
           <tr *ngFor="let item of venda.pagamentos">
             <td>{{ item.forma }}</td>
+            <td>{{ item.quantidadeParcelas }}</td>
             <td>{{ item.valorPago  | currency:'BRL'}}</td>
           </tr>
           </tbody>

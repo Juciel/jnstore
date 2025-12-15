@@ -1,6 +1,6 @@
 package br.com.jnstore.sboot.orch.controller;
 
-import br.com.jnstore.sboot.atom.vendas.api.CaixasApi;
+import br.com.jnstore.sboot.atom.vendas.api.CaixaApi;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaInput;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import br.com.jnstore.sboot.orch.service.CaixaService;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CaixaController implements CaixasApi {
+public class CaixaController implements CaixaApi {
 
     private final CaixaService service;
 

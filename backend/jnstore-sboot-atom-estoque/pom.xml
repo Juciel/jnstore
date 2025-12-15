@@ -102,6 +102,7 @@
 								<openApiNullable>false</openApiNullable>
 								<interfaceOnly>true</interfaceOnly>
 								<serializableModel>true</serializableModel>
+                                <useTags>true</useTags>
 							</configOptions>
 						</configuration>
 					</execution>

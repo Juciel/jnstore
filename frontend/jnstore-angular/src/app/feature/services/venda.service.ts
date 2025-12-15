@@ -16,43 +16,43 @@ export class VendaService {
   constructor(private http: HttpClient) {}
 
   registrarVenda(input: VendaInput): Observable<VendaRepresentation> {
-    return this.http.post<VendaRepresentation>(`${this.baseUrl}/vendas`, input);
+    return this.http.post<VendaRepresentation>(`${this.baseUrl}/api/vendas`, input);
   }
 
   listarVendas(): Observable<VendaRepresentation[]> {
-    return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/vendas`);
+    return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/api/vendas`);
   }
 
   buscarPorId(id: number): Observable<VendaRepresentation> {
-    return this.http.get<VendaRepresentation>(`${this.baseUrl}/vendas/${id}`);
+    return this.http.get<VendaRepresentation>(`${this.baseUrl}/api/vendas/${id}`);
   }
 
   detalharVenda(id: number): Observable<VendaDetalheRepresentation> {
-    return this.http.get<VendaDetalheRepresentation>(`${this.baseUrl}/vendas/detalhes/${id}`);
+    return this.http.get<VendaDetalheRepresentation>(`${this.baseUrl}/api/vendas/detalhes/${id}`);
   }
 
   deletarVenda(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/vendas/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/vendas/${id}`);
   }
 
   getVendasByCaixaId(caixaId: number): Observable<VendaRepresentation[]> {
-    return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/vendas/caixa/${caixaId}`);
+    return this.http.get<VendaRepresentation[]>(`${this.baseUrl}/api/vendas/caixa/${caixaId}`);
   }
 
   getTopProdutosVendidos(limit: number = 5): Observable<ItemVendaProdutoRepresentation[]> {
-    return this.http.get<ItemVendaProdutoRepresentation[]>(`${this.baseUrl}/vendas/produtos/top-vendidos?limit=${limit}`);
+    return this.http.get<ItemVendaProdutoRepresentation[]>(`${this.baseUrl}/api/vendas/produtos/top-vendidos?limit=${limit}`);
   }
 
   getVendasTotaisPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
-    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/totais?periodo=${periodo}`);
+    return this.http.get<VendaStats>(`${this.baseUrl}/api/vendas/totais?periodo=${periodo}`);
   }
 
   getNumeroVendasPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
-    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/quantidade?periodo=${periodo}`);
+    return this.http.get<VendaStats>(`${this.baseUrl}/api/vendas/quantidade?periodo=${periodo}`);
   }
 
   getTicketMedioPorPeriodo(periodo: 'hoje' | 'semana' | 'mes' | 'ano'): Observable<VendaStats> {
-    return this.http.get<VendaStats>(`${this.baseUrl}/vendas/ticket-medio?periodo=${periodo}`);
+    return this.http.get<VendaStats>(`${this.baseUrl}/api/vendas/ticket-medio?periodo=${periodo}`);
   }
 
   getAllPaginado(page: number, size: number, sort: string[], dataInicial?: string, dataFinal?: string): Observable<PageVendaRepresentation> {
@@ -71,6 +71,6 @@ export class VendaService {
       params = params.append('sort', s);
     });
 
-    return this.http.get<PageVendaRepresentation>(`${this.baseUrl}/vendas/paginado`, { params });
+    return this.http.get<PageVendaRepresentation>(`${this.baseUrl}/api/vendas/paginado`, { params });
   }
 }

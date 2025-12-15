@@ -1,14 +1,17 @@
-import { Component, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import {
+  Component, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef, ViewChild
+} from '@angular/core';
 import { CommonModule, isPlatformServer } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProdutoService } from 'src/app/feature/services/produto.service';
 import { CategoriaService } from 'src/app/feature/services/categoria.service';
-import { CategoriaRepresetation, ProdutoRepresetation } from 'src/app/feature/models';
+import { TaxaService } from 'src/app/feature/services/taxa.service';
+import { CategoriaRepresetation, ProdutoRepresetation, TaxaRepresentation } from 'src/app/feature/models';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
 import { LoadingService } from 'src/app/feature/services/loading.service';
-import { delay, finalize, of } from 'rxjs';
+import { finalize } from 'rxjs';
 import { VariacaoModalComponent } from 'src/app/feature/pages/produto/variacoes/variacao-modal.component';
 import { VariacaoTabelaComponent } from 'src/app/feature/pages/produto/variacoes/variacao-tabela.component';
 
@@ -23,6 +26,7 @@ export class ProdutoFormComponent implements OnInit {
   form: any;
 
   categorias: CategoriaRepresetation[] = [];
+  taxa: TaxaRepresentation | null = null;
   loading = false;
   categoriasError: string | null = null;
   saveError: string | null = null;
@@ -30,9 +34,13 @@ export class ProdutoFormComponent implements OnInit {
   isEditMode = false;
   produtoId: number | null = null;
 
-  @ViewChild(VariacaoModalComponent) variacaoModal!: VariacaoModalComponent;
+  @ViewChild('variacaoModal') variacaoModal!: VariacaoModalComponent;
 
-  constructor(private fb: FormBuilder, private produtoService: ProdutoService, private categoriaService: CategoriaService, private loadingService: LoadingService,
+  constructor(private fb: FormBuilder,
+              private produtoService: ProdutoService,
+              private categoriaService: CategoriaService,
+              private taxaService: TaxaService,
+              private loadingService: LoadingService,
               private route: ActivatedRoute, private router: Router,
               @Inject(PLATFORM_ID) private platformId: any,
               private cdr: ChangeDetectorRef) {
@@ -41,6 +49,8 @@ export class ProdutoFormComponent implements OnInit {
       descricao: [''],
       valorCompra: ['', Validators.required],
       valorVenda: ['', Validators.required],
+      valorVendaPix: ['', Validators.required],
+      valorVendaCredito: ['', Validators.required],
       categoriaId: ['', Validators.required],
       genero: ['', Validators.required],
       variacoes: this.fb.array([], Validators.minLength(1))
@@ -49,8 +59,8 @@ export class ProdutoFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (!isPlatformServer(this.platformId)) {
-
       this.loadCategorias();
+      this.loadTaxas();
       this.route.params.subscribe(params => {
         if (params['id']) {
           this.produtoId = Number(params['id']);
@@ -58,6 +68,32 @@ export class ProdutoFormComponent implements OnInit {
           this.loadProduto();
         }
       });
+    }
+  }
+
+  onValorVendaBlur(): void {
+    this.updateDependentValues();
+  }
+
+  private updateDependentValues() {
+    const valorVendaControl = this.form.get('valorVenda');
+    const valorNumerico = Number(valorVendaControl.value);
+
+    if (isNaN(valorNumerico) || valorNumerico === 0) {
+      this.form.patchValue({
+        valorVendaPix: null,
+        valorVendaCredito: null
+      });
+      return;
+    }
+
+    // 1. Atualiza o valor do PIX
+    this.form.patchValue({ valorVendaPix: valorNumerico });
+
+    // 2. Calcula e atualiza o valor do Crédito
+    if (this.taxa && typeof this.taxa.valorTaxa === 'number') {
+      const valorCredito = valorNumerico * (1 + this.taxa.valorTaxa / 100);
+      this.form.patchValue({ valorVendaCredito: valorCredito });
     }
   }
 
@@ -74,7 +110,10 @@ export class ProdutoFormComponent implements OnInit {
           categoriaId: p.categoria?.id,
           genero: p.genero
         });
-        // populate variacoes if available
+
+        // Após carregar o produto, chama o cálculo
+        setTimeout(() => this.updateDependentValues(), 100);
+
         if (p.variacoes && p.variacoes.length) {
           while (this.variacoes.length) this.variacoes.removeAt(0);
           p.variacoes.forEach(v => {
@@ -109,13 +148,10 @@ export class ProdutoFormComponent implements OnInit {
 
   onVariacaoSave(event: { index: number | null, data: any }) {
     if (event.index !== null && event.index >= 0) {
-      // Editando variação existente
       this.variacoes.at(event.index).patchValue(event.data);
     } else {
-      // Adicionando nova variação
       this.variacoes.push(this.fb.group({
         ...event.data,
-        // Garante que a validação seja adicionada ao novo grupo
         quantidadeEstoque: [event.data.quantidadeEstoque, [Validators.required, Validators.min(0)]]
       }));
     }
@@ -128,12 +164,26 @@ export class ProdutoFormComponent implements OnInit {
   }
 
   submit() {
-    const raw: any = this.form.value;
+    const raw: any = this.form.getRawValue();
+
+    const cleanCurrency = (value: any): number | undefined => {
+      if (value === null || value === undefined || value === '') return undefined;
+      if (typeof value === 'string') {
+        const cleaned = value.replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.');
+        const num = Number(cleaned);
+        return isNaN(num) ? undefined : num;
+      }
+      const num = Number(value);
+      return isNaN(num) ? undefined : num;
+    };
+
     const produto: ProdutoRepresetation = {
       nome: raw.nome ?? undefined,
       descricao: raw.descricao ?? undefined,
-      valorCompra: raw.valorCompra ?? undefined,
-      valorVenda: raw.valorVenda ?? undefined,
+      valorCompra: cleanCurrency(raw.valorCompra),
+      valorVenda: cleanCurrency(raw.valorVenda),
+      valorVendaPix: cleanCurrency(raw.valorVendaPix),
+      valorVendaCredito: cleanCurrency(raw.valorVendaCredito),
       genero: raw.genero ?? undefined,
       categoria: raw.categoriaId ? { id: Number(raw.categoriaId), descricao: '' } : undefined,
       variacoes: (raw.variacoes || []).map((v: any) => ({
@@ -171,8 +221,30 @@ export class ProdutoFormComponent implements OnInit {
     this.categoriaService.listarTodas().pipe(
       finalize(() => {
         this.loading = false;
-        if (!this.isEditMode) this.loadingService.hide(); // Esconde o loading se não estiver carregando um produto
+        if (!this.isEditMode) this.loadingService.hide();
       })
     ).subscribe({ next: res => { this.categorias = res || []; try { this.cdr.detectChanges(); } catch (e) { /* ignore */ } }, error: e => { this.categoriasError = 'Erro ao carregar categoria: ' + (e?.error?.message || e?.message || 'desconhecido'); try { this.cdr.detectChanges(); } catch (er) { /* ignore */ } } });
+  }
+
+  loadTaxas() {
+    this.loading = true;
+    this.loadingService.show();
+    this.categoriasError = null;
+    this.taxaService.getPorNome("CREDITO").pipe(
+      finalize(() => {
+        this.loading = false;
+        if (!this.isEditMode) this.loadingService.hide();
+      })
+    ).subscribe({
+      next: res => {
+        this.taxa = res;
+        this.updateDependentValues();
+        try { this.cdr.detectChanges(); } catch (e) { /* ignore */ }
+        },
+      error: e => {
+        this.categoriasError = 'Erro ao carregar taxas: ' + (e?.error?.message || e?.message || 'desconhecido');
+        try { this.cdr.detectChanges(); } catch (er) { /* ignore */ }
+      }
+    });
   }
 }

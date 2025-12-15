@@ -100,6 +100,28 @@
                 <version>7.5.0</version>
                 <executions>
                     <execution>
+                        <id>generate-client-api-auth</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/swagger/jnstore-sboot-auth.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>br.com.jnstore.sboot.auth.api</apiPackage>
+                            <modelPackage>br.com.jnstore.sboot.auth.model</modelPackage>
+                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            <configOptions>
+                                <delegatePattern>true</delegatePattern>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useJakartaEe>true</useJakartaEe>
+                                <openApiNullable>false</openApiNullable>
+                                <interfaceOnly>true</interfaceOnly>
+                                <serializableModel>true</serializableModel>
+                                <useTags>true</useTags>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>generate-client-api-estoque</id>
                         <goals>
                             <goal>generate</goal>
@@ -117,6 +139,7 @@
                                 <openApiNullable>false</openApiNullable>
                                 <interfaceOnly>true</interfaceOnly>
                                 <serializableModel>true</serializableModel>
+                                <useTags>true</useTags>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -138,6 +161,7 @@
                                 <openApiNullable>false</openApiNullable>
                                 <interfaceOnly>true</interfaceOnly>
                                 <serializableModel>true</serializableModel>
+                                <useTags>true</useTags>
                             </configOptions>
                         </configuration>
                     </execution>

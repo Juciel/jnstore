@@ -33,6 +33,12 @@ public class TbProduto {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorVenda;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorVendaPix;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorVendaCredito;
+
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private TbCategoria categoria;

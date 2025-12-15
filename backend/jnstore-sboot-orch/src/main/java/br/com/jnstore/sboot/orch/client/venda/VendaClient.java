@@ -14,40 +14,40 @@ import java.util.List;
 @FeignClient(name = "vendas", url = "${feign.client.venda.url}")
 public interface VendaClient {
 
-    @GetMapping("/vendas")
+    @GetMapping("/api/vendas")
     List<VendaRepresentation> listarVendas();
 
-    @GetMapping("/vendas/{id}")
+    @GetMapping("/api/vendas/{id}")
     VendaRepresentation buscarVendaPorId(@PathVariable("id") Long id);
 
-    @PostMapping("/vendas")
+    @PostMapping("/api/vendas")
     VendaRepresentation registrarVenda(@RequestBody VendaInput input);
 
-    @DeleteMapping("/vendas/{id}")
+    @DeleteMapping("/api/vendas/{id}")
     void desfazerVenda(@PathVariable("id") Long id);
 
-    @GetMapping("/vendas/por-variacao")
+    @GetMapping("/api/vendas/por-variacao")
     List<VendaRepresentation> listarVendasPorIdVariacao(@RequestParam("idVariacao") List<Long> idVariacao);
 
-    @GetMapping("/vendas/caixa/{caixaId}")
+    @GetMapping("/api/vendas/caixa/{caixaId}")
     List<VendaRepresentation> listarVendasPorCaixaId(@PathVariable("caixaId") Long caixaId);
 
-    @GetMapping("/vendas/paginado")
+    @GetMapping("/api/vendas/paginado")
     Object listarVendasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
                                 @RequestParam("sort") List<String> sort,
                                 @RequestParam("dataInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                 @RequestParam("dataFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal);
 
-    @GetMapping("/vendas/produtos/top-vendidos")
+    @GetMapping("/api/vendas/produtos/top-vendidos")
     List<ItemVendaRepresentation> getTopVendidos(@RequestParam("limit") Integer limit);
 
-    @GetMapping("/vendas/totais")
+    @GetMapping("/api/vendas/totais")
     VendaStats getVendasTotaisPorPeriodo(@RequestParam("periodo") String periodo);
 
-    @GetMapping("/vendas/quantidade")
+    @GetMapping("/api/vendas/quantidade")
     VendaStats getVendasQuantidadePorPeriodo(@RequestParam("periodo") String periodo);
 
-    @GetMapping("/vendas/ticket-medio")
+    @GetMapping("/api/vendas/ticket-medio")
     VendaStats getTicketMedioPorPeriodo(@RequestParam("periodo") String periodo);
 }

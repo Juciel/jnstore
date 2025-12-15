@@ -12,28 +12,28 @@ import java.util.List;
 @FeignClient(name = "caixas", url = "${feign.client.venda.url}")
 public interface CaixaClient {
 
-    @GetMapping("/caixas")
+    @GetMapping("/api/caixas")
     List<CaixaRepresentation> listarCaixas();
 
-    @GetMapping("/caixas/{id}")
+    @GetMapping("/api/caixas/{id}")
     CaixaRepresentation buscarCaixaPorId(@PathVariable("id") Long id);
 
-    @GetMapping("/caixas/abrir")
+    @GetMapping("/api/caixas/abrir")
     CaixaRepresentation consultaCaixaAbertoHoje();
 
-    @PostMapping("/caixas/abrir")
+    @PostMapping("/api/caixas/abrir")
     CaixaRepresentation abrirCaixa(@RequestBody CaixaInput input);
 
-    @PostMapping("/caixas/{id}/fechar")
+    @PostMapping("/api/caixas/{id}/fechar")
     CaixaRepresentation fecharCaixa(@PathVariable("id") Long id, @RequestBody(required = false) CaixaInput input);
 
-    @GetMapping("/caixas/paginado")
+    @GetMapping("/api/caixas/paginado")
     Object listarCaixasPaginado(@RequestParam("page") Integer page,
                                 @RequestParam("size") Integer size,
                                 @RequestParam("sort") List<String> sort,
                                 @RequestParam("dataInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                 @RequestParam("dataFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal);
 
-    @PostMapping("/caixas/{id}/retirar")
+    @PostMapping("/api/caixas/{id}/retirar")
     CaixaRepresentation retiradaCaixa(@PathVariable("id") Long id, @RequestBody(required = false) CaixaInput caixaInput);
 }

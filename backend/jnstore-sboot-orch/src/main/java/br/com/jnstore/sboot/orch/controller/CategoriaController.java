@@ -1,6 +1,6 @@
 package br.com.jnstore.sboot.orch.controller;
 
-import br.com.jnstore.sboot.atom.estoque.api.CategoriasApi;
+import br.com.jnstore.sboot.atom.estoque.api.CategoriaApi;
 import br.com.jnstore.sboot.atom.estoque.model.CategoriaRepresetation;
 import br.com.jnstore.sboot.orch.service.CategoriaService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CategoriaController implements CategoriasApi {
+public class CategoriaController implements CategoriaApi {
 
     private final CategoriaService categoriaService;
 

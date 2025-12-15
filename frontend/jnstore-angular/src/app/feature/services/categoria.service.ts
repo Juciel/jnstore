@@ -11,23 +11,23 @@ export class CategoriaService {
   constructor(private http: HttpClient) {}
 
   listarTodas(): Observable<CategoriaRepresetation[]> {
-    return this.http.get<CategoriaRepresetation[]>(`${this.baseUrl}/categorias`);
+    return this.http.get<CategoriaRepresetation[]>(`${this.baseUrl}/api/categorias`);
   }
 
   buscarPorId(id: number): Observable<CategoriaRepresetation> {
-    return this.http.get<CategoriaRepresetation>(`${this.baseUrl}/categorias/${id}`);
+    return this.http.get<CategoriaRepresetation>(`${this.baseUrl}/api/categorias/${id}`);
   }
 
   criar(categoria: CategoriaRepresetation): Observable<CategoriaRepresetation> {
-    return this.http.post<CategoriaRepresetation>(`${this.baseUrl}/categorias`, categoria);
+    return this.http.post<CategoriaRepresetation>(`${this.baseUrl}/api/categorias`, categoria);
   }
 
   atualizar(id: number, categoria: CategoriaRepresetation): Observable<CategoriaRepresetation> {
-    return this.http.put<CategoriaRepresetation>(`${this.baseUrl}/categorias/${id}`, categoria);
+    return this.http.put<CategoriaRepresetation>(`${this.baseUrl}/api/categorias/${id}`, categoria);
   }
 
   deletar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/categorias/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/categorias/${id}`);
   }
 
   getAllPaginado(page: number, size: number, sort: string[], descricao: string): Observable<PageCategoriaRepresentation> {
@@ -40,6 +40,6 @@ export class CategoriaService {
       params = params.append('sort', s);
     });
 
-    return this.http.get<PageCategoriaRepresentation>(`${this.baseUrl}/categorias/paginado`, { params });
+    return this.http.get<PageCategoriaRepresentation>(`${this.baseUrl}/api/categorias/paginado`, { params });
   }
 }

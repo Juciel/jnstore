@@ -65,7 +65,13 @@
                 <option value="PIX">PIX</option>
               </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2" *ngIf="p.get('forma')?.value === 'CREDITO'">
+              <label class="form-label">Parcelas</label>
+              <select class="form-select" formControlName="quantidadeParcelas">
+                <option *ngFor="let parcela of parcelasCredito" [value]="parcela">{{ parcela }}x</option>
+              </select>
+            </div>
+            <div class="col-md-2">
               <label class="form-label">Valor Pago</label>
               <input type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" />
             </div>

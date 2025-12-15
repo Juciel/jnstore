@@ -1,6 +1,6 @@
 package br.com.jnstore.sboot.orch.controller;
 
-import br.com.jnstore.sboot.atom.estoque.api.ProdutosApi;
+import br.com.jnstore.sboot.atom.estoque.api.ProdutoApi;
 import br.com.jnstore.sboot.atom.estoque.model.ProdutoRepresetation;
 import br.com.jnstore.sboot.atom.vendas.model.ItemVendaProdutoRepresentation;
 import br.com.jnstore.sboot.orch.service.ProdutoService;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProdutoController implements ProdutosApi {
+public class ProdutoController implements ProdutoApi {
 
     private final ProdutoService service;
 

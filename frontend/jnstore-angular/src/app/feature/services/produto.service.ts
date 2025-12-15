@@ -11,30 +11,30 @@ export class ProdutoService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<ProdutoRepresetation[]> {
-    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos`);
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/api/produtos`);
   }
 
   getById(id: number): Observable<ProdutoRepresetation> {
-    return this.http.get<ProdutoRepresetation>(`${this.baseUrl}/produtos/${id}`);
+    return this.http.get<ProdutoRepresetation>(`${this.baseUrl}/api/produtos/${id}`);
   }
 
   create(produto: ProdutoRepresetation): Observable<ProdutoRepresetation> {
-    return this.http.post<ProdutoRepresetation>(`${this.baseUrl}/produtos`, produto);
+    return this.http.post<ProdutoRepresetation>(`${this.baseUrl}/api/produtos`, produto);
   }
 
   update(id: number, produto: ProdutoRepresetation): Observable<ProdutoRepresetation> {
-    return this.http.put<ProdutoRepresetation>(`${this.baseUrl}/produtos/${id}`, produto);
+    return this.http.put<ProdutoRepresetation>(`${this.baseUrl}/api/produtos/${id}`, produto);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/produtos/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/produtos/${id}`);
   }
 
   /**
    * Busca um novo SKU para uma variação de produto.
    */
   getNewSku(): Observable<string> {
-    return this.http.get(`${this.baseUrl}/produtos/new-sku`, { responseType: 'text' });
+    return this.http.get(`${this.baseUrl}/api/produtos/new-sku`, { responseType: 'text' });
   }
 
   /**
@@ -51,15 +51,15 @@ export class ProdutoService {
       params = params.append('sort', s);
     });
 
-    return this.http.get<PageProdutoRepresentation>(`${this.baseUrl}/produtos/paginado`, { params });
+    return this.http.get<PageProdutoRepresentation>(`${this.baseUrl}/api/produtos/paginado`, { params });
   }
 
   getProdutosBaixoEstoque(limit: number = 5): Observable<ProdutoRepresetation[]> {
-    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/baixo-estoque?limit=${limit}`);
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/api/produtos/baixo-estoque?limit=${limit}`);
   }
 
   getProdutosEmFalta(limit: number = 5): Observable<ProdutoRepresetation[]> {
-    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/produtos/em-falta?limit=${limit}`);
+    return this.http.get<ProdutoRepresetation[]>(`${this.baseUrl}/api/produtos/em-falta?limit=${limit}`);
   }
 
 }

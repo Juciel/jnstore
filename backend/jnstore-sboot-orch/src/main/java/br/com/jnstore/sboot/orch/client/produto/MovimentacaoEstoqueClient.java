@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "movimentacaoEstoque", url = "${feign.client.produto.url}")
 public interface MovimentacaoEstoqueClient {
 
-    @PostMapping("/estoque/entrada")
+    @PostMapping("/api/estoque/entrada")
     MovimentacaoEstoqueRepresetation registrarEntrada(@RequestBody MovimentacaoEstoqueInput input);
 
-    @PostMapping("/estoque/saida")
+    @PostMapping("/api/estoque/saida")
     MovimentacaoEstoqueRepresetation registrarSaida(@RequestBody MovimentacaoEstoqueInput input);
 }

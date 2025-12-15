@@ -2,6 +2,7 @@ package br.com.jnstore.sboot.atom.vendas.service.impl;
 
 import br.com.jnstore.sboot.atom.vendas.domain.TbCaixa;
 import br.com.jnstore.sboot.atom.vendas.domain.TbVenda;
+import br.com.jnstore.sboot.atom.vendas.domain.enums.StatusCaixa;
 import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.VendaInput;
 import br.com.jnstore.sboot.atom.vendas.model.VendaRepresentation;
@@ -76,7 +77,11 @@ public class VendaServiceImpl implements VendaService {
 
         TbCaixa tbCaixa = tbVenda.getCaixa();
         if (tbCaixa == null) {
-            throw new IllegalStateException("Venda sem caixa associado, não é possível desfazer.");
+            throw new IllegalArgumentException("Venda SEM caixa associado, não é possível desfazer.");
+        }
+
+        if (StatusCaixa.FECHADO.equals(tbCaixa.getStatus()) || StatusCaixa.RETIRADO.equals(tbCaixa.getStatus())) {
+            throw new IllegalArgumentException("Venda com caixa "+tbCaixa.getStatus()+", não é possível desfazer.");
         }
 
         // Reverte o valor final do caixa

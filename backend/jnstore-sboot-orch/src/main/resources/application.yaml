@@ -11,3 +11,5 @@ feign:
       url: http://localhost:8082
     venda:
       url: http://localhost:8083
+    auth:
+      url: http://localhost:8084

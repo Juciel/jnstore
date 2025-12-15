@@ -30,4 +30,7 @@ public class TbPagamento {
 
     @Column(name = "VALOR_PAGO", nullable = false)
     private BigDecimal valorPago;
+
+    @Column(name = "QUANTIDADE_PARCELAS", nullable = false)
+    private Integer quantidadeParcelas;
 }

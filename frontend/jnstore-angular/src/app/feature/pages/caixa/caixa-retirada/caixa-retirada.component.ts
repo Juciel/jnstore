@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { VendaService } from 'src/app/feature/services/venda.service';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
-import { CaixaRepresentation } from 'src/app/feature/models';
+import { CaixaRepresentation,VendaRepresentation } from 'src/app/feature/models';
 
 @Component({
   selector: 'app-caixa-retirada',
@@ -16,14 +17,21 @@ import { CaixaRepresentation } from 'src/app/feature/models';
 export class CaixaRetiradaComponent implements OnInit {
   caixaId: number | null = null;
   caixa: CaixaRepresentation | undefined;
+  vendas: VendaRepresentation[] = [];
   valorRetirada?: number; // Mantido para o input do formulário
   loading = false;
   closeError: string | null = null;
+
+  totalPix: number = 0;
+  totalDinheiro: number = 0;
+  totalCredito: number = 0;
+  totalDebito: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private caixaService: CaixaService,
+    private vendaService: VendaService,
     private cdr: ChangeDetectorRef // Injetar ChangeDetectorRef
   ) { }
 
@@ -42,10 +50,6 @@ export class CaixaRetiradaComponent implements OnInit {
     this.caixaService.buscarPorId(id).subscribe({
       next: (caixa: CaixaRepresentation) => {
         this.caixa = caixa;
-        // Se o caixa já tiver um valorFinal, exibi-lo no campo valorRetirada
-        if (this.caixa.valorFinal !== undefined && this.caixa.valorFinal !== null) {
-          this.valorRetirada = this.caixa.valorFinal;
-        }
         this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças
       },
@@ -54,6 +58,23 @@ export class CaixaRetiradaComponent implements OnInit {
         console.error('buscarCaixaPorId: Erro ao buscar caixa:', e); // Log para depuração
         this.loading = false;
         this.cdr.detectChanges(); // Forçar detecção de mudanças mesmo em caso de erro
+      }
+    });
+
+    this.vendaService.getVendasByCaixaId(id).subscribe({
+      next: (vendas: VendaRepresentation[]) => {
+        this.vendas = vendas;
+        this.calcularTotaisPagamentos();
+        if (this.totalDinheiro !== undefined && this.totalDinheiro !== null) {
+          this.valorRetirada = this.totalDinheiro;
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.closeError = 'Não foi possível carregar as vendas do caixa.';
+        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -88,5 +109,39 @@ export class CaixaRetiradaComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/caixa']);
+  }
+
+  private calcularTotaisPagamentos(): void {
+    this.totalPix = 0;
+    this.totalDinheiro = 0;
+    this.totalCredito = 0;
+    this.totalDebito = 0;
+
+    if (!this.vendas) {
+      return;
+    }
+
+    for (const venda of this.vendas) {
+      if (venda.pagamentos) {
+        for (const pagamento of venda.pagamentos) {
+          if (pagamento.valorPago) {
+            switch (pagamento.forma) {
+              case 'PIX':
+                this.totalPix += pagamento.valorPago;
+                break;
+              case 'DINHEIRO':
+                this.totalDinheiro += pagamento.valorPago;
+                break;
+              case 'CREDITO':
+                this.totalCredito += pagamento.valorPago;
+                break;
+              case 'DEBITO':
+                this.totalDebito += pagamento.valorPago;
+                break;
+            }
+          }
+        }
+      }
+    }
   }
 }

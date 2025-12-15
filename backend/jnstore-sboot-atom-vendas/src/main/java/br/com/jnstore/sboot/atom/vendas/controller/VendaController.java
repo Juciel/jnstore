@@ -1,6 +1,6 @@
 package br.com.jnstore.sboot.atom.vendas.controller;
 
-import br.com.jnstore.sboot.atom.vendas.api.VendasApi;
+import br.com.jnstore.sboot.atom.vendas.api.VendaApi;
 import br.com.jnstore.sboot.atom.vendas.mapper.ItemVendaMapper;
 import br.com.jnstore.sboot.atom.vendas.mapper.VendaMapper;
 import br.com.jnstore.sboot.atom.vendas.model.ItemVendaRepresentation;
@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class VendaController implements VendasApi {
+public class VendaController implements VendaApi {
 
     private final VendaService service;
     private final ItemVendaService itemVendaService;

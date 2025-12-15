@@ -30,8 +30,22 @@
 
       <div class="mb-3">
         <label class="form-label">Preço de Venda</label>
-        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched" formControlName="valorVenda" />
+        <input type="text" class="form-control" currencyMask inputmode="decimal"
+               [class.is-invalid]="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched"
+               formControlName="valorVenda" (blur)="onValorVendaBlur()" />
         <div *ngIf="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Preço de Venda no Pix</label>
+        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" formControlName="valorVendaPix" />
+        <div *ngIf="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Preço de Venda no Credito</label>
+        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" formControlName="valorVendaCredito" />
+        <div *ngIf="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
       </div>
 
       <div class="row">
@@ -65,7 +79,7 @@
         <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">{{ loading ? 'Salvando...' : 'Salvar Produto' }}</button>
       </div>
     </form>
-    <app-variacao-modal (save)="onVariacaoSave($event)"></app-variacao-modal>
+    <app-variacao-modal #variacaoModal (save)="onVariacaoSave($event)"></app-variacao-modal>
 
     <div *ngIf="saveError" class="alert alert-danger">{{ saveError }}</div>
   </div>
