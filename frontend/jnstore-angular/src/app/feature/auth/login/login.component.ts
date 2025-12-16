@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
   loading = false;
   submitted = false;
   error = '';
+  incorrectPasswordAttempts = 0; // Contador de tentativas de senha incorreta
+  showForgotPasswordButton = false; // Controla a visibilidade do botão "Esqueci minha senha"
 
   constructor(
     private formBuilder: FormBuilder,
@@ -54,6 +56,8 @@ export class LoginComponent implements OnInit {
     })
       .subscribe({
         next: () => {
+          this.incorrectPasswordAttempts = 0; // Reseta o contador em caso de sucesso
+          this.showForgotPasswordButton = false; // Esconde o botão em caso de sucesso
           this.usuarioService.isPrimeiroLogin(nomeUsuario).subscribe(isPrimeiro => {
             if (isPrimeiro) {
               this.router.navigate(['/atualizar-senha'], { state: { nomeUsuario: nomeUsuario } });
@@ -65,7 +69,17 @@ export class LoginComponent implements OnInit {
         error: err => {
           this.error = err.error && err.error.message ? err.error.message : err.message ? err.message : 'Ocorreu um erro desconhecido.';
           this.loading = false;
+
+          // Incrementa o contador de tentativas de senha incorreta
+          this.incorrectPasswordAttempts++;
+          if (this.incorrectPasswordAttempts >= 5) {
+            this.showForgotPasswordButton = true; // Exibe o botão se atingir 5 tentativas
+          }
         }
       });
+  }
+
+  goAtualizarSenha(): void {
+    this.router.navigate(['/atualizar-senha'], { state: { nomeUsuario: this.f['username'].value } });
   }
 }

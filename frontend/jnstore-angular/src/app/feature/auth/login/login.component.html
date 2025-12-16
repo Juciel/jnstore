@@ -23,4 +23,7 @@
       </button>
     </div>
   </form>
+  <div class="text-center mt-3">
+    <button *ngIf="showForgotPasswordButton && loginForm.controls['username'].value" class="btn btn-secondary" (click)="goAtualizarSenha()">Esqueci minha senha</button>
+  </div>
 </div>
