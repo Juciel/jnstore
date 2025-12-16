@@ -1,0 +1,18 @@
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.small-box { display: flex; align-items: center; justify-content: space-between; padding: 1rem; color: #fff; border-radius: .5rem; }
+.small-box .icon { font-size: 2.5rem; opacity: .8; }
+.bg-warning { background-color: var(--jn-gold) !important; color: var(--jn-black) !important; }
+.bg-success { background-color: rgba(63,43,32,0.9) !important; }
+.bg-primary { background-color: var(--jn-brown) !important; }

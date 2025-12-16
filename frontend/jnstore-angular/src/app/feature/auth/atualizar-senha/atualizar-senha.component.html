@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card mt-5">
+        <div class="card-body">
+          <h3 class="card-title text-center">Atualizar Senha</h3>
+          <p class="text-center">Por ser seu primeiro login, você precisa atualizar sua senha.</p>
+          <form [formGroup]="atualizarSenhaForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="novaSenha">Nova Senha</label>
+              <input type="password" id="novaSenha" formControlName="novaSenha" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['novaSenha'].errors }" autocomplete="off"/>
+              <div *ngIf="submitted && f['novaSenha'].errors" class="invalid-feedback">
+                <div *ngIf="f['novaSenha'].errors['required']">Nova senha é obrigatória</div>
+                <div *ngIf="f['novaSenha'].errors['minlength']">A senha deve ter no mínimo 6 caracteres</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="confirmarSenha">Confirmar Nova Senha</label>
+              <input type="password" id="confirmarSenha" formControlName="confirmarSenha" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['confirmarSenha'].errors }" autocomplete="off"/>
+              <div *ngIf="submitted && f['confirmarSenha'].errors" class="invalid-feedback">
+                <div *ngIf="f['confirmarSenha'].errors['required']">Confirmação de senha é obrigatória</div>
+                <div *ngIf="f['confirmarSenha'].errors['mustMatch']">As senhas não correspondem</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <button [disabled]="loading" class="btn btn-primary btn-block">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Atualizar Senha
+              </button>
+            </div>
+            <div *ngIf="error" class="alert alert-danger mt-3">{{error}}</div>
+            <div *ngIf="success" class="alert alert-success mt-3">{{success}}</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

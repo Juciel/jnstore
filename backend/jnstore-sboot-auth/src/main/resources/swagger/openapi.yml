@@ -1,0 +1,473 @@
+openapi: 3.0.0
+info:
+  title: "Serviço de Autenticacao JN Store"
+  description: "API responsável por gerenciar Usuarios, perfis e emitir JSON Web Tokens (JWT) para acesso aos demais microsserviços."
+  version: 1.0.0
+servers:
+  - url: "http://localhost:8084" # URL base da API
+    description: "Servidor Local de Desenvolvimento"
+tags:
+  - name: "Autenticacao"
+    description: "Operações de Login e obtenção de informações do usuário"
+  - name: "Usuarios"
+    description: "Cadastro e Gestão de Usuarios"
+  - name: "Perfil"
+    description: "Cadastro gestão de perfis"
+
+# Adicionando segurança global para exigir JWT na maioria dos endpoints
+security:
+  - bearerAuth: []
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Autenticacao
+      summary: "Autenticar Usuário e Gerar JWT"
+      description: "Recebe as credenciais do usuário e, em caso de sucesso, retorna um token JWT. Este endpoint é público."
+      operationId: login
+      security: [] # Tornando este endpoint explicitamente público
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredenciaisLoginRepresetation'
+      responses:
+        '200':
+          description: "Autenticacao bem-sucedida"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponseRepresetation'
+        '401':
+          description: "Credenciais Inválidas"
+
+  /api/auth/me:
+    get:
+      tags:
+        - Autenticacao
+      summary: "Obter Dados do Usuário Logado"
+      description: "Retorna as informações do usuário autenticado com base no token JWT enviado."
+      operationId: getAuthenticatedUser
+      responses:
+        '200':
+          description: "Dados do usuário"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioRepresentation'
+        '401':
+          description: "Não autorizado"
+
+  /api/users/register:
+    post:
+      tags:
+        - Usuarios
+      summary: "Registrar Novo Usuário (Admin)"
+      description: "Cria um novo usuário no sistema. Requer permissão de ADMIN."
+      operationId: registrarUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioRepresentation'
+      responses:
+        '201':
+          description: "Usuário registrado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioRepresentation'
+        '403':
+          description: "Acesso negado"
+        '409':
+          description: "O email ou nome de usuário informado já está em uso."
+
+  /api/users/primeiro-login:
+    get:
+      tags:
+        - Usuarios
+      summary: "Verificar primeiro login"
+      description: "Verifica se é o primeiro login do usuário."
+      operationId: isPrimeiroLogin
+      parameters:
+        - name: nomeUsuario
+          in: query
+          required: true
+          description: "Nome de usuário"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Retorna true se for o primeiro login"
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: "Usuário não encontrado"
+
+  /api/users/atualizar-senha:
+    put:
+      tags:
+        - Usuarios
+      summary: "Atualizar senha do usuário"
+      description: "Atualiza a senha do usuário e marca o primeiro login como false."
+      operationId: atualizarSenha
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarSenhaRequest'
+      responses:
+        '204':
+          description: "Senha atualizada com sucesso"
+        '404':
+          description: "Usuário não encontrado"
+
+  /api/users/{id}:
+    delete:
+      tags:
+        - Usuarios
+      summary: "Excluir Usuário (Admin)"
+      description: "Exclui um usuário existente. Requer permissão de ADMIN."
+      operationId: excluirUsuario
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "ID do usuário a ser excluído"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Usuário excluído com sucesso"
+        '403':
+          description: "Acesso negado"
+        '404':
+          description: "Usuário não encontrado"
+
+  /api/profiles:
+    post:
+      tags:
+        - Perfil
+      summary: "Criar Novo Perfil (Perfil)"
+      description: "Cria um novo perfil (role) no sistema. Requer permissão de ADMIN."
+      operationId: criarPerfil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerfilRepresentation'
+      responses:
+        '201':
+          description: "Perfil criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerfilRepresentation'
+        '403':
+          description: "Acesso negado"
+        '409':
+          description: "Um perfil com este nome já existe."
+  
+  /api/profiles/podeEditarProduto:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar produtos"
+      operationId: podeEditarProduto
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar produtos"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarProduto:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar produtos"
+      operationId: podeVisualizarProduto
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar produtos"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarValorCompra:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar o valor de compra"
+      operationId: podeVisualizarValorCompra
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar o valor de compra"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarCategoria:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar categorias"
+      operationId: podeVisualizarCategoria
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar categorias"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarCategoria:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar categorias"
+      operationId: podeEditarCategoria
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar categorias"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeAbrirCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode abrir o caixa"
+      operationId: podeAbrirCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode abrir o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar o caixa"
+      operationId: podeVisualizarCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeFecharCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode fechar o caixa"
+      operationId: podeFecharCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode fechar o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeRetirarCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode fazer retiradas do caixa"
+      operationId: podeRetirarCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode fazer retiradas do caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar vendas"
+      operationId: podeEditarVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar vendas"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar vendas"
+      operationId: podeVisualizarVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar vendas"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarValorVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar o valor de uma venda"
+      operationId: podeEditarValorVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar o valor de uma venda"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+components:
+  schemas:
+    CredenciaisLoginRepresetation:
+      type: object
+      required:
+        - nomeUsuario
+        - senha
+      properties:
+        nomeUsuario:
+          type: string
+          example: "admin.jnstore"
+        senha:
+          type: string
+          example: senha123
+
+    TokenResponseRepresetation:
+      type: object
+      properties:
+        token:
+          type: string
+          description: "O JSON Web Token a ser usado no cabeçalho Authorization."
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpOU3RvcmVBZG1pbiIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        tipo:
+          type: string
+          example: "Bearer"
+        expiresIn:
+          type: integer
+          description: "Tempo de expiração do token em milissegundos."
+          example: 3600000
+
+    UsuarioRepresentation:
+      type: object
+      required:
+        - nome
+        - nomeUsuario
+        - senha
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nome:
+          type: string
+          example: "João Admin"
+        nomeUsuario:
+          type: string
+          example: "joao.admin"
+        email:
+          type: string
+          format: email
+          example: "joao.admin@jnstore.com"
+        senha:
+          type: string
+          description: "Necessário apenas para criação/atualização. Não é retornado em consultas."
+          example: minhaSenhaSegura456
+          writeOnly: true
+        perfis:
+          type: array
+          items:
+            $ref: '#/components/schemas/PerfilRepresentation'
+
+    AtualizarSenhaRequest:
+      type: object
+      required:
+        - nomeUsuario
+        - novaSenha
+      properties:
+        nomeUsuario:
+          type: string
+          example: "joao.admin"
+        novaSenha:
+          type: string
+          example: "novaSenhaSuperSegura123"
+
+    PerfilRepresentation:
+      type: object
+      required:
+        - nome
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nome:
+          type: string
+          description: "Nome do perfil (role). Ex: ADMIN, CAIXA, ESTOQUISTA"
+          example: "ESTOQUISTA"
+
+    ErroRepresetation:
+      type: object
+      description: "Modelo padrão para retorno de erros na API."
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Data e hora em que o erro ocorreu (ISO 8601)."
+          example: '2025-12-01T17:23:00Z'
+        status:
+          type: integer
+          description: "O código de status HTTP que foi retornado (ex: 400, 404, 500)."
+          example: 400
+        error:
+          type: string
+          description: "Descrição curta do tipo de erro HTTP (ex: Bad Request, Not Found)."
+          example: 'Bad Request'
+        message:
+          type: string
+          description: "Mensagem de erro amigável e detalhada para o usuário."
+          example: 'Os dados da variação do produto são inválidos.'
+        path:
+          type: string
+          description: "O endpoint da requisição que gerou o erro."
+          example: '/produtos/123/estoque'
+        detalhes:
+          type: array
+          description: "Lista de erros específicos de validação de campos (uso em erros 400)."
+          items:
+            $ref: '#/components/schemas/ErroDetalheRepresetation'
+
+    # 8. ErroDetalheRepresetation
+    ErroDetalheRepresetation:
+      type: object
+      description: "Detalhes de validação de campos (usado em erros 400 - Bad Request)."
+      properties:
+        campo:
+          type: string
+          description: "Nome do campo que falhou a validação."
+          example: 'quantidade'
+        mensagem:
+          type: string
+          description: "Descrição específica do motivo da falha de validação."
+          example: 'A quantidade deve ser um valor positivo.'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

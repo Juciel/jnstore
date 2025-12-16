@@ -1,0 +1,39 @@
+<div class="mb-3">
+  <h5>Variações</h5>
+  <table class="table table-bordered table-striped" *ngIf="variacoes.length > 0">
+    <thead>
+      <tr>
+        <th>Identificador (SKU)</th>
+        <th>Cor</th>
+        <th>Tamanho</th>
+        <th>Estoque</th>
+        <th class="text-center" *ngIf="podeEditar">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let v of variacoes; let i = index">
+        <td>{{ v.get('identificador')?.value }}</td>
+        <td>{{ v.get('cor')?.value }}</td>
+        <td>{{ v.get('tamanho')?.value }}</td>
+        <td>{{ v.get('quantidadeEstoque')?.value }}</td>
+        <td class="text-center" *ngIf="podeEditar">
+          <button type="button" class="btn btn-sm btn-outline-primary me-1" title="Editar" (click)="editarVariacao(i)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger" title="Remover" (click)="removerVariacao(i)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="variacoes.length === 0" class="alert alert-info">
+    Nenhuma variação adicionada.
+  </div>
+
+  <button type="button" class="btn btn-sm btn-outline-primary" (click)="add.emit()" *ngIf="podeEditar">
+    <i class="fas fa-plus"></i> Adicionar Variação
+  </button>
+
+</div>

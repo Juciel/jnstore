@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: jnstore.sboot.atom.estoque
+  datasource:
+    url: jdbc:mysql://localhost:3306/db_estoque
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate: # Cria as tabelas automaticamente, destruindo dados anteriores
+      ddl-auto: create
+    show-sql: true # Mostra as queries SQL no console
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: "SecretoMuitoLongoParaSerSeguroNaoUseEmProducaoPorFavorAltereIsso"
+  expiration: "86400000" # 24 horas
+
+server:
+  port: 8082
+
+# Configuração básica de CORS para o Frontend Angular (8080)
+# Permitindo o acesso do Angular ao seu backend
+cors:
+  allowed-origins: http://localhost:4200

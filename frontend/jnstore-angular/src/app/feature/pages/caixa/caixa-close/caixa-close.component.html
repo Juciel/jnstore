@@ -1,0 +1,50 @@
+<div class="caixa-open container py-3">
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading">
+    <div *ngIf="caixa">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <button class="btn btn-secondary" (click)="goBack()">&larr; Voltar</button>
+      </div>
+
+      <h2 class="mb-3">Gerenciamento de Caixa</h2>
+
+      <div *ngIf="closeError" class="alert alert-danger mt-3">
+        {{ closeError }}
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+          Fechar Caixa
+        </div>
+        <div class="card-body">
+          <p><strong>Valor Inicial:</strong> {{ caixa.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</p>
+          <p><strong>Data de Abertura:</strong> {{ caixa.dataAbertura | date:'dd/MM/yyyy HH:mm':'UTC' }}</p>
+          <p><strong>Status:</strong> {{ caixa.status | titlecase }}</p>
+          <form (ngSubmit)="fecharCaixa()" #f="ngForm" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Valor Final</label>
+              <input class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
+              <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor final.</div>
+            </div>
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary" [disabled]="loading || valorCtrl.invalid" *ngIf="podeFecharCaixa">
+                {{ loading ? 'Fechando...' : 'Fechar Caixa' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!caixa && !closeError" class="alert alert-warning mt-3">
+      Nenhum ID de caixa fornecido para fechamento.
+    </div>
+
+
+  </div>
+</div>

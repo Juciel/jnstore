@@ -1,0 +1,97 @@
+<div class="caixa-detalhe-container">
+  <h2 mat-dialog-title>Detalhes do Caixa #{{ caixa?.id }}</h2>
+  <mat-dialog-content>
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!loading">
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <div *ngIf="!error && caixa" class="details-content">
+
+        <!-- Tabela de Informações do Caixa -->
+        <h3>Informações do Caixa</h3>
+        <table class="info-table">
+          <tr>
+            <td><strong>Data Abertura:</strong></td>
+            <td>{{ caixa.dataAbertura | date: 'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Data Fechamento:</strong></td>
+            <td>{{ caixa.dataFechamento ? (caixa.dataFechamento | date: 'dd/MM/yyyy HH:mm') : 'Em aberto' }}</td>
+          </tr>
+          <tr *ngIf="caixa.dataRetirada">
+            <td><strong>Data da Retirada:</strong></td>
+            <td>{{ caixa.dataRetirada | date: 'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Valor Inicial:</strong></td>
+            <td>{{ caixa.valorInicial | currency: 'BRL' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Valor Final:</strong></td>
+            <td>{{ caixa.valorFinal | currency: 'BRL' }}</td>
+          </tr>
+          <tr *ngIf="caixa.valorRetirada">
+            <td><strong>Valor da Retirada:</strong></td>
+            <td>{{ caixa.valorRetirada | currency: 'BRL' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Status:</strong></td>
+            <td>{{ caixa.status | titlecase }}</td>
+          </tr>
+        </table>
+
+        <!-- Tabela de Totais por Forma de Pagamento -->
+        <h3>Resumo Financeiro</h3>
+        <table class="info-table">
+          <tr>
+            <td><strong>Total em Pix:</strong></td>
+            <td>{{ totalPix | currency: 'BRL' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Total em Dinheiro:</strong></td>
+            <td>{{ totalDinheiro | currency: 'BRL' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Total em Crédito:</strong></td>
+            <td>{{ totalCredito | currency: 'BRL' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Total em Débito:</strong></td>
+            <td>{{ totalDebito | currency: 'BRL' }}</td>
+          </tr>
+        </table>
+
+        <!-- Tabela de Vendas -->
+        <h3>Vendas Realizadas</h3>
+        <div *ngIf="vendas.length > 0; else noVendas" class="vendas-table-container">
+          <table class="info-table">
+            <thead>
+              <tr>
+                <th>Número da Venda</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let venda of vendas">
+                <td><a href="javascript:void(0)" (click)="abrirDetalheVenda(venda.id)">Venda #{{ venda.id }}</a></td>
+                <td>{{ venda.totalLiquido | currency: 'BRL' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noVendas>
+          <p>Nenhuma venda registrada para este caixa.</p>
+        </ng-template>
+
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="fechar()">Fechar</button>
+  </mat-dialog-actions>
+</div>

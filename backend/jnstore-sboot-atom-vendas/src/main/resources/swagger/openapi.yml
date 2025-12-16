@@ -1,0 +1,992 @@
+openapi: 3.0.1
+info:
+  title: "JNStore Vendas API"
+  description: "API para gerenciamento de Vendas, Caixas, Itens de Venda e Pagamentos da JNStore."
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+    description: Ambiente de desenvolvimento
+
+tags:
+  - name: "Caixa"
+    description: "Operações relacionadas à abertura e fechamento de caixa."
+  - name: "Venda"
+    description: "Operações para registrar e consultar vendas."
+  - name: "Taxa"
+    description: "Operações relacionadas a taxas."
+
+paths:
+  /api/caixas/abrir:
+    get:
+      tags:
+        - Caixa
+      summary: "Consulta se existe um caixa aberto para o dia atual"
+      operationId: consultaCaixaAbertoHoje
+      responses:
+        '200':
+          description: "Caixa aberto encontrado para o dia"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Caixa
+      summary: "Abre um novo caixa"
+      operationId: abrirCaixa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '201':
+          description: "Caixa aberto com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/caixas/{id}/fechar:
+    post:
+      tags:
+        - Caixa
+      summary: "Fecha um caixa existente"
+      operationId: fecharCaixa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '200':
+          description: "Caixa fechado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/caixas/{id}/retirar:
+    post:
+      tags:
+        - Caixa
+      summary: "Retira o dinheiro de um caixa existente"
+      operationId: retiradaCaixa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaixaInput'
+      responses:
+        '200':
+          description: "Caixa fechado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/caixas:
+    get:
+      tags:
+        - Caixa
+      summary: "Lista todos os caixas"
+      operationId: listarCaixas
+      responses:
+        '200':
+          description: "Lista de caixas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CaixaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/caixas/paginado:
+    get:
+      tags:
+        - Caixa
+      summary: "Lista caixas de forma paginada"
+      operationId: listarCaixasPaginado
+      parameters:
+        - name: page
+          in: query
+          description: "Número da página (começando em 0)"
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: "Tamanho da página"
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou descricao,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: [ "id,desc", "descricao,asc" ]
+        - name: dataInicial
+          in: query
+          description: "Filtro para data de abertura inicial (formato YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: dataFinal
+          in: query
+          description: "Filtro para data de abertura final (formato YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "Lista paginada de caixas"
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/caixas/{id}:
+    get:
+      tags:
+        - Caixa
+      summary: "Busca um caixa pelo ID"
+      operationId: buscarCaixaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Caixa encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaixaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas:
+    post:
+      tags:
+        - Venda
+      summary: "Registra uma nova venda"
+      operationId: registrarVenda
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendaInput'
+      responses:
+        '201':
+          description: "Venda registrada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Venda
+      summary: "Lista todas as vendas"
+      operationId: listarVendas
+      responses:
+        '200':
+          description: "Lista de vendas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/paginado:
+    get:
+      tags:
+        - Venda
+      summary: "Lista vendas de forma paginada"
+      operationId: listarVendasPaginado
+      parameters:
+        - name: page
+          in: query
+          description: "Número da página (começando em 0)"
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: "Tamanho da página"
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sort
+          in: query
+          description: "Critério de ordenação. Formato: campo,(asc|desc). Ex: id,desc ou descricao,asc. Pode ser repetido para múltiplos campos."
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            example: [ "id,desc", "descricao,asc" ]
+        - name: dataInicial
+          in: query
+          description: "Filtro para data da venda inicial (formato YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: dataFinal
+          in: query
+          description: "Filtro para data da venda final (formato YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "Lista paginada de vendas"
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/por-variacao:
+    get:
+      tags:
+        - Venda
+      summary: "Busca vendas por uma lista de IDs de variação"
+      operationId: listarVendasPorIdVariacao
+      parameters:
+        - name: idVariacao
+          in: query
+          required: true
+          description: "Lista de IDs de variação para buscar as vendas associadas."
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: "Lista de vendas encontradas"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/caixa/{caixaId}:
+    get:
+      tags:
+        - Venda
+      summary: "Busca vendas por ID do caixa"
+      operationId: listarVendasPorCaixaId
+      parameters:
+        - name: caixaId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Lista de vendas para o caixa especificado"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/{id}:
+    get:
+      tags:
+        - Venda
+      summary: "Busca uma venda pelo ID"
+      operationId: buscarVendaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Venda encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete: # Novo método para desfazerVenda
+      tags:
+        - Venda
+      summary: "Desfaz uma venda pelo ID"
+      operationId: desfazerVenda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Venda desfeita com sucesso"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/detalhes/{id}:
+    get:
+      tags:
+        - Venda
+      summary: "Busca detalhes completos de uma venda pelo ID"
+      operationId: buscarDetalhesVendaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Detalhes da venda encontrados"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaDetalheRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/totais:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna o valor total das vendas para um período específico"
+      operationId: getVendasTotaisPorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para agregação das vendas."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Valor total das vendas para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/quantidade:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna a quantidade total de itens vendidos para um período específico"
+      operationId: getVendasQuantidadePorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para agregação da quantidade de vendas."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Quantidade total de itens vendidos para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/ticket-medio:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna o valor do ticket médio das vendas para um período específico"
+      operationId: getTicketMedioPorPeriodo
+      parameters:
+        - name: periodo
+          in: query
+          description: "Período para cálculo do ticket médio."
+          required: true
+          schema:
+            type: string
+            enum:
+              - hoje
+              - semana
+              - mes
+              - ano
+      responses:
+        '200':
+          description: "Valor do ticket médio para o período"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendaStats'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/vendas/produtos/top-vendidos:
+    get:
+      tags:
+        - Venda
+      summary: "Retorna os produtos mais vendidos."
+      operationId: getTopVendidos
+      parameters:
+        - name: limit
+          in: query
+          description: "Número máximo de produtos a serem retornados."
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        '200':
+          description: "Lista de produtos mais vendidos."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemVendaRepresentation'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/taxas:
+    get:
+      tags:
+        - Taxa
+      summary: "Consulta taxa por nome"
+      operationId: getTaxaPorNome
+      parameters:
+        - name: nome
+          in: query
+          description: "Filtro para nome"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Consulta taxa por nome"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Taxa
+      summary: "Insere uma nova taxa"
+      operationId: inserirTaxa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxaInput'
+      responses:
+        '201':
+          description: "Taxa inserida com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxaRepresentation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/taxas/{id}:
+    get:
+      tags:
+        - Taxa
+      summary: "Consulta taxa existente"
+      operationId: getTaxaPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Taxa recuperada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Taxa
+      summary: "Atualiza uma taxa existente"
+      operationId: atualizarTaxa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxaInput'
+      responses:
+        '200':
+          description: "Taxa atualizada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxaRepresentation'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CaixaInput:
+      type: object
+      properties:
+        valor:
+          type: number
+          description: "Valor inicial na abertura , valor final no fechamento ou valor da retirada."
+
+    CaixaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        usuarioAbertura:
+          type: string
+        dataAbertura:
+          type: string
+          format: date-time
+        valorInicial:
+          type: number
+          format: double
+        usuarioFechamento:
+          type: string
+        dataFechamento:
+          type: string
+          format: date-time
+        valorFinal:
+          type: number
+        usuarioRetirada:
+          type: string
+        dataRetirada:
+          type: string
+          format: date-time
+        valorRetirada:
+          type: number
+        status:
+          $ref: '#/components/schemas/StatusCaixa'
+
+    VendaInput:
+      type: object
+      required:
+        - caixaId
+        - itens
+        - pagamentos
+      properties:
+        caixaId:
+          type: integer
+          format: int64
+        desconto:
+          type: number
+          default: 0
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaInput'
+        totalBruto:
+          type: number
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoInput'
+        totalLiquido:
+          type: number
+
+    VendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        caixaId:
+          type: integer
+          format: int64
+        dataVenda:
+          type: string
+          format: date-time
+        totalBruto:
+          type: number
+        desconto:
+          type: number
+        totalLiquido:
+          type: number
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaRepresentation'
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoRepresentation'
+        usuarioVenda:
+          type: string
+
+    VendaDetalheRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        caixa:
+          $ref: '#/components/schemas/CaixaRepresentation'
+        dataVenda:
+          type: string
+          format: date-time
+        totalBruto:
+          type: number
+        desconto:
+          type: number
+        totalLiquido:
+          type: number
+        itens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemVendaProdutoRepresentation'
+        pagamentos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PagamentoRepresentation'
+        usuarioVenda:
+          type: string
+
+    ItemVendaInput:
+      type: object
+      required:
+        - varianteId
+        - precoUnitario
+        - quantidade
+      properties:
+        varianteId:
+          type: integer
+          format: int64
+          description: "ID da variante do produto (referência ao MS-ESTOQUE)."
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    ItemVendaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        varianteId:
+          type: integer
+          format: int64
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    ItemVendaProdutoRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        idProduto:
+          type: integer
+          format: int64
+        nomeProduto:
+          type: string
+        descricaoProduto:
+          type: string
+        descricaoCategoria:
+          type: string
+        descricaoGenero:
+          type: string
+        varianteId:
+          type: integer
+          format: int64
+        identificador:
+          type: string
+        cor:
+          type: string
+        tamanho:
+          type: string
+        precoUnitario:
+          type: number
+        quantidade:
+          type: integer
+
+    PagamentoInput:
+      type: object
+      required:
+        - forma
+        - valorPago
+        - quantidadeParcelas
+      properties:
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+        quantidadeParcelas:
+          type: integer
+
+    PagamentoRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        forma:
+          $ref: '#/components/schemas/FormaPagamento'
+        valorPago:
+          type: number
+          format: double
+        quantidadeParcelas:
+          type: integer
+
+    FormaPagamento:
+      type: string
+      enum:
+        - CREDITO
+        - DEBITO
+        - DINHEIRO
+        - PIX
+
+    StatusCaixa:
+      type: string
+      enum:
+        - ABERTO
+        - FECHADO
+        - RETIRADO
+
+    TaxaInput:
+      type: object
+      required:
+        - nome
+        - valorTaxa
+      properties:
+        nome:
+          type: string
+        valorTaxa:
+          type: number
+
+    TaxaRepresentation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        nome:
+          type: string
+        valorTaxa:
+          type: number
+
+    ErroRepresetation:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        detalhes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErroDetalheRepresetation'
+
+    ErroDetalheRepresetation:
+      type: object
+      properties:
+        campo:
+          type: string
+        mensagem:
+          type: string
+
+    VendaStats:
+      type: object
+      description: "Estatísticas de vendas para um período."
+      properties:
+        total:
+          type: number
+          description: "Valor total ou quantidade total de vendas."
+          example: 1234.56
+        variacao:
+          type: number
+          description: "Variação percentual em relação ao período anterior."
+          example: 10.50
+
+  responses:
+    BadRequest:
+      description: "Requisição inválida"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    NotFound:
+      description: "Recurso não encontrado"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+    InternalServerError:
+      description: "Erro interno do servidor"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErroRepresetation'
+
+security:
+  - bearerAuth: []

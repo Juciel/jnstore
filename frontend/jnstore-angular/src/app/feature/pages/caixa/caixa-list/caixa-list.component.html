@@ -1,0 +1,102 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="card-title visually-hidden">Caixas</h3>
+    <a class="btn btn-primary" routerLink="/caixa/abrir" *ngIf="podeAbrirCaixa">Abrir Caixa</a>
+  </div>
+  <div class="card-body">
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!loading">
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <div class="mb-3 d-flex gap-3">
+        <input type="date" class="form-control" placeholder="Data Inicial" [(ngModel)]="dataInicialFilter" (input)="onFilterChange()" autocomplete="off">
+        <input type="date" class="form-control" placeholder="Data Final" [(ngModel)]="dataFinalFilter" (input)="onFilterChange()" autocomplete="off">
+      </div>
+
+      <table *ngIf="caixas.length" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th (click)="toggleSort('dataAbertura')" style="cursor: pointer;">
+              Data Abertura
+              <i *ngIf="sortColumn === 'dataAbertura' && sortDirection === 'asc'" class="fas fa-sort-up"></i>
+              <i *ngIf="sortColumn === 'dataAbertura' && sortDirection === 'desc'" class="fas fa-sort-down"></i>
+              <i *ngIf="sortColumn !== 'dataAbertura'" class="fas fa-sort"></i>
+            </th>
+            <th>Valor Inicial</th>
+            <th>Data Fechamento</th>
+            <th>Valor Final</th>
+            <th>Data Retirada</th>
+            <th>Valor Retirada</th>
+            <th style="width: 120px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let caixa of caixas">
+            <td>{{ caixa.status | titlecase }}</td>
+            <td>{{ caixa.dataAbertura | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
+            <td>{{ caixa.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ caixa.dataFechamento | date:'dd/MM/yyyy HH:mm':'UTC'}}</td>
+            <td>{{ caixa.valorFinal | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ caixa.dataRetirada | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
+            <td>{{ caixa.valorRetirada | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>
+              <button (click)="detalharCaixa(caixa.id)" class="btn btn-sm btn-info me-2" *ngIf="podeVisualizarCaixa"><i class="fas fa-eye"></i></button>
+              <button [routerLink]="['/caixa/fechar', caixa.id]" *ngIf="caixa.status === 'ABERTO' && podeFecharCaixa" class="btn btn-sm btn-warning me-2" title="Fechar Caixa"><i class="fas fa-lock"></i></button>
+              <button [routerLink]="['/caixa/retirada', caixa.id]" *ngIf="caixa.status === 'FECHADO' && podeRetirarCaixa" class="btn btn-sm btn-warning me-2" title="Retirada Caixa"><i class="fas fa-dolly"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="!caixas.length && (!dataInicialFilter && !dataFinalFilter)" class="text-muted">Nenhum caixa encontrado.</div>
+      <div *ngIf="!caixas.length && (dataInicialFilter || dataFinalFilter)" class="text-muted">Nenhum caixa encontrado para o filtro.</div>
+
+      <div *ngIf="totalPages > 0 || totalElements > 0" class="d-flex justify-content-between align-items-center mt-4">
+        <div class="d-flex align-items-center gap-3">
+          <label for="pageSizeSelect" class="mb-0 text-nowrap">Itens por página:</label>
+          <select id="pageSizeSelect" class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+            <option [ngValue]="100">100</option>
+          </select>
+          <span class="text-nowrap">Total de itens: {{ totalElements }}</span>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(0)" aria-label="Primeira">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 0">
+              <a class="page-link" (click)="goToPage(currentPage - 1)" aria-label="Anterior">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
+              <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(currentPage + 1)" aria-label="Próxima">
+                <span aria-hidden="true">&rsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+              <a class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Última">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

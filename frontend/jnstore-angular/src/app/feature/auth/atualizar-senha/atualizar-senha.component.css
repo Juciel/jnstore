@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  width: 400px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.btn-block {
+  width: 100%;
+}
