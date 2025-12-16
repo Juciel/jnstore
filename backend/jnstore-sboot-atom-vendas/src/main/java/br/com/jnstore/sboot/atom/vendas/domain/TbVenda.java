@@ -43,6 +43,6 @@ public class TbVenda {
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TbPagamento> pagamentos;
 
-    @Column(name = "ID_USUARIO_VENDA", nullable = false)
-    private Long idUsuarioVenda;
+    @Column(name = "USUARIO_VENDA", nullable = false)
+    private String usuarioVenda;
 }

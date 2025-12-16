@@ -1,7 +1,6 @@
 package br.com.jnstore.sboot.atom.vendas.mapper;
 
 import br.com.jnstore.sboot.atom.vendas.domain.TbCaixa;
-import br.com.jnstore.sboot.atom.vendas.model.CaixaInput;
 import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

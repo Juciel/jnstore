@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CategoriaService } from 'src/app/feature/services/categoria.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/confirm-dialog.service';
 import { CategoriaRepresetation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // Importar FormsModule
 
 @Component({
@@ -34,9 +35,13 @@ export class CategoriaListComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   sort: string[] = []; // Inicializado vazio, será preenchido em load()
 
+  podeEditarCategoria = false;
+  podeVisualizarCategoria = false;
+
   constructor(
     private categoriaService: CategoriaService,
     private confirmDialog: ConfirmDialogService,
+    private perfilService: PerfilService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {
@@ -53,7 +58,31 @@ export class CategoriaListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.permissoes();
     this.load();
+  }
+
+  permissoes(): void{
+      this.loading = true;
+      const requests = {
+        podeEditarCategoria: this.perfilService.podeEditarCategoria().pipe(catchError(e => of(null))),
+        podeVisualizarCategoria: this.perfilService.podeVisualizarCategoria().pipe(catchError(e => of(null))),
+      }
+
+      forkJoin(requests).subscribe({
+        next: (data: any) => {
+          this.podeEditarCategoria = data.podeEditarCategoria;
+          this.podeVisualizarCategoria = data.podeVisualizarCategoria;
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (e) => {
+          console.error('Erro ao carregar as pemissoes:', e);
+          this.error = 'Erro ao carregar as pemissões.';
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   load(): void {

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth/auth.service'; // Caminho corrigido do AuthService
+import { AuthService } from '../../services/auth/auth.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private usuarioService: UsuarioService,
   ) { }
 
   ngOnInit() {
@@ -45,13 +47,20 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
+    const nomeUsuario = this.f['username'].value;
     this.authService.login({
-      nomeUsuario: this.f['username'].value,
+      nomeUsuario: nomeUsuario,
       senha: this.f['password'].value
     })
       .subscribe({
         next: () => {
-          this.router.navigate(['/']); // Redireciona para a página inicial após o login
+          this.usuarioService.isPrimeiroLogin(nomeUsuario).subscribe(isPrimeiro => {
+            if (isPrimeiro) {
+              this.router.navigate(['/atualizar-senha'], { state: { nomeUsuario: nomeUsuario } });
+            } else {
+              this.router.navigate(['/']); // Redireciona para a página inicial
+            }
+          });
         },
         error: err => {
           this.error = err.error && err.error.message ? err.error.message : err.message ? err.message : 'Ocorreu um erro desconhecido.';

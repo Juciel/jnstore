@@ -5,10 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
 import { VendaService } from 'src/app/feature/services/venda.service';
 import { ProdutoService } from 'src/app/feature/services/produto.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { PageProdutoRepresentation, ProdutoRepresetation, VariacaoProdutoRepresetation } from 'src/app/feature/models';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil, map } from 'rxjs/operators';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
-import { of, Subject } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-venda',
@@ -33,10 +35,15 @@ export class VendaComponent implements OnInit, OnDestroy {
   autocompleteResults: any[][] = [];
   parcelasCredito = [2, 3, 4, 5];
 
+  podeEditarVenda = false;
+  podeEditarValorVenda = false;
+  podeVisualizarVenda = false;
+
   constructor(
     private fb: FormBuilder,
     private vendaService: VendaService,
     private produtoService: ProdutoService,
+    private perfilService: PerfilService,
     private route: ActivatedRoute, private router: Router,
     @Inject(PLATFORM_ID) private platformId: any,
     private cdr: ChangeDetectorRef,
@@ -49,6 +56,7 @@ export class VendaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.permissoes();
     this.addItem();
     this.addPagamento();
     this.subscribeToChanges();
@@ -57,6 +65,46 @@ export class VendaComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  permissoes(): void {
+    this.loading = true;
+    const requests = {
+      podeEditarVenda: this.perfilService.podeEditarVenda().pipe(catchError(e => of(null))),
+      podeVisualizarVenda: this.perfilService.podeVisualizarVenda().pipe(catchError(e => of(null))),
+      podeEditarValorVenda: this.perfilService.podeEditarValorVenda().pipe(catchError(e => of(null))),
+    };
+
+    forkJoin(requests).subscribe({
+      next: (data: any) => {
+        this.podeEditarVenda = data.podeEditarVenda;
+        this.podeVisualizarVenda = data.podeVisualizarVenda;
+        this.podeEditarValorVenda = data.podeEditarValorVenda;
+
+        // Itera sobre os controles de pagamento para aplicar a permissão
+        for (let i = 0; i < this.pagamentos.length; i++) {
+          const pagamentoControl = this.pagamentos.at(i);
+          const valorPagoControl = pagamentoControl.get('valorPago');
+
+          if (valorPagoControl) {
+            if (!this.podeEditarValorVenda) {
+              valorPagoControl.disable();
+            } else {
+              valorPagoControl.enable();
+            }
+          }
+        }
+
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        console.error('Erro ao carregar as pemissoes:', e);
+        this.submitError = 'Erro ao carregar as pemissões.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private subscribeToChanges(): void {

@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/confirm-dialog.service';
 import { CaixaRepresentation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CaixaDetalheComponent } from 'src/app/feature/pages/caixa/caixa-detalhe/caixa-detalhe.component';
 import { FormsModule } from '@angular/forms'; // Importar FormsModule
@@ -38,8 +39,14 @@ export class CaixaListComponent implements OnInit {
 
   sort: string[] = [];
 
+  podeAbrirCaixa = false;
+  podeVisualizarCaixa = false;
+  podeFecharCaixa = false;
+  podeRetirarCaixa = false;
+
   constructor(
     private caixaService: CaixaService,
+    private perfilService: PerfilService,
     private confirmDialog: ConfirmDialogService,
     private cdr: ChangeDetectorRef,
     private router: Router,
@@ -58,7 +65,35 @@ export class CaixaListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.permissoes();
     this.load();
+  }
+
+  permissoes(): void{
+    this.loading = true;
+    const requests = {
+         podeAbrirCaixa: this.perfilService.podeAbrirCaixa().pipe(catchError(e => of(null))),
+         podeVisualizarCaixa: this.perfilService.podeVisualizarCaixa().pipe(catchError(e => of(null))),
+         podeFecharCaixa: this.perfilService.podeFecharCaixa().pipe(catchError(e => of(null))),
+         podeRetirarCaixa: this.perfilService.podeRetirarCaixa().pipe(catchError(e => of(null))),
+      }
+
+    forkJoin(requests).subscribe({
+         next: (data: any) => {
+           this.podeAbrirCaixa = data.podeAbrirCaixa;
+           this.podeVisualizarCaixa = data.podeVisualizarCaixa;
+           this.podeFecharCaixa = data.podeFecharCaixa;
+           this.podeRetirarCaixa = data.podeRetirarCaixa;
+           this.loading = false;
+           this.cdr.detectChanges();
+         },
+        error: (e) => {
+           console.error('Erro ao carregar as pemissoes:', e);
+           this.error = 'Erro ao carregar as pemissões.';
+           this.loading = false;
+           this.cdr.detectChanges();
+        }
+    });
   }
 
   load(): void {

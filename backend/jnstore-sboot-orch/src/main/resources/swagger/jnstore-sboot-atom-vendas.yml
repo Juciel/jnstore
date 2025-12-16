@@ -688,26 +688,23 @@ components:
           type: integer
           format: int64
           readOnly: true
-        idUsuarioAbertura:
-          type: integer
-          format: int64
+        usuarioAbertura:
+          type: string
         dataAbertura:
           type: string
           format: date-time
         valorInicial:
           type: number
           format: double
-        idUsuarioFechamento:
-          type: integer
-          format: int64
+        usuarioFechamento:
+          type: string
         dataFechamento:
           type: string
           format: date-time
         valorFinal:
           type: number
-        idUsuarioRetirada:
-          type: integer
-          format: int64
+        usuarioRetirada:
+          type: string
         dataRetirada:
           type: string
           format: date-time
@@ -769,9 +766,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PagamentoRepresentation'
-        idUsuarioVenda:
-          type: integer
-          format: int64
+        usuarioVenda:
+          type: string
 
     VendaDetalheRepresentation:
       type: object
@@ -798,9 +794,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PagamentoRepresentation'
-        idUsuarioVenda:
-          type: integer
-          format: int64
+        usuarioVenda:
+          type: string
 
     ItemVendaInput:
       type: object

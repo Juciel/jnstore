@@ -11,7 +11,7 @@ export class CaixaService {
   constructor(private http: HttpClient) {}
 
   abrirCaixa(input: CaixaInput): Observable<CaixaRepresentation> {
-    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/api/api/caixas/abrir`, input);
+    return this.http.post<CaixaRepresentation>(`${this.baseUrl}/api/caixas/abrir`, input);
   }
 
   fecharCaixa(id: number, input: CaixaInput): Observable<CaixaRepresentation> {

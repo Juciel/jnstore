@@ -8,10 +8,12 @@ import br.com.jnstore.sboot.auth.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         novoUsuario.setPerfis(perfils);
         novoUsuario.setSenha(passwordEncoder.encode(novoUsuario.getSenha()));
+        novoUsuario.setPrimeiroLogin(true);
 
         return usuarioRepository.save(novoUsuario);
     }
@@ -45,5 +48,28 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new NoSuchElementException("Usuário com ID " + id + " não encontrado.");
         }
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<TbUsuario> findByNomeUsuario(String nome) {
+        return usuarioRepository.findByNomeUsuario(nome);
+    }
+
+    @Override
+    public boolean isPrimeiroLogin(String nomeUsuario) {
+        TbUsuario usuario = usuarioRepository.findByNomeUsuario(nomeUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+        return usuario.isPrimeiroLogin();
+    }
+
+    @Override
+    @Transactional
+    public void atualizarSenha(String nomeUsuario, String novaSenha) {
+        TbUsuario usuario = usuarioRepository.findByNomeUsuario(nomeUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        usuario.setPrimeiroLogin(false);
+        usuarioRepository.save(usuario);
     }
 }

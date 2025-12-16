@@ -52,7 +52,9 @@ export class App {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects.split('?')[0];
-        this.isLoginPage.set(url === '/login');
+        // CORREÇÃO: Considerar /atualizar-senha como uma página de autenticação
+        const isAuthRoute = url === '/login' || url === '/atualizar-senha';
+        this.isLoginPage.set(isAuthRoute);
 
         if (!this.isLoginPage() && this.authService.isLoggedIn() && !this.usuarioLogado()) {
           this.authService.getUsuarioLogado().subscribe({

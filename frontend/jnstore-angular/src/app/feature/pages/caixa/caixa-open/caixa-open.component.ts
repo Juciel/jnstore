@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router'; // Importar Router
 import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
 
 @Component({
@@ -16,12 +17,28 @@ export class CaixaOpenComponent implements OnInit {
   valor?: number;
   opened: any = null;
   loading = false;
+  podeAbrirCaixa = false;
   openError: string | null = null;
 
-  constructor(private caixaService: CaixaService, private cdr: ChangeDetectorRef, private router: Router) { } // Injetar Router
+  constructor(private caixaService: CaixaService, private perfilService: PerfilService, private cdr: ChangeDetectorRef, private router: Router) { } // Injetar Router
 
   ngOnInit(): void {
+    this.permissoes();
     this.verificarCaixaAberto();
+  }
+
+  permissoes(): void{
+    this.perfilService.podeAbrirCaixa().subscribe({
+      next: (response: boolean) => {
+        this.podeAbrirCaixa = response;
+      },
+      error: e => {
+          console.error('Erro ao carregar as pemissoes:', e);
+          this.openError = 'Erro ao carregar as pemissões.';
+          this.loading = false;
+          this.cdr.detectChanges(); // Forçar detecção de mudanças mesmo em caso de erro
+      }
+    });
   }
 
   verificarCaixaAberto() {

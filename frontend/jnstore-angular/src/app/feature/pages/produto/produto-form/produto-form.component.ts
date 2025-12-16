@@ -8,10 +8,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProdutoService } from 'src/app/feature/services/produto.service';
 import { CategoriaService } from 'src/app/feature/services/categoria.service';
 import { TaxaService } from 'src/app/feature/services/taxa.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { CategoriaRepresetation, ProdutoRepresetation, TaxaRepresentation } from 'src/app/feature/models';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
-import { LoadingService } from 'src/app/feature/services/loading.service';
-import { finalize } from 'rxjs';
+import { forkJoin, finalize, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { VariacaoModalComponent } from 'src/app/feature/pages/produto/variacoes/variacao-modal.component';
 import { VariacaoTabelaComponent } from 'src/app/feature/pages/produto/variacoes/variacao-tabela.component';
 
@@ -30,6 +31,9 @@ export class ProdutoFormComponent implements OnInit {
   loading = false;
   categoriasError: string | null = null;
   saveError: string | null = null;
+  podeEditarProduto = false;
+  podeVisualizarValorCompra = false;
+  podeVisualizarProduto = false;
 
   isEditMode = false;
   produtoId: number | null = null;
@@ -40,14 +44,14 @@ export class ProdutoFormComponent implements OnInit {
               private produtoService: ProdutoService,
               private categoriaService: CategoriaService,
               private taxaService: TaxaService,
-              private loadingService: LoadingService,
+              private perfilService: PerfilService,
               private route: ActivatedRoute, private router: Router,
               @Inject(PLATFORM_ID) private platformId: any,
               private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
       nome: ['', Validators.required],
       descricao: [''],
-      valorCompra: ['', Validators.required],
+      valorCompra: [''],
       valorVenda: ['', Validators.required],
       valorVendaPix: ['', Validators.required],
       valorVendaCredito: ['', Validators.required],
@@ -58,6 +62,7 @@ export class ProdutoFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.permissoes();
     if (!isPlatformServer(this.platformId)) {
       this.loadCategorias();
       this.loadTaxas();
@@ -69,6 +74,38 @@ export class ProdutoFormComponent implements OnInit {
         }
       });
     }
+  }
+
+  permissoes(): void{
+    const requests = {
+      podeEditarProduto: this.perfilService.podeEditarProduto().pipe(catchError(e => of(false))), // Retorna false em caso de erro
+      podeVisualizarProduto: this.perfilService.podeVisualizarProduto().pipe(catchError(e => of(false))),
+      podeVisualizarValorCompra: this.perfilService.podeVisualizarValorCompra().pipe(catchError(e => of(false))),
+    }
+
+    forkJoin(requests).subscribe({
+      next: (data: any) => {
+        this.podeEditarProduto = data.podeEditarProduto;
+        this.podeVisualizarProduto = data.podeVisualizarProduto;
+        this.podeVisualizarValorCompra = data.podeVisualizarValorCompra;
+
+        if (!this.podeEditarProduto) {
+          this.form.disable();
+        } else {
+          this.form.enable();
+        }
+
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (e) => {
+        console.error('Erro ao carregar as pemissoes:', e);
+        this.saveError = 'Erro ao carregar as pemissões.';
+        this.form.disable(); // Desabilita o form em caso de erro
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onValorVendaBlur(): void {
@@ -216,24 +253,20 @@ export class ProdutoFormComponent implements OnInit {
 
   loadCategorias() {
     this.loading = true;
-    this.loadingService.show();
     this.categoriasError = null;
     this.categoriaService.listarTodas().pipe(
       finalize(() => {
         this.loading = false;
-        if (!this.isEditMode) this.loadingService.hide();
       })
     ).subscribe({ next: res => { this.categorias = res || []; try { this.cdr.detectChanges(); } catch (e) { /* ignore */ } }, error: e => { this.categoriasError = 'Erro ao carregar categoria: ' + (e?.error?.message || e?.message || 'desconhecido'); try { this.cdr.detectChanges(); } catch (er) { /* ignore */ } } });
   }
 
   loadTaxas() {
     this.loading = true;
-    this.loadingService.show();
     this.categoriasError = null;
     this.taxaService.getPorNome("CREDITO").pipe(
       finalize(() => {
         this.loading = false;
-        if (!this.isEditMode) this.loadingService.hide();
       })
     ).subscribe({
       next: res => {

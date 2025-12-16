@@ -2,10 +2,11 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ProdutoService } from 'src/app/feature/services/produto.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { ConfirmDialogService } from 'src/app/feature/components/confirm-dialog/confirm-dialog.service';
 import { ProdutoRepresetation } from 'src/app/feature/models';
 import { timeout, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { FormsModule } from '@angular/forms'; // Importar FormsModule
 
 @Component({
@@ -34,9 +35,14 @@ export class ProdutoListComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
   sort: string[] = [];
 
+  podeEditarProduto = false;
+  podeVisualizarValorCompra = false;
+  podeVisualizarProduto = false;
+
   constructor(
     private produtoService: ProdutoService,
     private confirmDialog: ConfirmDialogService,
+    private perfilService: PerfilService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {
@@ -53,7 +59,33 @@ export class ProdutoListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.permissoes();
     this.load();
+  }
+
+  permissoes(): void{
+      this.loading = true;
+      const requests = {
+        podeEditarProduto: this.perfilService.podeEditarProduto().pipe(catchError(e => of(null))),
+        podeVisualizarProduto: this.perfilService.podeVisualizarProduto().pipe(catchError(e => of(null))),
+        podeVisualizarValorCompra: this.perfilService.podeVisualizarValorCompra().pipe(catchError(e => of(null))),
+      }
+
+      forkJoin(requests).subscribe({
+        next: (data: any) => {
+          this.podeEditarProduto = data.podeEditarProduto;
+          this.podeVisualizarProduto = data.podeVisualizarProduto;
+          this.podeVisualizarValorCompra = data.podeVisualizarValorCompra;
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (e) => {
+          console.error('Erro ao carregar as pemissoes:', e);
+          this.error = 'Erro ao carregar as pemissões.';
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   load(): void {

@@ -13,6 +13,7 @@ import br.com.jnstore.sboot.atom.vendas.service.VendaService;
 import br.com.jnstore.sboot.atom.vendas.util.CalculationUtil;
 import br.com.jnstore.sboot.atom.vendas.util.DateCalculationUtil;
 import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
+import br.com.jnstore.sboot.atom.vendas.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,7 +66,7 @@ public class VendaServiceImpl implements VendaService {
         tbCaixa.setValorFinal(valorFinalCaixa.add(tbVenda.getTotalLiquido()));
         caixaRepository.save(tbCaixa);
 
-        tbVenda.setIdUsuarioVenda(1L);
+        tbVenda.setUsuarioVenda(SecurityUtils.getAuthenticatedUsername());
         return repository.save(tbVenda);
     }
 

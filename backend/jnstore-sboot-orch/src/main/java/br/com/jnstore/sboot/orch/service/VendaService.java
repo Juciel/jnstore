@@ -62,7 +62,6 @@ public class VendaService {
             itensEstoque.add(item);
         });
         estoque.setItens(itensEstoque);
-        estoque.setUsuarioId(1L);
         return estoque;
     }
 

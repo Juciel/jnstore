@@ -6,6 +6,11 @@ export interface UsuarioRepresentation {
   perfis?: PerfilRepresentation[];
 }
 
+export interface AtualizarSenhaRequest {
+  nomeUsuario?: string;
+  novaSenha?: string;
+}
+
 export interface PerfilRepresentation {
   id?: number;
   nome?: string;

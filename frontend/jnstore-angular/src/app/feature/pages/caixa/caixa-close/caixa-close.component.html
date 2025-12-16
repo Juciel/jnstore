@@ -28,11 +28,11 @@
           <form (ngSubmit)="fecharCaixa()" #f="ngForm" novalidate>
             <div class="mb-3">
               <label class="form-label">Valor Final</label>
-              <input class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask />
+              <input class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
               <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor final.</div>
             </div>
             <div class="mb-3">
-              <button type="submit" class="btn btn-primary" [disabled]="loading || valorCtrl.invalid">
+              <button type="submit" class="btn btn-primary" [disabled]="loading || valorCtrl.invalid" *ngIf="podeFecharCaixa">
                 {{ loading ? 'Fechando...' : 'Fechar Caixa' }}
               </button>
             </div>

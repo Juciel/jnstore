@@ -27,7 +27,7 @@ public class TbProduto {
     @Column(length = 200)
     private String descricao;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2)
     private BigDecimal valorCompra;
 
     @Column(nullable = false, precision = 10, scale = 2)

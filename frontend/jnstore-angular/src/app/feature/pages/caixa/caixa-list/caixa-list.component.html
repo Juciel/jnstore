@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-header d-flex justify-content-between align-items-center">
     <h3 class="card-title visually-hidden">Caixas</h3>
-    <a class="btn btn-primary" routerLink="/caixa/abrir">Abrir Caixa</a>
+    <a class="btn btn-primary" routerLink="/caixa/abrir" *ngIf="podeAbrirCaixa">Abrir Caixa</a>
   </div>
   <div class="card-body">
     <div *ngIf="loading" class="loading-overlay">
@@ -15,8 +15,8 @@
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
       <div class="mb-3 d-flex gap-3">
-        <input type="date" class="form-control" placeholder="Data Inicial" [(ngModel)]="dataInicialFilter" (input)="onFilterChange()">
-        <input type="date" class="form-control" placeholder="Data Final" [(ngModel)]="dataFinalFilter" (input)="onFilterChange()">
+        <input type="date" class="form-control" placeholder="Data Inicial" [(ngModel)]="dataInicialFilter" (input)="onFilterChange()" autocomplete="off">
+        <input type="date" class="form-control" placeholder="Data Final" [(ngModel)]="dataFinalFilter" (input)="onFilterChange()" autocomplete="off">
       </div>
 
       <table *ngIf="caixas.length" class="table table-striped">
@@ -44,12 +44,12 @@
             <td>{{ caixa.valorInicial | currency:'BRL':'symbol':'1.2-2' }}</td>
             <td>{{ caixa.dataFechamento | date:'dd/MM/yyyy HH:mm':'UTC'}}</td>
             <td>{{ caixa.valorFinal | currency:'BRL':'symbol':'1.2-2' }}</td>
-            <td>{{ caixa.dataRetirada | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>{{ caixa.dataRetirada | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
             <td>{{ caixa.valorRetirada | currency:'BRL':'symbol':'1.2-2' }}</td>
             <td>
-              <button (click)="detalharCaixa(caixa.id)" class="btn btn-sm btn-info me-2"><i class="fas fa-eye"></i></button>
-              <button [routerLink]="['/caixa/fechar', caixa.id]" *ngIf="caixa.status === 'ABERTO'" class="btn btn-sm btn-warning me-2" title="Fechar Caixa"><i class="fas fa-lock"></i></button>
-              <button [routerLink]="['/caixa/retirada', caixa.id]" *ngIf="caixa.status === 'FECHADO'" class="btn btn-sm btn-warning me-2" title="Retirada Caixa"><i class="fas fa-dolly"></i></button>
+              <button (click)="detalharCaixa(caixa.id)" class="btn btn-sm btn-info me-2" *ngIf="podeVisualizarCaixa"><i class="fas fa-eye"></i></button>
+              <button [routerLink]="['/caixa/fechar', caixa.id]" *ngIf="caixa.status === 'ABERTO' && podeFecharCaixa" class="btn btn-sm btn-warning me-2" title="Fechar Caixa"><i class="fas fa-lock"></i></button>
+              <button [routerLink]="['/caixa/retirada', caixa.id]" *ngIf="caixa.status === 'FECHADO' && podeRetirarCaixa" class="btn btn-sm btn-warning me-2" title="Retirada Caixa"><i class="fas fa-dolly"></i></button>
             </td>
           </tr>
         </tbody>

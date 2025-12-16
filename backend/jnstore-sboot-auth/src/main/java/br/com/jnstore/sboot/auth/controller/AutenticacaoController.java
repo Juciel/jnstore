@@ -7,6 +7,7 @@ import br.com.jnstore.sboot.atom.auth.model.UsuarioRepresentation;
 import br.com.jnstore.sboot.auth.mapper.UsuarioMapper;
 import br.com.jnstore.sboot.auth.repository.UsuarioRepository;
 import br.com.jnstore.sboot.auth.service.AutenticacaoService;
+import br.com.jnstore.sboot.auth.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacaoController implements AutenticacaoApi {
 
     private final AutenticacaoService autenticacaoService;
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
     private final UsuarioMapper usuarioMapper;
 
 
@@ -36,7 +37,7 @@ public class AutenticacaoController implements AutenticacaoApi {
             return ResponseEntity.status(401).build();
         }
         String username = authentication.getName();
-        return usuarioRepository.findByNomeUsuario(username)
+        return usuarioService.findByNomeUsuario(username)
                 .map(usuarioMapper::toRepresentationSemSenha)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário '" + username + "' não encontrado no banco de dados, mas presente no token."));

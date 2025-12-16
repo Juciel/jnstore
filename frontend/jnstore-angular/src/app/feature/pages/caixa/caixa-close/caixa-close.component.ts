@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CaixaService } from 'src/app/feature/services/caixa.service';
+import { PerfilService } from 'src/app/feature/services/perfil.service';
 import { CurrencyMaskDirective } from 'src/app/feature/directives/currency-mask.directive';
 import { CaixaRepresentation } from 'src/app/feature/models';
 
@@ -18,21 +19,38 @@ export class CaixaCloseComponent implements OnInit {
   caixa: CaixaRepresentation | undefined;
   valorFechamento?: number; // Mantido para o input do formulário
   loading = false;
+  podeFecharCaixa = false;
   closeError: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private caixaService: CaixaService,
+    private perfilService: PerfilService,
     private cdr: ChangeDetectorRef // Injetar ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    this.permissoes();
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.caixaId = +id;
         this.buscarCaixaPorId(this.caixaId);
+      }
+    });
+  }
+
+  permissoes(): void{
+    this.perfilService.podeFecharCaixa().subscribe({
+      next: (response: boolean) => {
+        this.podeFecharCaixa = response;
+      },
+      error: e => {
+          console.error('Erro ao carregar as pemissoes:', e);
+          this.closeError = 'Erro ao carregar as pemissões.';
+          this.loading = false;
+          this.cdr.detectChanges(); // Forçar detecção de mudanças mesmo em caso de erro
       }
     });
   }

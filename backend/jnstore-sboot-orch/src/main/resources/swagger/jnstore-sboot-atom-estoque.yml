@@ -716,10 +716,9 @@ components:
           type: string
           description: "Descrição ou motivo da movimentação (Ex: ID da Venda, Nota Fiscal, Ajuste de inventário)."
           maxLength: 100
-        usuarioId:
-          type: integer
-          format: int64
-          description: "ID do usuário que realizou a operação."
+        usuarioCriacao:
+          type: string
+          description: "usuário que realizou a operação."
 
     ItemMovimentacaoEstoqueRepresentation:
       type: object

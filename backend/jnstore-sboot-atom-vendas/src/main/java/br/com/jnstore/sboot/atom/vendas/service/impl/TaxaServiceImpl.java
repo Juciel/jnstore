@@ -3,6 +3,7 @@ package br.com.jnstore.sboot.atom.vendas.service.impl;
 import br.com.jnstore.sboot.atom.vendas.domain.TbTaxas;
 import br.com.jnstore.sboot.atom.vendas.repository.TaxaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.TaxaService;
+import br.com.jnstore.sboot.atom.vendas.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class TaxaServiceImpl implements TaxaService {
                 .ifPresent(c -> {
                     throw new IllegalArgumentException("Já existe uma taxa com o nome '" + tbTaxas.getNome() + "'.");
                 });
-        tbTaxas.setIdUsuarioCriacao(1L);
+        tbTaxas.setUsuarioCriacao(SecurityUtils.getAuthenticatedUsername());
         tbTaxas.setDataCriacao(LocalDateTime.now());
         return repository.save(tbTaxas);
     }
@@ -47,7 +48,7 @@ public class TaxaServiceImpl implements TaxaService {
                 });
 
         entity.setNome(tbTaxas.getNome());
-        entity.setIdUsuarioAtualizacao(1L); // Placeholder para usuário logado
+        entity.setUsuarioAtualizacao(SecurityUtils.getAuthenticatedUsername());
         entity.setDataAtualizacao(LocalDateTime.now());
         return repository.save(entity);
     }

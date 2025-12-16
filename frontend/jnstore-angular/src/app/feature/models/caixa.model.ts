@@ -4,13 +4,13 @@ export interface CaixaInput {
 
 export interface CaixaRepresentation {
   id?: number;
-  idUsuarioAbertura?: number;
+  usuarioAbertura?: string;
   dataAbertura?: string; // date-time
   valorInicial?: number;
-  idUsuarioFechamento?: number;
+  usuarioFechamento?: string;
   dataFechamento?: string; // date-time
   valorFinal?: number;
-  idUsuarioRetirada?: number;
+  usuarioRetirada?: string;
   dataRetirada?: string; // date-time
   valorRetirada?: number;
   status: StatusCaixa;

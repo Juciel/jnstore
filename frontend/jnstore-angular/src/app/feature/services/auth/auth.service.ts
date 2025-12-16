@@ -33,13 +33,11 @@ export class AuthService {
 
     isLoggedIn(): boolean {
       const loggedIn = !!localStorage.getItem('jwt_token');
-      console.log('AuthService.isLoggedIn() retornou:', loggedIn); // Adicione esta linha
       return loggedIn;
     }
 
     getToken(): string | null {
       const token = localStorage.getItem('jwt_token');
-      console.log('AuthService.getToken() retornou:', token);
       return localStorage.getItem('jwt_token');
     }
 }

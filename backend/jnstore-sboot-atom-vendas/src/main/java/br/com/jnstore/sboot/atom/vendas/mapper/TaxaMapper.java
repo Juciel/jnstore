@@ -12,9 +12,9 @@ public interface TaxaMapper {
     TaxaRepresentation toRepresentation(TbTaxas tbTaxas);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "idUsuarioCriacao", ignore = true)
+    @Mapping(target = "usuarioCriacao", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
-    @Mapping(target = "idUsuarioAtualizacao", ignore = true)
+    @Mapping(target = "usuarioAtualizacao", ignore = true)
     @Mapping(target = "dataAtualizacao", ignore = true)
     TbTaxas toDomain(TaxaInput taxaInput);
 }

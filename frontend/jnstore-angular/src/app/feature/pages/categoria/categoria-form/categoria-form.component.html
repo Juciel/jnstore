@@ -16,7 +16,7 @@
       <div class="mb-3">
         <label class="form-label">Descrição</label>
         <input class="form-control" [class.is-invalid]="form.get('descricao')?.invalid && form.get('descricao')?.touched"
-          formControlName="descricao" placeholder="Ex: Camisetas, Calças, Acessórios" maxlength="100"/>
+          formControlName="descricao" placeholder="Ex: Camisetas, Calças, Acessórios" maxlength="100" autocomplete="off"/>
         <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="invalid-feedback">
           <div *ngIf="form.get('descricao')?.errors?.['required']">Descrição é obrigatória.</div>
           <div *ngIf="form.get('descricao')?.errors?.['minlength']">Mínimo 3 caracteres.</div>
@@ -25,7 +25,7 @@
       </div>
 
       <div class="mb-3">
-        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading">{{ loading ? 'Salvando...' :
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading" *ngIf="podeEditarCategoria">{{ loading ? 'Salvando...' :
           'Salvar Categoria' }}</button>
       </div>
     </form>

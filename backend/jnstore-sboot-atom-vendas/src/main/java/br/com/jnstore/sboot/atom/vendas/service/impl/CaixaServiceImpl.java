@@ -7,6 +7,7 @@ import br.com.jnstore.sboot.atom.vendas.model.CaixaRepresentation;
 import br.com.jnstore.sboot.atom.vendas.repository.CaixaRepository;
 import br.com.jnstore.sboot.atom.vendas.service.CaixaService;
 import br.com.jnstore.sboot.atom.vendas.util.PaginationUtil;
+import br.com.jnstore.sboot.atom.vendas.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable; // Alterado para Pageable
@@ -32,7 +33,7 @@ public class CaixaServiceImpl implements CaixaService {
     @Transactional
     public TbCaixa abrirCaixa(BigDecimal valorInicial){
         TbCaixa tbCaixa = new TbCaixa();
-        tbCaixa.setIdUsuarioAbertura(1L);
+        tbCaixa.setUsuarioAbertura(SecurityUtils.getAuthenticatedUsername());
         tbCaixa.setDataAbertura(LocalDateTime.now());
         tbCaixa.setValorInicial(valorInicial);
         tbCaixa.setStatus(StatusCaixa.ABERTO);
@@ -44,7 +45,7 @@ public class CaixaServiceImpl implements CaixaService {
     public TbCaixa fecharCaixa(Long id, BigDecimal valorTotalVendas) {
         TbCaixa tbCaixa = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Caixa não encontrado"));
-        tbCaixa.setIdUsuarioFechamento(1L);
+        tbCaixa.setUsuarioFechamento(SecurityUtils.getAuthenticatedUsername());
         tbCaixa.setDataFechamento(LocalDateTime.now());
         tbCaixa.setValorFinal(valorTotalVendas);
         tbCaixa.setStatus(StatusCaixa.FECHADO);
@@ -56,7 +57,7 @@ public class CaixaServiceImpl implements CaixaService {
     public TbCaixa retiradaCaixa(Long id, BigDecimal valorRetirada) {
         TbCaixa tbCaixa = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Caixa não encontrado"));
-        tbCaixa.setIdUsuarioRetirada(1L);
+        tbCaixa.setUsuarioRetirada(SecurityUtils.getAuthenticatedUsername());
         tbCaixa.setDataRetirada(LocalDateTime.now());
         tbCaixa.setValorRetirada(valorRetirada);
         tbCaixa.setStatus(StatusCaixa.RETIRADO);

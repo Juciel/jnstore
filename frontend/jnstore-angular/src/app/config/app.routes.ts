@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from '../feature/auth/login/login.component';
 import { AuthGuard } from '../feature/services/auth/auth.guard'; // Importar AuthGuard
+import { AtualizarSenhaComponent } from '../feature/auth/atualizar-senha/atualizar-senha.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'atualizar-senha', component: AtualizarSenhaComponent },
 	{ path: '', pathMatch: 'full', redirectTo: 'dashboard' }, // Removido canActivate daqui
 	{ path: 'dashboard', loadComponent: () => import('../feature/pages/dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [AuthGuard] },
 	{ path: 'produtos', loadComponent: () => import('../feature/pages/produto/produto-list/produto-list.component').then(m => m.ProdutoListComponent), canActivate: [AuthGuard] },

@@ -23,7 +23,7 @@
             <div class="col-md-6">
               <label class="form-label">Produto</label>
               <div class="autocomplete-container">
-                <input type="text" class="form-control" formControlName="search" placeholder="Digite para buscar...">
+                <input type="text" class="form-control" formControlName="search" placeholder="Digite para buscar..." autocomplete="off">
                 <div class="autocomplete-results" *ngIf="autocompleteResults[i] && autocompleteResults[i].length > 0">
                   <div *ngFor="let result of autocompleteResults[i]" class="autocomplete-item" (click)="selectProduct(i, result)">
                     {{result.variacao.identificador}}<br>
@@ -40,11 +40,11 @@
             <!-- Other Fields -->
             <div class="col-md-2">
               <label class="form-label">Preço Unit.</label>
-              <input type="text" class="form-control" formControlName="precoUnitario" currencyMask inputmode="decimal" />
+              <input type="text" class="form-control" formControlName="precoUnitario" currencyMask inputmode="decimal" autocomplete="off"/>
             </div>
             <div class="col-md-2">
               <label class="form-label">Quantidade</label>
-              <input type="number" class="form-control" formControlName="quantidade" />
+              <input type="number" class="form-control" formControlName="quantidade" autocomplete="off"/>
             </div>
             <div class="col-md-2 d-flex align-items-end">
               <button type="button" class="btn btn-outline-danger w-100" (click)="removeItem(i)">Remover</button>
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-sm btn-outline-primary mt-2" (click)="addItem()">Adicionar Item</button>
+        <button type="button" class="btn btn-sm btn-outline-primary mt-2" (click)="addItem()" *ngIf="podeEditarVenda">Adicionar Item</button>
       </div>
 
       <div formArrayName="pagamentos" class="mb-3">
@@ -76,18 +76,18 @@
             </div>
             <div class="col-md-2">
               <label class="form-label">Valor Pago</label>
-              <input type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" />
+              <input type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" autocomplete="off"/>
             </div>
             <div class="col-md-2 d-flex align-items-end">
               <button type="button" class="btn btn-outline-danger w-100" (click)="removePagamento(j)">Remover</button>
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-primary" (click)="addPagamento()">Adicionar Pagamento</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" (click)="addPagamento()" *ngIf="podeEditarVenda && podeEditarValorVenda">Adicionar Pagamento</button>
       </div>
 
       <div class="mb-3">
-        <button type="submit" class="btn btn-primary" [disabled]="loading">{{ loading ? 'Registrando...' : 'Registrar Venda' }}</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading" *ngIf="podeEditarVenda">{{ loading ? 'Registrando...' : 'Registrar Venda' }}</button>
       </div>
     </form>
 

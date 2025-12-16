@@ -60,7 +60,7 @@ paths:
         '401':
           description: "Não autorizado"
 
-  /api/auth/register:
+  /api/users/register:
     post:
       tags:
         - Usuarios
@@ -84,6 +84,49 @@ paths:
           description: "Acesso negado"
         '409':
           description: "O email ou nome de usuário informado já está em uso."
+
+  /api/users/primeiro-login:
+    get:
+      tags:
+        - Usuarios
+      summary: "Verificar primeiro login"
+      description: "Verifica se é o primeiro login do usuário."
+      operationId: isPrimeiroLogin
+      parameters:
+        - name: nomeUsuario
+          in: query
+          required: true
+          description: "Nome de usuário"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Retorna true se for o primeiro login"
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: "Usuário não encontrado"
+
+  /api/users/atualizar-senha:
+    put:
+      tags:
+        - Usuarios
+      summary: "Atualizar senha do usuário"
+      description: "Atualiza a senha do usuário e marca o primeiro login como false."
+      operationId: atualizarSenha
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtualizarSenhaRequest'
+      responses:
+        '204':
+          description: "Senha atualizada com sucesso"
+        '404':
+          description: "Usuário não encontrado"
 
   /api/users/{id}:
     delete:
@@ -132,6 +175,163 @@ paths:
           description: "Acesso negado"
         '409':
           description: "Um perfil com este nome já existe."
+  
+  /api/profiles/podeEditarProduto:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar produtos"
+      operationId: podeEditarProduto
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar produtos"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarProduto:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar produtos"
+      operationId: podeVisualizarProduto
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar produtos"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarValorCompra:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar o valor de compra"
+      operationId: podeVisualizarValorCompra
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar o valor de compra"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarCategoria:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar categorias"
+      operationId: podeVisualizarCategoria
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar categorias"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarCategoria:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar categorias"
+      operationId: podeEditarCategoria
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar categorias"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeAbrirCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode abrir o caixa"
+      operationId: podeAbrirCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode abrir o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar o caixa"
+      operationId: podeVisualizarCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeFecharCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode fechar o caixa"
+      operationId: podeFecharCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode fechar o caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeRetirarCaixa:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode fazer retiradas do caixa"
+      operationId: podeRetirarCaixa
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode fazer retiradas do caixa"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar vendas"
+      operationId: podeEditarVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar vendas"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeVisualizarVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode visualizar vendas"
+      operationId: podeVisualizarVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode visualizar vendas"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /api/profiles/podeEditarValorVenda:
+    get:
+      tags:
+        - Perfil
+      summary: "Verifica se o usuário autenticado pode editar o valor de uma venda"
+      operationId: podeEditarValorVenda
+      responses:
+        '200':
+          description: "Retorna true se o usuário pode editar o valor de uma venda"
+          content:
+            application/json:
+              schema:
+                type: boolean
 
 components:
   schemas:
@@ -193,6 +393,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PerfilRepresentation'
+
+    AtualizarSenhaRequest:
+      type: object
+      required:
+        - nomeUsuario
+        - novaSenha
+      properties:
+        nomeUsuario:
+          type: string
+          example: "joao.admin"
+        novaSenha:
+          type: string
+          example: "novaSenhaSuperSegura123"
 
     PerfilRepresentation:
       type: object

@@ -762,10 +762,9 @@ components:
         descricaoMotivo:
           type: string
           description: "Descrição ou motivo da movimentação (Ex: ID da Venda, Nota Fiscal, Ajuste de inventário)."
-        usuarioId:
-          type: integer
-          format: int64
-          description: "ID do usuário que realizou a operação."
+        usuarioCriacao:
+          type: string
+          description: "usuário que realizou a operação."
 
     # 3. VariacaoProdutoRepresetation
     VariacaoProdutoRepresetation:

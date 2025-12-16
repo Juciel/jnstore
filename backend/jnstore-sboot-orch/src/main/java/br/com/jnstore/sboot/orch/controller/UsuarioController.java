@@ -1,10 +1,9 @@
-package br.com.jnstore.sboot.auth.controller;
+package br.com.jnstore.sboot.orch.controller;
 
-import br.com.jnstore.sboot.atom.auth.api.UsuariosApi;
-import br.com.jnstore.sboot.atom.auth.model.AtualizarSenhaRequest;
-import br.com.jnstore.sboot.atom.auth.model.UsuarioRepresentation;
-import br.com.jnstore.sboot.auth.mapper.UsuarioMapper;
-import br.com.jnstore.sboot.auth.service.UsuarioService;
+import br.com.jnstore.sboot.auth.api.UsuariosApi;
+import br.com.jnstore.sboot.auth.model.AtualizarSenhaRequest;
+import br.com.jnstore.sboot.auth.model.UsuarioRepresentation;
+import br.com.jnstore.sboot.orch.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController implements UsuariosApi {
 
     private final UsuarioService service;
-    private final UsuarioMapper mapper;
 
     @Override
     public ResponseEntity<UsuarioRepresentation> registrarUsuario(UsuarioRepresentation request) {
-        var usuario = mapper.toRepresentation(service.registrar(mapper.toDomain(request)));
-        return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+        return new ResponseEntity<>(service.registrarUsuario(request), HttpStatus.CREATED);
     }
 
     @Override
@@ -36,7 +33,7 @@ public class UsuarioController implements UsuariosApi {
 
     @Override
     public ResponseEntity<Void> atualizarSenha(AtualizarSenhaRequest request) {
-        service.atualizarSenha(request.getNomeUsuario(), request.getNovaSenha());
+        service.atualizarSenha(request);
         return ResponseEntity.noContent().build();
     }
 }

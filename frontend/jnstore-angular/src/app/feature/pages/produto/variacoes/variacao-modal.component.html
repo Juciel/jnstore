@@ -16,7 +16,7 @@
             <div class="col-md-6">
               <label class="form-label">Qtd. Estoque</label>
               <input type="number" class="form-control" formControlName="quantidadeEstoque"
-                [class.is-invalid]="f['quantidadeEstoque'].invalid && f['quantidadeEstoque'].touched" />
+                [class.is-invalid]="f['quantidadeEstoque'].invalid && f['quantidadeEstoque'].touched" autocomplete="off"/>
               <div *ngIf="f['quantidadeEstoque'].invalid && f['quantidadeEstoque'].touched" class="invalid-feedback">
                 Estoque é obrigatório e não pode ser negativo.
               </div>
@@ -37,7 +37,7 @@
             <div class="col-md-6" *ngIf="f['cor'].value === 'Outro'">
               <label class="form-label">Qual cor?</label>
               <input type="text" class="form-control" formControlName="outraCor"
-                     [class.is-invalid]="f['outraCor'].invalid && f['outraCor'].touched" maxlength="50"/>
+                     [class.is-invalid]="f['outraCor'].invalid && f['outraCor'].touched" maxlength="50" autocomplete="off"/>
               <div *ngIf="f['outraCor'].invalid && f['outraCor'].touched" class="invalid-feedback">
                 Especifique a cor.
               </div>
@@ -58,7 +58,7 @@
             <div class="col-md-6" *ngIf="f['tamanho'].value === 'Outro'">
               <label class="form-label">Qual tamanho?</label>
               <input type="text" class="form-control" formControlName="outroTamanho"
-                     [class.is-invalid]="f['outroTamanho'].invalid && f['outroTamanho'].touched" maxlength="10"/>
+                     [class.is-invalid]="f['outroTamanho'].invalid && f['outroTamanho'].touched" maxlength="10" autocomplete="off"/>
               <div *ngIf="f['outroTamanho'].invalid && f['outroTamanho'].touched" class="invalid-feedback">
                 Especifique o tamanho.
               </div>

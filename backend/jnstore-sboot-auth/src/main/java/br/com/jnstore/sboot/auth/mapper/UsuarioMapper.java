@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
+    @Mapping(target = "primeiroLogin", ignore = true)
     TbUsuario toDomain(UsuarioRepresentation registroUsuario);
 
     UsuarioRepresentation toRepresentation(TbUsuario registrar);

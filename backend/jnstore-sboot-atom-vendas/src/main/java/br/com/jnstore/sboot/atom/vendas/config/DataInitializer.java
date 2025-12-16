@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
                     TbTaxas newTaxa = new TbTaxas();
                     newTaxa.setNome("CREDITO");
                     newTaxa.setValorTaxa(VALOR_INICIAL_TAXA_CREDITO);
-                    newTaxa.setIdUsuarioCriacao(1L);
+                    newTaxa.setUsuarioCriacao("jose.admin");
                     newTaxa.setDataCriacao(LocalDateTime.now());
                     return taxaRepository.save(newTaxa);
                 });

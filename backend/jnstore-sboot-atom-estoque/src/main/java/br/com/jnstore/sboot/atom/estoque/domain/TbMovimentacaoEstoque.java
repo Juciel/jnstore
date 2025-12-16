@@ -33,7 +33,4 @@ public class TbMovimentacaoEstoque {
 
     @Column(name = "USUARIO_CRIACAO", nullable = false)
     private String usuarioCriacao;
-
-    @Column(name = "DATA_CRIACAO", nullable = false)
-    private LocalDateTime dataCriacao;
 }

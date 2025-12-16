@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header d-flex justify-content-between align-items-center">
+  <div class="card-header d-flex justify-content-between align-items-center" *ngIf="podeEditarProduto">
     <h3 class="card-title visually-hidden">Produtos</h3>
     <a class="btn btn-primary" routerLink="/produtos/novo">Adicionar Produto</a>
   </div>
@@ -15,7 +15,7 @@
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
       <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Filtrar por nome" [(ngModel)]="nomeFilter" (input)="onFilterChange()">
+        <input type="text" class="form-control" placeholder="Filtrar por nome" [(ngModel)]="nomeFilter" (input)="onFilterChange()" autocomplete="off">
       </div>
 
       <table *ngIf="produtos.length" class="table table-striped">
@@ -30,10 +30,10 @@
             <th>Categoria</th>
             <th>Preço para venda</th>
             <th>Qtd</th>
-            <th>Valor da Compra</th>
-            <th>Valor de Venda</th>
-            <th>Lucro</th>
-            <th style="width: 120px;">Ações</th>
+            <th *ngIf="podeVisualizarValorCompra">Valor da Compra</th>
+            <th *ngIf="podeVisualizarValorCompra">Valor de Venda</th>
+            <th *ngIf="podeVisualizarValorCompra">Lucro</th>
+            <th style="width: 120px;" *ngIf="podeEditarProduto || podeVisualizarProduto">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -42,12 +42,12 @@
             <td>{{ p.categoria?.descricao || '-' }}</td>
             <td>{{ p.valorVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
             <td>{{ p.quantidadeTotalEstoque }}</td>
-            <td>{{ p.valorTotalCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
-            <td>{{ p.valorTotalVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
-            <td>{{ p.valorTotalLucro | currency:'BRL':'symbol':'1.2-2' }}</td>
-            <td>
-              <a [routerLink]="['/produtos', p.id, 'editar']" class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></a>
-              <button (click)="deleteProduto(p.id, p.nome)" [disabled]="deleting" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+            <td *ngIf="podeVisualizarValorCompra">{{ p.valorTotalCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td *ngIf="podeVisualizarValorCompra">{{ p.valorTotalVenda | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td *ngIf="podeVisualizarValorCompra">{{ p.valorTotalLucro | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td *ngIf="podeEditarProduto || podeVisualizarProduto">
+              <a [routerLink]="['/produtos', p.id, 'editar']" class="btn btn-sm btn-info me-2" *ngIf="podeEditarProduto || podeVisualizarProduto"><i class="fas fa-edit"></i></a>
+              <button (click)="deleteProduto(p.id, p.nome)" [disabled]="deleting" class="btn btn-sm btn-danger" *ngIf="podeEditarProduto"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
         </tbody>
