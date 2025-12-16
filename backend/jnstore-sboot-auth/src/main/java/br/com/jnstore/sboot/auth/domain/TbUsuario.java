@@ -33,7 +33,7 @@ public class TbUsuario {
     private String nome;
 
     @Column(nullable = false)
-    private boolean primeiroLogin = true;
+    private boolean primeiroLogin;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

@@ -47,7 +47,7 @@ public class PerfilServiceImpl implements PerfilService {
 
     @Override
     public boolean podeEditarProduto(List<GrantedAuthority> grants) {
-        return checkPermission(grants, nome -> PerfilNomeEnum.ADMIN.name().equalsIgnoreCase(nome) || PerfilNomeEnum.GERENTE.name().equalsIgnoreCase(nome));
+        return checkPermission(grants, allPodeEditar());
     }
 
     @Override
