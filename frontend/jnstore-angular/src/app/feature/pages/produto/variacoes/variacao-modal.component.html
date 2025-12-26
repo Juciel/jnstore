@@ -23,8 +23,8 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Cor</label>
-              <select class="form-select" formControlName="cor" [class.is-invalid]="f['cor'].invalid && f['cor'].touched">
+              <label for="cor" class="form-label">Cor</label>
+              <select id="cor" class="form-select" formControlName="cor" [class.is-invalid]="f['cor'].invalid && f['cor'].touched">
                 <option value="" disabled>Selecione uma cor</option>
                 <option *ngFor="let color of standardColors" [value]="color">{{ color }}</option>
                 <option value="Outro">Outro</option>
@@ -35,8 +35,8 @@
             </div>
 
             <div class="col-md-6" *ngIf="f['cor'].value === 'Outro'">
-              <label class="form-label">Qual cor?</label>
-              <input type="text" class="form-control" formControlName="outraCor"
+              <label for="outraCor" class="form-label">Qual cor?</label>
+              <input id="outraCor" type="text" class="form-control" formControlName="outraCor"
                      [class.is-invalid]="f['outraCor'].invalid && f['outraCor'].touched" maxlength="50" autocomplete="off"/>
               <div *ngIf="f['outraCor'].invalid && f['outraCor'].touched" class="invalid-feedback">
                 Especifique a cor.
@@ -44,8 +44,8 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Tamanho</label>
-              <select class="form-select" formControlName="tamanho" [class.is-invalid]="f['tamanho'].invalid && f['tamanho'].touched">
+              <label for="tamanho" class="form-label">Tamanho</label>
+              <select id="tamanho" class="form-select" formControlName="tamanho" [class.is-invalid]="f['tamanho'].invalid && f['tamanho'].touched">
                 <option value="" disabled>Selecione um tamanho</option>
                 <option *ngFor="let size of standardSizes" [value]="size">{{ size }}</option>
                 <option value="Outro">Outro</option>
@@ -56,8 +56,8 @@
             </div>
 
             <div class="col-md-6" *ngIf="f['tamanho'].value === 'Outro'">
-              <label class="form-label">Qual tamanho?</label>
-              <input type="text" class="form-control" formControlName="outroTamanho"
+              <label for="outroTamanho" class="form-label">Qual tamanho?</label>
+              <input id="outroTamanho" type="text" class="form-control" formControlName="outroTamanho"
                      [class.is-invalid]="f['outroTamanho'].invalid && f['outroTamanho'].touched" maxlength="10" autocomplete="off"/>
               <div *ngIf="f['outroTamanho'].invalid && f['outroTamanho'].touched" class="invalid-feedback">
                 Especifique o tamanho.

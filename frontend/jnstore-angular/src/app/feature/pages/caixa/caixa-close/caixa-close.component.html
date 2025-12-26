@@ -27,8 +27,8 @@
           <p><strong>Status:</strong> {{ caixa.status | titlecase }}</p>
           <form (ngSubmit)="fecharCaixa()" #f="ngForm" novalidate>
             <div class="mb-3">
-              <label class="form-label">Valor Final</label>
-              <input class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
+              <label class="form-label" for="valorFechamento">Valor Final</label>
+              <input id="valorFechamento" class="form-control" type="text" [(ngModel)]="valorFechamento" name="valorFechamento" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
               <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor final.</div>
             </div>
             <div class="mb-3">

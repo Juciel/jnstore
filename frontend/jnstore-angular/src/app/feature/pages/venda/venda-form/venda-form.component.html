@@ -21,9 +21,9 @@
           <div class="row g-2">
             <!-- Autocomplete Column -->
             <div class="col-md-6">
-              <label class="form-label">Produto</label>
+              <label for="produto" class="form-label">Produto</label>
               <div class="autocomplete-container">
-                <input type="text" class="form-control" formControlName="search" placeholder="Digite para buscar..." autocomplete="off">
+                <input id="produto" type="text" class="form-control" formControlName="search" placeholder="Digite para buscar..." autocomplete="off">
                 <div class="autocomplete-results" *ngIf="autocompleteResults[i] && autocompleteResults[i].length > 0">
                   <div *ngFor="let result of autocompleteResults[i]" class="autocomplete-item" (click)="selectProduct(i, result)">
                     {{result.variacao.identificador}}<br>
@@ -39,12 +39,12 @@
 
             <!-- Other Fields -->
             <div class="col-md-2">
-              <label class="form-label">Preço Unit.</label>
-              <input type="text" class="form-control" formControlName="precoUnitario" currencyMask inputmode="decimal" autocomplete="off"/>
+              <label for="precoUnitario" class="form-label">Preço Unit.</label>
+              <input id="precoUnitario" type="text" class="form-control" formControlName="precoUnitario" currencyMask inputmode="decimal" autocomplete="off"/>
             </div>
             <div class="col-md-2">
-              <label class="form-label">Quantidade</label>
-              <input type="number" class="form-control" formControlName="quantidade" autocomplete="off"/>
+              <label for="quantidade" class="form-label">Quantidade</label>
+              <input id="quantidade" type="number" class="form-control" formControlName="quantidade" autocomplete="off"/>
             </div>
             <div class="col-md-2 d-flex align-items-end">
               <button type="button" class="btn btn-outline-danger w-100" (click)="removeItem(i)">Remover</button>
@@ -60,8 +60,8 @@
         <div *ngFor="let p of pagamentos.controls; let j = index" [formGroupName]="j" class="card p-2 mb-2">
           <div class="row g-2">
             <div class="col-md-6">
-              <label class="form-label">Forma</label>
-              <select class="form-select" formControlName="forma">
+              <label for="forma" class="form-label">Forma</label>
+              <select id="forma" class="form-select" formControlName="forma">
                 <option value="DINHEIRO">DINHEIRO</option>
                 <option value="CREDITO">CREDITO</option>
                 <option value="DEBITO">DEBITO</option>
@@ -75,8 +75,8 @@
               </select>
             </div>
             <div class="col-md-2">
-              <label class="form-label">Valor Pago</label>
-              <input type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" autocomplete="off"/>
+              <label for="valorPago" class="form-label">Valor Pago</label>
+              <input id="valorPago" type="text" class="form-control" formControlName="valorPago" currencyMask inputmode="decimal" autocomplete="off"/>
             </div>
             <div class="col-md-2 d-flex align-items-end">
               <button type="button" class="btn btn-outline-danger w-100" (click)="removePagamento(j)">Remover</button>

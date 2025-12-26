@@ -34,8 +34,8 @@
       <div class="card-body">
         <form (ngSubmit)="abrir()" #f="ngForm" novalidate>
           <div class="mb-3">
-            <label class="form-label">Valor Inicial</label>
-            <input class="form-control" type="text" [(ngModel)]="valor" name="valor" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
+            <label class="form-label" for="valorInicial">Valor Inicial</label>
+            <input id="valorInicial" class="form-control" type="text" [(ngModel)]="valor" name="valor" required #valorCtrl="ngModel" currencyMask autocomplete="off"/>
             <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor inicial.</div>
           </div>
           <div class="mb-3">

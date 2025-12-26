@@ -12,53 +12,18 @@
     <div *ngIf="saveError" class="alert alert-danger">{{ saveError }}</div>
     <div *ngIf="categoriasError" class="alert alert-danger">{{ categoriasError }}</div>
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <div class="mb-3">
-        <label class="form-label">Nome</label>
-        <input class="form-control" [class.is-invalid]="form.get('nome')?.invalid && form.get('nome')?.touched" formControlName="nome" maxlength="100" autocomplete="off" [disabled]="!podeEditarProduto"/>
-        <div *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="invalid-feedback">Nome é obrigatório.</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Descrição</label>
-        <input class="form-control" formControlName="descricao" maxlength="200" autocomplete="off" [disabled]="!podeEditarProduto"/>
-      </div>
-
-      <div class="mb-3" *ngIf="podeVisualizarValorCompra">
-        <label class="form-label">Preço de Compra</label>
-        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorCompra')?.invalid && form.get('valorCompra')?.touched" formControlName="valorCompra" autocomplete="off" [disabled]="!podeEditarProduto"/>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Preço de Venda</label>
-        <input type="text" class="form-control" currencyMask inputmode="decimal"
-               [class.is-invalid]="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched"
-               formControlName="valorVenda" (blur)="onValorVendaBlur()" autocomplete="off" [disabled]="!podeEditarProduto"/>
-        <div *ngIf="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Preço de Venda no Pix</label>
-        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" formControlName="valorVendaPix" autocomplete="off" [disabled]="!podeEditarProduto"/>
-        <div *ngIf="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Preço de Venda no Credito</label>
-        <input type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" formControlName="valorVendaCredito" autocomplete="off" [disabled]="!podeEditarProduto"/>
-        <div *ngIf="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
-      </div>
 
       <div class="row">
         <div class="mb-3 col-md-6">
-          <label class="form-label">Categoria</label>
-          <select class="form-select" formControlName="categoriaId" [disabled]="!podeEditarProduto">
+          <label for="categoria" class="form-label">Categoria</label>
+          <select id="categoria" class="form-select" formControlName="categoriaId" [disabled]="!podeEditarProduto">
             <option value="">-- selecione --</option>
             <option *ngFor="let c of categorias" [value]="c.id">{{ c.descricao }}</option>
           </select>
         </div>
         <div class="mb-3 col-md-6">
-          <label class="form-label">Gênero</label>
-          <select class="form-select" formControlName="genero" [disabled]="!podeEditarProduto">
+          <label for="genero" class="form-label">Gênero</label>
+          <select id="genero" class="form-select" formControlName="genero" [disabled]="!podeEditarProduto">
             <option value="">-- selecione --</option>
             <option value="MASCULINO">Masculino</option>
             <option value="FEMININO">Feminino</option>
@@ -66,6 +31,43 @@
           </select>
         </div>
       </div>
+      <div class="row">
+        <div class="mb-3 col-md-6">
+          <label for="nome" class="form-label">Nome</label>
+          <input id="nome" class="form-control" [class.is-invalid]="form.get('nome')?.invalid && form.get('nome')?.touched" formControlName="nome" maxlength="100" autocomplete="off" [disabled]="!podeEditarProduto"/>
+          <div *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" class="invalid-feedback">Nome é obrigatório.</div>
+        </div>
+        <div class="mb-3 col-md-6">
+          <label for="precoVenda" class="form-label">Preço de Venda</label>
+          <input id="precoVenda"  type="text" class="form-control" currencyMask inputmode="decimal"
+                 [class.is-invalid]="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched"
+                 formControlName="valorVenda" (blur)="onValorVendaBlur()" autocomplete="off" [disabled]="!podeEditarProduto"/>
+          <div *ngIf="form.get('valorVenda')?.invalid && form.get('valorVenda')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
+        </div>
+      </div>
+
+<!--
+      <div class="mb-3">
+        <label for="descricao" class="form-label">Descrição</label>
+        <input id="descricao" class="form-control" formControlName="descricao" maxlength="200" autocomplete="off" [disabled]="!podeEditarProduto"/>
+      </div>
+
+      <div class="mb-3" *ngIf="podeVisualizarValorCompra">
+        <label for="precoCompra" class="form-label">Preço de Compra</label>
+        <input id="precoCompra" type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorCompra')?.invalid && form.get('valorCompra')?.touched" formControlName="valorCompra" autocomplete="off" [disabled]="!podeEditarProduto"/>
+      </div>-->
+
+      <!--<div class="mb-3">
+        <label for="precoVendaPix" class="form-label">Preço de Venda no Pix</label>
+        <input id="precoVendaPix" type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" formControlName="valorVendaPix" autocomplete="off" [disabled]="!podeEditarProduto"/>
+        <div *ngIf="form.get('valorVendaPix')?.invalid && form.get('valorVendaPix')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="precoVendaCredito" class="form-label">Preço de Venda no Credito</label>
+        <input id="precoVendaCredito" type="text" class="form-control" currencyMask inputmode="decimal" [class.is-invalid]="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" formControlName="valorVendaCredito" autocomplete="off" [disabled]="!podeEditarProduto"/>
+        <div *ngIf="form.get('valorVendaCredito')?.invalid && form.get('valorVendaCredito')?.touched" class="invalid-feedback">Informe o preço de venda.</div>
+      </div>-->
 
       <app-variacao-tabela
         [parentForm]="form"

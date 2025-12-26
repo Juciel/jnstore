@@ -27,8 +27,8 @@
           <p><strong>Status:</strong> {{ caixa.status | titlecase }}</p>
           <form (ngSubmit)="retiradaCaixa()" #f="ngForm" novalidate>
             <div class="mb-3">
-              <label class="form-label">Valor Final</label>
-              <input class="form-control" type="text" [(ngModel)]="valorRetirada" name="valorRetirada" required #valorCtrl="ngModel" currencyMask autocomplete="off" />
+              <label for="valorRetirada" class="form-label">Valor Final</label>
+              <input id="valorRetirada" class="form-control" type="text" [(ngModel)]="valorRetirada" name="valorRetirada" required #valorCtrl="ngModel" currencyMask autocomplete="off" />
               <div *ngIf="valorCtrl.invalid && valorCtrl.touched" class="invalid-feedback d-block">Informe o valor final.</div>
             </div>
             <div class="mb-3">

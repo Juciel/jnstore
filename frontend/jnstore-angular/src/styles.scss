@@ -69,7 +69,17 @@ a{ color: var(--jn-brown); }
 
 /* Cards and inputs subtle border using brown */
 .card{ border-color: rgba(63,43,32,0.12); }
-input.form-control, select.form-select, textarea.form-control{ border-color: rgba(63,43,32,0.12); }
+
+/* Improved input visibility */
+input.form-control, select.form-select, textarea.form-control {
+    border: 1px solid #495057; /* Darker border for better visibility */
+    background-color: #fff;
+}
+
+input.form-control:focus, select.form-select:focus, textarea.form-control:focus {
+    border-color: var(--jn-gold);
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+}
 
 /* Header tweaks (app title area) */
 h1{ color: var(--jn-brown); }
